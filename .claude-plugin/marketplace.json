@@ -1,0 +1,13 @@
+{
+  "name": "it-cli",
+  "owner": {
+    "name": "Tony Malins"
+  },
+  "plugins": [
+    {
+      "name": "it-cli",
+      "source": "./plugins/it-cli",
+      "description": "Drive the `its` IT-systems CLI from Claude Code — one skill covering RMM, Entra ID, Intune, Microsoft 365, Dokploy, Bitwarden, UniFi, Wrike, Azure and more."
+    }
+  ]
+}

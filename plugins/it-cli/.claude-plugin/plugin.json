@@ -1,0 +1,10 @@
+{
+  "name": "it-cli",
+  "version": "0.1.0",
+  "description": "Claude Code skill for the `its` IT-systems CLI — query and manage infrastructure across many providers from one shell.",
+  "author": {
+    "name": "Tony Malins"
+  },
+  "homepage": "https://github.com/sling86/it-cli-plugin",
+  "keywords": ["cli", "it", "infrastructure", "entra", "intune", "microsoft-365", "rmm", "devops"]
+}
