@@ -2,928 +2,350 @@
 
 SharePoint Online — sites, document libraries, lists, files, search, permissions, pages.
 
-> Auto-generated command reference. Do not edit by hand.
-> Configure with `its sp setup`; get live help with `its sp <resource> help`.
+> Auto-generated reference. Configure: `its sp setup`. For a command you can name, prefer live help `its sp <resource> help` (always current) — read this file to discover what exists. [Index](./index.md)
 
-[← Provider index](./index.md)
+## sites
 
-## Resources
-
-- [sites](#sites)
-- [drives](#drives)
-- [lists](#lists)
-- [files](#files)
-- [search](#search)
-- [permissions](#permissions)
-- [groups](#groups)
-- [pages](#pages)
-- [dashboard](#dashboard)
-- [graph](#graph)
-
-### sites
-
-| Command | Description |
-|---------|-------------|
-| `its sp sites` | List all SharePoint sites. Surfaces the most common fields; pass --json for raw shape. |
-| `its sp sites get <siteId>` | Get site details by ID. Pass the id (or any natural identifier) as the positional arg. |
-| `its sp sites search <query>` | Search sites by name. Substring match across the most relevant fields; case-insensitive. |
-| `its sp sites root` | Get the root site. Returns the document library root. |
-| `its sp sites subsites <siteId>` | List child sites. Returns child sites of the given site. |
-| `its sp sites structure <siteId>` | Get site structure (drives, lists, subsites). Walks the site hierarchy + drives. |
-
-#### `its sp sites`
-
+### `its sp sites`
 List all SharePoint sites. Surfaces the most common fields; pass --json for raw shape.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--all` | `` | Include personal (OneDrive) sites | — |
-
-**Examples:**
-
+Flags: `--all` Include personal (OneDrive) sites
 ```bash
 its sp sites
-
-# Pipe-friendly output — use with jq / scripts.
 its sp sites --json
-
-# Re-runs every 10s — handy for dashboards or incident response.
 its sp sites --watch
 ```
 
-#### `its sp sites get <siteId>`
-
+### `its sp sites get <siteId>`
 Get site details by ID. Pass the id (or any natural identifier) as the positional arg.
-
-**Examples:**
-
 ```bash
 its sp sites get <site-id>
-
-# Pipe-friendly output — use with jq / scripts.
 its sp sites get <site-id> --json
 ```
 
-#### `its sp sites search <query>`
-
+### `its sp sites search <query>`
 Search sites by name. Substring match across the most relevant fields; case-insensitive.
-
-**Examples:**
-
 ```bash
 its sp sites search "marketing"
-
-# Pipe-friendly output — use with jq / scripts.
 its sp sites search "marketing" --json
 ```
 
-#### `its sp sites root`
-
+### `its sp sites root`
 Get the root site. Returns the document library root.
-
-**Examples:**
-
 ```bash
 its sp sites root
-
-# Pipe-friendly output — use with jq / scripts.
 its sp sites root --json
 ```
 
-#### `its sp sites subsites <siteId>`
-
+### `its sp sites subsites <siteId>`
 List child sites. Returns child sites of the given site.
-
-**Examples:**
-
 ```bash
 its sp sites subsites <site-id>
-
-# Pipe-friendly output — use with jq / scripts.
 its sp sites subsites <site-id> --json
 ```
 
-#### `its sp sites structure <siteId>`
-
+### `its sp sites structure <siteId>`
 Get site structure (drives, lists, subsites). Walks the site hierarchy + drives.
-
-**Examples:**
-
 ```bash
-# Lists, drives, subsites in one view
 its sp sites structure <site-id>
-
-# Pipe-friendly output — use with jq / scripts.
 its sp sites structure <site-id> --json
 ```
 
----
+## drives
 
-### drives
-
-| Command | Description |
-|---------|-------------|
-| `its sp drives <siteId>` | List document libraries on a site. Surfaces the most common fields; pass --json for raw shape. |
-| `its sp drives root <siteId>` | List files at document library root. Returns the document library root. |
-| `its sp drives folder <siteId>` | List folder contents. Returns the contents of a folder by path. |
-| `its sp drives get <siteId>` | Get file or folder details. Pass the id (or any natural identifier) as the positional arg. |
-
-#### `its sp drives <siteId>`
-
+### `its sp drives <siteId>`
 List document libraries on a site. Surfaces the most common fields; pass --json for raw shape.
-
-**Examples:**
-
 ```bash
 its sp drives <site-id>
-
-# Pipe-friendly output — use with jq / scripts.
 its sp drives <site-id> --json
-
-# Re-runs every 10s — handy for dashboards or incident response.
 its sp drives <site-id> --watch
 ```
 
-#### `its sp drives root <siteId>`
-
+### `its sp drives root <siteId>`
 List files at document library root. Returns the document library root.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--drive` | `` | Drive ID | — |
-| `--top` | `` | Number of items to return | 50 |
-| `--all` | `` | Fetch all results (overrides --top) | — |
-
-**Examples:**
-
+Flags: `--drive` Drive ID · `--top` Number of items to return · `--all` Fetch all results (overrides --top)
 ```bash
 its sp drives root <site-id>
-
-# Pipe-friendly output — use with jq / scripts.
 its sp drives root <site-id> --json
 ```
 
-#### `its sp drives folder <siteId>`
-
+### `its sp drives folder <siteId>`
 List folder contents. Returns the contents of a folder by path.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--drive` | `` | Drive ID | — |
-| `--path` | `` | Item ID or /path to folder | — |
-
-**Examples:**
-
+Flags: `--drive` Drive ID · `--path` Item ID or /path to folder
 ```bash
 its sp drives folder <site-id> --path "Shared Documents/Marketing"
-
-# Pipe-friendly output — use with jq / scripts.
 its sp drives folder <site-id> --path "Shared Documents/Marketing" --json
 ```
 
-#### `its sp drives get <siteId>`
-
+### `its sp drives get <siteId>`
 Get file or folder details. Pass the id (or any natural identifier) as the positional arg.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--drive` | `` | Drive ID | — |
-| `--item` | `` | Item ID | — |
-
-**Examples:**
-
+Flags: `--drive` Drive ID · `--item` Item ID
 ```bash
 its sp drives get <site-id> --path "Shared Documents/report.pdf"
-
-# Pipe-friendly output — use with jq / scripts.
 its sp drives get <site-id> --path "Shared Documents/report.pdf" --json
 ```
 
----
+## lists
 
-### lists
-
-| Command | Description |
-|---------|-------------|
-| `its sp lists <siteId>` | List all lists on a site. Surfaces the most common fields; pass --json for raw shape. |
-| `its sp lists get <siteId>` | Get list details. Pass the id (or any natural identifier) as the positional arg. |
-| `its sp lists columns <siteId>` | Get column definitions for a list. Returns column definitions for a list. |
-| `its sp lists items <siteId>` | List items from a list. Returns rows of a list, with column values. |
-| `its sp lists create-item <siteId>` | Create a list item. Idempotent on natural-key collision; use update-item to mutate. |
-| `its sp lists update-item <siteId>` | Update a list item. PATCH — only supplied fields change. |
-| `its sp lists delete-item <siteId>` | Delete a list item. Permanent — use --confirm. |
-
-#### `its sp lists <siteId>`
-
+### `its sp lists <siteId>`
 List all lists on a site. Surfaces the most common fields; pass --json for raw shape.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--all` | `` | Include hidden lists | — |
-
-**Examples:**
-
+Flags: `--all` Include hidden lists
 ```bash
 its sp lists <site-id>
-
-# Pipe-friendly output — use with jq / scripts.
 its sp lists <site-id> --json
-
-# Re-runs every 10s — handy for dashboards or incident response.
 its sp lists <site-id> --watch
 ```
 
-#### `its sp lists get <siteId>`
-
+### `its sp lists get <siteId>`
 Get list details. Pass the id (or any natural identifier) as the positional arg.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--list` | `` | List ID | — |
-
-**Examples:**
-
+Flags: `--list` List ID
 ```bash
 its sp lists get <site-id> --list <list-id>
-
-# Pipe-friendly output — use with jq / scripts.
 its sp lists get <site-id> --list <list-id> --json
 ```
 
-#### `its sp lists columns <siteId>`
-
+### `its sp lists columns <siteId>`
 Get column definitions for a list. Returns column definitions for a list.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--list` | `` | List ID | — |
-| `--all` | `` | Include hidden columns | — |
-
-**Examples:**
-
+Flags: `--list` List ID · `--all` Include hidden columns
 ```bash
 its sp lists columns <site-id> --list <list-id>
-
-# Pipe-friendly output — use with jq / scripts.
 its sp lists columns <site-id> --list <list-id> --json
 ```
 
-#### `its sp lists items <siteId>`
-
+### `its sp lists items <siteId>`
 List items from a list. Returns rows of a list, with column values.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--list` | `` | List ID | — |
-| `--top` | `` | Number of items to return | 100 |
-| `--filter` | `` | OData filter expression | — |
-| `--orderby` | `` | OData orderBy expression | — |
-
-**Examples:**
-
+Flags: `--list` List ID · `--top` Number of items to return · `--filter` OData filter expression · `--orderby` OData orderBy expression
 ```bash
 its sp lists items <site-id> --list <list-id>
-
-# Pipe-friendly output — use with jq / scripts.
 its sp lists items <site-id> --list <list-id> --json
 ```
 
-#### `its sp lists create-item <siteId>`
-
+### `its sp lists create-item <siteId>`
 Create a list item. Idempotent on natural-key collision; use update-item to mutate.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--list` | `` | List ID | — |
-| `--fields` | `` | JSON string of field values | — |
-
-**Examples:**
-
+Flags: `--list` List ID · `--fields` JSON string of field values
 ```bash
 its sp lists create-item <site-id> --list <list-id> --json '{"Title":"New row"}'
-
-# Set arbitrary list columns via the inline JSON payload.
 its sp lists create-item <site-id> --list <list-id> --json '{"Title":"New ticket","Priority":"High","Assignee":"jane.smith@example.com"}'
 ```
 
-#### `its sp lists update-item <siteId>`
-
+### `its sp lists update-item <siteId>`
 Update a list item. PATCH — only supplied fields change.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--list` | `` | List ID | — |
-| `--item` | `` | Item ID | — |
-| `--fields` | `` | JSON string of field values to update | — |
-
-**Examples:**
-
+Flags: `--list` List ID · `--item` Item ID · `--fields` JSON string of field values to update
 ```bash
 its sp lists update-item <site-id> --list <list-id> --item <item-id> --json '{"Title":"Updated"}'
-
-# PATCH semantics — only the supplied fields are changed.
 its sp lists update-item <site-id> --list <list-id> --item <item-id> --json '{"Status":"Closed","ResolvedBy":"jane.smith@example.com"}'
 ```
 
-#### `its sp lists delete-item <siteId>`
-
+### `its sp lists delete-item <siteId>`
 Delete a list item. Permanent — use --confirm.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--list` | `` | List ID | — |
-| `--item` | `` | Item ID | — |
-| `--confirm` | `` | Confirm deletion | — |
-
-**Examples:**
-
+Flags: `--list` List ID · `--item` Item ID · `--confirm` Confirm deletion
 ```bash
 its sp lists delete-item <site-id> --list <list-id> --item <item-id> --confirm
-
-# Pipe-friendly output — use with jq / scripts.
 its sp lists delete-item <site-id> --list <list-id> --item <item-id> --confirm --json
 ```
 
----
+## files
 
-### files
-
-| Command | Description |
-|---------|-------------|
-| `its sp files download` | Download a drive item to disk (--out) or pipe binary-safe to stdout. Resolves the pre-signed @microsoft.graph.downloadUrl from item metadata and fetches that — `sp graph get .../content` corrupts binary on the UTF-8 path. |
-| `its sp files upload <siteId>` | Upload a text file. Stream a local file to the resource. |
-| `its sp files folder <siteId>` | Create a folder. Returns the contents of a folder by path. |
-| `its sp files delete <siteId>` | Delete a file or folder (moves to recycle bin). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record. |
-| `its sp files move <siteId>` | Move or rename a file. Move an item between folders. --confirm required. |
-| `its sp files checkout <siteId>` | Check out a file for editing. Locks the item against concurrent edits. |
-| `its sp files checkin <siteId>` | Check in a file. Releases the lock after editing. |
-| `its sp files versions <siteId>` | List file version history. Returns version history for a file. |
-| `its sp files restore <siteId>` | Restore a file to a previous version. Restore a soft-deleted item from trash. |
-
-#### `its sp files download`
-
+### `its sp files download`
 Download a drive item to disk (--out) or pipe binary-safe to stdout. Resolves the pre-signed @microsoft.graph.downloadUrl from item metadata and fetches that — `sp graph get .../content` corrupts binary on the UTF-8 path.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--site` | `` | Site ID (with --drive --item|--path) | — |
-| `--user` | `` | User UPN — operate on /users/<upn>/drive | — |
-| `--drive` | `` | Drive ID (with --item or --path) | — |
-| `--item` | `` | Drive item ID | — |
-| `--path` | `` | Item path relative to drive root (e.g. /Folder/file.docx) | — |
-| `--url` | `` | Pre-signed @microsoft.graph.downloadUrl (skips metadata lookup) | — |
-| `--out` | `` | Local file path to write to. Omit to pipe to stdout. | — |
-
-**Examples:**
-
+Flags: `--site` Site ID (with --drive --item|--path) · `--user` User UPN — operate on /users/<upn>/drive · `--drive` Drive ID (with --item or --path) · `--item` Drive item ID · `--path` Item path relative to drive root (e.g. /Folder/file.docx) · `--url` Pre-signed @microsoft.graph.downloadUrl (skips metadata lookup) · `--out` Local file path to write to. Omit to pipe to stdout.
 ```bash
 its sp files download --user tony@example.com --item 01Q3JEFHMUOTAVKHPGWNBJPEDKM376OQH6 --out out.docx
-
 its sp files download --site <siteId> --drive <driveId> --path "/Folder/file.pdf" --out file.pdf
-
 its sp files download --url "https://.../download" --out file.bin
-
 its sp files download --user tony@example.com --item <id> | sha256sum
 ```
 
-#### `its sp files upload <siteId>`
-
+### `its sp files upload <siteId>`
 Upload a text file. Stream a local file to the resource.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--drive` | `` | Drive ID | — |
-| `--path` | `` | Parent path (default /) | / |
-| `--name` | `` | File name | — |
-| `--content` | `` | Text content to upload | — |
-| `--content-file` | `` | Read --content from a local UTF-8 file (use for content > ~15KB — Windows command-line cap) | — |
-
-**Examples:**
-
+Flags: `--drive` Drive ID · `--path` Parent path (default /) · `--name` File name · `--content` Text content to upload · `--content-file` Read --content from a local UTF-8 file (use for content > ~15KB — Windows command-line cap)
 ```bash
 its sp files upload <site-id> --path "Shared Documents/report.pdf" --file ./report.pdf
-
-# Pipe-friendly output — use with jq / scripts.
 its sp files upload <site-id> --path "Shared Documents/report.pdf" --file ./report.pdf --json
 ```
 
-#### `its sp files folder <siteId>`
-
+### `its sp files folder <siteId>`
 Create a folder. Returns the contents of a folder by path.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--drive` | `` | Drive ID | — |
-| `--parent` | `` | Parent item ID | — |
-| `--name` | `` | Folder name | — |
-
-**Examples:**
-
+Flags: `--drive` Drive ID · `--parent` Parent item ID · `--name` Folder name
 ```bash
 its sp files folder <site-id> --path "Shared Documents"
-
-# Pipe-friendly output — use with jq / scripts.
 its sp files folder <site-id> --path "Shared Documents" --json
 ```
 
-#### `its sp files delete <siteId>`
-
+### `its sp files delete <siteId>`
 Delete a file or folder (moves to recycle bin). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--drive` | `` | Drive ID | — |
-| `--item` | `` | Item ID | — |
-| `--confirm` | `` | Confirm deletion | — |
-
-**Examples:**
-
+Flags: `--drive` Drive ID · `--item` Item ID · `--confirm` Confirm deletion
 ```bash
 its sp files delete <site-id> --path "Shared Documents/old.docx" --confirm
 ```
 
-#### `its sp files move <siteId>`
-
+### `its sp files move <siteId>`
 Move or rename a file. Move an item between folders. --confirm required.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--drive` | `` | Drive ID | — |
-| `--item` | `` | Item ID | — |
-| `--name` | `` | New file name | — |
-| `--parent` | `` | New parent folder ID | — |
-
-**Examples:**
-
+Flags: `--drive` Drive ID · `--item` Item ID · `--name` New file name · `--parent` New parent folder ID
 ```bash
 its sp files move <site-id> --from "Shared Documents/old.docx" --to "Shared Documents/new.docx"
-
-# Pipe-friendly output — use with jq / scripts.
 its sp files move <site-id> --from "Shared Documents/old.docx" --to "Shared Documents/new.docx" --json
 ```
 
-#### `its sp files checkout <siteId>`
-
+### `its sp files checkout <siteId>`
 Check out a file for editing. Locks the item against concurrent edits.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--drive` | `` | Drive ID | — |
-| `--item` | `` | Item ID | — |
-
-**Examples:**
-
+Flags: `--drive` Drive ID · `--item` Item ID
 ```bash
 its sp files checkout <site-id> --path "Shared Documents/draft.docx"
-
-# Pipe-friendly output — use with jq / scripts.
 its sp files checkout <site-id> --path "Shared Documents/draft.docx" --json
 ```
 
-#### `its sp files checkin <siteId>`
-
+### `its sp files checkin <siteId>`
 Check in a file. Releases the lock after editing.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--drive` | `` | Drive ID | — |
-| `--item` | `` | Item ID | — |
-| `--comment` | `` | Check-in comment | |
-| `--type` | `` | Check-in type: minor, major, or overwrite | major |
-
-**Examples:**
-
+Flags: `--drive` Drive ID · `--item` Item ID · `--comment` Check-in comment · `--type` Check-in type: minor, major, or overwrite
 ```bash
 its sp files checkin <site-id> --path "Shared Documents/draft.docx" --comment "v2"
-
-# Pipe-friendly output — use with jq / scripts.
 its sp files checkin <site-id> --path "Shared Documents/draft.docx" --comment "v2" --json
 ```
 
-#### `its sp files versions <siteId>`
-
+### `its sp files versions <siteId>`
 List file version history. Returns version history for a file.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--drive` | `` | Drive ID | — |
-| `--item` | `` | Item ID | — |
-
-**Examples:**
-
+Flags: `--drive` Drive ID · `--item` Item ID
 ```bash
 its sp files versions --item <item-id>
-
-# Pipe-friendly output — use with jq / scripts.
 its sp files versions --item <item-id> --json
 ```
 
-#### `its sp files restore <siteId>`
-
+### `its sp files restore <siteId>`
 Restore a file to a previous version. Restore a soft-deleted item from trash.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--drive` | `` | Drive ID | — |
-| `--item` | `` | Item ID | — |
-| `--version` | `` | Version ID to restore | — |
-| `--confirm` | `` | Confirm restore | — |
-
-**Examples:**
-
+Flags: `--drive` Drive ID · `--item` Item ID · `--version` Version ID to restore · `--confirm` Confirm restore
 ```bash
 its sp files restore <site-id> --item <item-id> --version <version-id>
-
-# Pipe-friendly output — use with jq / scripts.
 its sp files restore <site-id> --item <item-id> --version <version-id> --json
 ```
 
----
+## search
 
-### search
-
-| Command | Description |
-|---------|-------------|
-| `its sp search <query>` | Search across SharePoint. Surfaces the most common fields; pass --json for raw shape. |
-
-#### `its sp search <query>`
-
+### `its sp search <query>`
 Search across SharePoint. Surfaces the most common fields; pass --json for raw shape.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--type` | `` | Entity type: driveItem, listItem, list, or site | driveItem |
-| `--top` | `` | Maximum results to return | 25 |
-
-**Examples:**
-
+Flags: `--type` Entity type: driveItem, listItem, list, or site · `--top` Maximum results to return
 ```bash
 its sp search "quarterly report"
-
-# Pipe-friendly output — use with jq / scripts.
 its sp search "quarterly report" --json
-
-# Re-runs every 10s — handy for dashboards or incident response.
 its sp search "quarterly report" --watch
 ```
 
----
+## permissions
 
-### permissions
-
-| Command | Description |
-|---------|-------------|
-| `its sp permissions <siteId>` | List app-level site permissions. Surfaces the most common fields; pass --json for raw shape. |
-| `its sp permissions item <siteId>` | List sharing permissions on a file or folder. Single record detail. |
-| `its sp permissions share <siteId>` | Create a sharing link. Creates a sharing link / direct grant. |
-| `its sp permissions grant-app <siteId>` | Grant the it-cli app (or another app via --app) a Sites.Selected role on one site. Useful for bootstrapping the role needed by `its sp groups *`. Requires Sites.FullControl.All on the CALLING credentials — typically via a separate admin app (SP_ADMIN_CLIENT_ID/SP_ADMIN_CLIENT_SECRET) or a one-off elevation. |
-| `its sp permissions remove <siteId>` | Remove a sharing permission. Permanent — use --confirm. |
-
-#### `its sp permissions <siteId>`
-
+### `its sp permissions <siteId>`
 List app-level site permissions. Surfaces the most common fields; pass --json for raw shape.
-
-**Examples:**
-
 ```bash
 its sp permissions <site-id>
-
-# Pipe-friendly output — use with jq / scripts.
 its sp permissions <site-id> --json
-
-# Re-runs every 10s — handy for dashboards or incident response.
 its sp permissions <site-id> --watch
 ```
 
-#### `its sp permissions item <siteId>`
-
+### `its sp permissions item <siteId>`
 List sharing permissions on a file or folder. Single record detail.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--drive` | `` | Drive ID | — |
-| `--item` | `` | Item ID | — |
-
-**Examples:**
-
+Flags: `--drive` Drive ID · `--item` Item ID
 ```bash
 its sp permissions item <site-id> --item <item-id>
-
-# Pipe-friendly output — use with jq / scripts.
 its sp permissions item <site-id> --item <item-id> --json
 ```
 
-#### `its sp permissions share <siteId>`
-
+### `its sp permissions share <siteId>`
 Create a sharing link. Creates a sharing link / direct grant.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--drive` | `` | Drive ID | — |
-| `--item` | `` | Item ID | — |
-| `--type` | `` | Link type: view, edit, or embed | view |
-| `--scope` | `` | Link scope: anonymous or organization | organization |
-
-**Examples:**
-
+Flags: `--drive` Drive ID · `--item` Item ID · `--type` Link type: view, edit, or embed · `--scope` Link scope: anonymous or organization
 ```bash
 its sp permissions share --item <item-id> --user jane.smith@example.com --role read
-
-# Pipe-friendly output — use with jq / scripts.
 its sp permissions share --item <item-id> --user jane.smith@example.com --role read --json
 ```
 
-#### `its sp permissions grant-app <siteId>`
-
+### `its sp permissions grant-app <siteId>`
 Grant the it-cli app (or another app via --app) a Sites.Selected role on one site. Useful for bootstrapping the role needed by `its sp groups *`. Requires Sites.FullControl.All on the CALLING credentials — typically via a separate admin app (SP_ADMIN_CLIENT_ID/SP_ADMIN_CLIENT_SECRET) or a one-off elevation.
+Flags: `--role` Role to grant: read, write, or fullcontrol · `--app` Client (object) id of the app to grant. Defaults to the current SP_CLIENT_ID / CLIENT_ID. · `--name` Display name to store with the grant. Defaults to 'its-cli'.
 
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--role` | `` | Role to grant: read, write, or fullcontrol | fullcontrol |
-| `--app` | `` | Client (object) id of the app to grant. Defaults to the current SP_CLIENT_ID / CLIENT_ID. | — |
-| `--name` | `` | Display name to store with the grant. Defaults to 'its-cli'. | its-cli |
-
-#### `its sp permissions remove <siteId>`
-
+### `its sp permissions remove <siteId>`
 Remove a sharing permission. Permanent — use --confirm.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--drive` | `` | Drive ID | — |
-| `--item` | `` | Item ID | — |
-| `--permission` | `` | Permission ID to remove | — |
-| `--confirm` | `` | Confirm removal | — |
-
-**Examples:**
-
+Flags: `--drive` Drive ID · `--item` Item ID · `--permission` Permission ID to remove · `--confirm` Confirm removal
 ```bash
 its sp permissions remove <site-id> --item <item-id> --perm <perm-id> --confirm
 ```
 
----
+## groups
 
-### groups
-
-| Command | Description |
-|---------|-------------|
-| `its sp groups <site>` | List SharePoint site groups (Owners/Members/Visitors + custom) on a site. Pass a site URL or Graph site id. |
-| `its sp groups members <site> <group>` | List members of an SP site group. Accept group id or title. |
-| `its sp groups add-member <site> <group> <principal>` | Add a UPN, Entra security-group object id, or pre-formed claim LoginName to an SP site group. Idempotent. |
-| `its sp groups remove-member <site> <group> <principal>` | Remove a member from an SP site group. Destructive — use --confirm. |
-
-#### `its sp groups <site>`
-
+### `its sp groups <site>`
 List SharePoint site groups (Owners/Members/Visitors + custom) on a site. Pass a site URL or Graph site id.
 
-#### `its sp groups members <site> <group>`
-
+### `its sp groups members <site> <group>`
 List members of an SP site group. Accept group id or title.
 
-#### `its sp groups add-member <site> <group> <principal>`
-
+### `its sp groups add-member <site> <group> <principal>`
 Add a UPN, Entra security-group object id, or pre-formed claim LoginName to an SP site group. Idempotent.
 
-#### `its sp groups remove-member <site> <group> <principal>`
-
+### `its sp groups remove-member <site> <group> <principal>`
 Remove a member from an SP site group. Destructive — use --confirm.
+Flags: `--confirm` Confirm removal
 
-**Flags:**
+## pages
 
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--confirm` | `` | Confirm removal | — |
-
----
-
-### pages
-
-| Command | Description |
-|---------|-------------|
-| `its sp pages <siteId>` | List modern pages on a site. Surfaces the most common fields; pass --json for raw shape. |
-| `its sp pages get <siteId>` | Get page details. Pass the id (or any natural identifier) as the positional arg. |
-
-#### `its sp pages <siteId>`
-
+### `its sp pages <siteId>`
 List modern pages on a site. Surfaces the most common fields; pass --json for raw shape.
-
-**Examples:**
-
 ```bash
 its sp pages <site-id>
-
-# Pipe-friendly output — use with jq / scripts.
 its sp pages <site-id> --json
-
-# Re-runs every 10s — handy for dashboards or incident response.
 its sp pages <site-id> --watch
 ```
 
-#### `its sp pages get <siteId>`
-
+### `its sp pages get <siteId>`
 Get page details. Pass the id (or any natural identifier) as the positional arg.
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--page` | `` | Page ID | — |
-
-**Examples:**
-
+Flags: `--page` Page ID
 ```bash
 its sp pages get <site-id> --page <page-id>
-
-# Pipe-friendly output — use with jq / scripts.
 its sp pages get <site-id> --page <page-id> --json
 ```
 
----
+## dashboard
 
-### dashboard
-
-| Command | Description |
-|---------|-------------|
-| `its sp dashboard` | Comprehensive SharePoint overview. Surfaces the most common fields; pass --json for raw shape. |
-
-#### `its sp dashboard`
-
+### `its sp dashboard`
 Comprehensive SharePoint overview. Surfaces the most common fields; pass --json for raw shape.
-
-**Examples:**
-
 ```bash
-# Sites, storage, recent activity
 its sp dashboard
-
-# Pipe-friendly output — use with jq / scripts.
 its sp dashboard --json
-
-# Re-runs every 10s — handy for dashboards or incident response.
 its sp dashboard --watch
 ```
 
----
+## graph
 
-### graph
-
-| Command | Description |
-|---------|-------------|
-| `its sp graph get <path>` | Raw Graph GET — pass any /v1.0 or /beta path (use --beta for beta) |
-| `its sp graph post <path>` | Raw Graph POST — pass any /v1.0 or /beta path (use --beta for beta) |
-| `its sp graph patch <path>` | Raw Graph PATCH — pass any /v1.0 or /beta path (use --beta for beta) |
-| `its sp graph put <path>` | Raw Graph PUT — pass any /v1.0 or /beta path (use --beta for beta) |
-| `its sp graph delete <path>` | Raw Graph DELETE — pass any /v1.0 or /beta path (use --beta for beta) |
-
-#### `its sp graph get <path>`
-
+### `its sp graph get <path>`
 Raw Graph GET — pass any /v1.0 or /beta path (use --beta for beta).
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--beta` | `` | Use /beta instead of /v1.0 | — |
-| `--header` | `` | Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal) | — |
-| `--raw` | `` | Return the response body as raw bytes (no JSON decode). Required for binary endpoints like /content. Currently honoured by the `sp` provider. | — |
-| `--out` | `` | Write the response to this file path instead of stdout. Implies --raw. | — |
-
-**Examples:**
-
+Flags: `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal) · `--raw` Return the response body as raw bytes (no JSON decode). Required for binary endpoints like /content. Currently honoured by the `sp` provider. · `--out` Write the response to this file path instead of stdout. Implies --raw.
 ```bash
 its sp graph get "/sites/<site-id>/lists"
-
-# Pipe-friendly output — use with jq / scripts.
 its sp graph get "/sites/<site-id>/lists" --json
 ```
 
-#### `its sp graph post <path>`
-
+### `its sp graph post <path>`
 Raw Graph POST — pass any /v1.0 or /beta path (use --beta for beta).
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--body` | `` | Request body — inline JSON string or @file.json to read from disk | — |
-| `--beta` | `` | Use /beta instead of /v1.0 | — |
-| `--header` | `` | Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal) | — |
-
-**Examples:**
-
+Flags: `--body` Request body — inline JSON string or @file.json to read from disk · `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
 its sp graph post "/sites/<site-id>/lists" --body @./new-list.json
-
-# Pipe-friendly output — use with jq / scripts.
 its sp graph post "/sites/<site-id>/lists" --body @./new-list.json --json
 ```
 
-#### `its sp graph patch <path>`
-
+### `its sp graph patch <path>`
 Raw Graph PATCH — pass any /v1.0 or /beta path (use --beta for beta).
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--body` | `` | Request body — inline JSON string or @file.json to read from disk | — |
-| `--beta` | `` | Use /beta instead of /v1.0 | — |
-| `--header` | `` | Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal) | — |
-
-**Examples:**
-
+Flags: `--body` Request body — inline JSON string or @file.json to read from disk · `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
 its sp graph patch "/sites/<site-id>/lists/<list-id>" --body '{"displayName":"Renamed"}'
-
-# Pipe-friendly output — use with jq / scripts.
 its sp graph patch "/sites/<site-id>/lists/<list-id>" --body --json
 ```
 
-#### `its sp graph put <path>`
-
+### `its sp graph put <path>`
 Raw Graph PUT — pass any /v1.0 or /beta path (use --beta for beta).
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--body` | `` | Request body — inline JSON string or @file.json to read from disk | — |
-| `--beta` | `` | Use /beta instead of /v1.0 | — |
-| `--header` | `` | Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal) | — |
-
-**Examples:**
-
+Flags: `--body` Request body — inline JSON string or @file.json to read from disk · `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
 its sp graph put "/sites/<site-id>/drive/items/<item-id>/content" --body @./file.bin
-
-# Pipe-friendly output — use with jq / scripts.
 its sp graph put "/sites/<site-id>/drive/items/<item-id>/content" --body @./file.bin --json
 ```
 
-#### `its sp graph delete <path>`
-
+### `its sp graph delete <path>`
 Raw Graph DELETE — pass any /v1.0 or /beta path (use --beta for beta).
-
-**Flags:**
-
-| Flag | Alias | Description | Default |
-|------|-------|-------------|---------|
-| `--beta` | `` | Use /beta instead of /v1.0 | — |
-| `--header` | `` | Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal) | — |
-
-**Examples:**
-
+Flags: `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
 its sp graph delete "/sites/<site-id>/lists/<list-id>" --confirm
 ```
-
----
