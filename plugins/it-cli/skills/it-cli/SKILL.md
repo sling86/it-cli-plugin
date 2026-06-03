@@ -77,7 +77,7 @@ its export [--data]             # Export config (+ optionally live data)
 
 ## Providers
 
-Each provider has its own command reference under [`reference/`](./reference/) — read `reference/<alias>.md` for the full resource/action/flag list. Start at [`reference/index.md`](./reference/index.md).
+For a command you can already name, prefer **live help** — `its <provider> <resource> help` (always current, near-zero cost). Read the bundled reference (`reference/<alias>.md`, start at [`reference/index.md`](./reference/index.md)) to **discover** what a provider offers — but the big providers' files are large, so switch to live help once you know the command.
 
 | Provider | Alias | What it covers | Reference |
 | -------- | ----- | -------------- | --------- |
