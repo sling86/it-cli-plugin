@@ -38,6 +38,7 @@ its auth login                  # OAuth sign-in (browser PKCE; --device-code for
 its auth status                 # Inspect delegated identity + token cache
 its auth doctor                 # Full diagnostic — env + delegated + per-resource swap
 its auth scopes [provider]      # Required Delegated + Application Graph scopes per provider
+its trust-cert <url>            # Trust + remember a self-signed TLS cert (TOFU); list / remove <host>
 its watch <provider> <resource> # Re-run on an interval with change highlighting
 its diff <provider> <resource> <snapshot.json>   # Diff live vs saved JSON
 its export [--data]             # Export config (+ optionally live data)
