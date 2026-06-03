@@ -235,7 +235,7 @@ its bw vaults --watch
 ```
 
 ### `its bw vaults create <name>`
-Save the current default vault (or custom credentials) as a named profile.
+Save a named vault profile — its own host, account and master password (use for a second vault on a different server).
 Flags: `--url` Server URL (defaults to current BW_URL) · `--email` Email (defaults to current BW_EMAIL) · `--client-id` API client ID (for API key auth) · `--client-secret` API client secret (for API key auth)
 ```bash
 its bw vaults create "personal"
