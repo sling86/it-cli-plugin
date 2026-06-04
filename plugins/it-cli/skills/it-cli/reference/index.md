@@ -2,7 +2,7 @@
 
 > Auto-generated from the live command definitions. Do not edit by hand.
 
-**19 providers** · **186 resources** · **639 commands**. Pick a provider for its full command list.
+**19 providers** · **186 resources** · **640 commands**. Pick a provider for its full command list.
 
 | Provider | Alias | Resources | Commands |
 |----------|-------|-----------|----------|
@@ -10,7 +10,7 @@
 | [Entra ID](./entra.md) | `entra` | 21 | 98 |
 | [Dokploy](./dokploy.md) | `dokploy` | 25 | 108 |
 | [Bitwarden](./bw.md) | `bw` | 10 | 37 |
-| [SharePoint](./sp.md) | `sp` | 10 | 44 |
+| [SharePoint](./sp.md) | `sp` | 10 | 45 |
 | [UniFi Network](./unifi.md) | `unifi` | 14 | 38 |
 | [Wrike](./wrike.md) | `wrike` | 12 | 48 |
 | [Azure CLI](./az.md) | `az` | 10 | 23 |

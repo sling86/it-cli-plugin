@@ -178,6 +178,10 @@ Flags: `--drive` Drive ID · `--item` Item ID · `--confirm` Confirm deletion
 its sp files delete <site-id> --path "Shared Documents/old.docx" --confirm
 ```
 
+### `its sp files share <siteId>`
+Create a sharing link for a file/folder (Graph createLink) and return its URL. --type view|edit, --scope organisation|anonymous (anonymous may be tenant-blocked).
+Flags: `--drive` Drive ID · `--item` Item ID · `--type` Link type · `--scope` Link scope
+
 ### `its sp files move <siteId>`
 Move or rename a file. Move an item between folders. --confirm required.
 Flags: `--drive` Drive ID · `--item` Item ID · `--name` New file name · `--parent` New parent folder ID

@@ -294,7 +294,7 @@ its rmm scripts get <script-id> --json
 
 ### `its rmm scripts run <agent>`
 Execute a saved RMM script on the target agent. Streams stdout/stderr back; use --timeout for long-running jobs (default 120s).
-Flags: `--script` Script ID · `--args` Script arguments (comma-separated) · `--timeout` Timeout in seconds
+Flags: `--script` Script ID · `--args` Script arguments (comma-separated) · `--timeout` Timeout in seconds · `--raw` Print the script's raw stdout (and stderr) directly, instead of JSON-wrapped output with escaped \r\n
 ```bash
 its rmm scripts run OFFICE-PC-01 --script "Restart Print Spooler"
 its rmm scripts run OFFICE-PC-01 --script "Long Audit" --timeout 600
@@ -358,9 +358,9 @@ its rmm tasks OFFICE-PC-01 --json
 its rmm tasks OFFICE-PC-01 --watch
 ```
 
-### `its rmm tasks create <agent_id>`
-Schedule a script to run on an agent at a fixed cadence. Use --interval seconds; default is daily.
-Flags: `--script` Script ID for the task
+### `its rmm tasks create <agent>`
+Create an automated task that runs a script on an agent. Default is a manual task (run on demand); add --daily-time HH:MM for a daily schedule (+ --weekdays to limit days). Resolves the agent by id/hostname/username, including offline agents.
+Flags: `--script` Script ID to run · `--name` Task name (default: derived from the script ID) · `--args` Script arguments (comma-separated, e.g. -Mode,Notify) · `--timeout` Per-run timeout in seconds (default 90) · `--daily-time` Run daily at HH:MM (24h) — turns this into a scheduled task · `--weekdays` With --daily-time: restrict to these days (mon,tue,wed,thu,fri,sat,sun); default every day · `--run-asap` Run as soon as possible if a scheduled run was missed
 ```bash
 its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --cron "0 3 * * 0"
 its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --cron "0 3 * * 0" --json
