@@ -192,6 +192,10 @@ its entra groups remove-member <group-id> --user jane.smith@example.com --confir
 its entra groups remove-member <group-id> --user jane.smith@example.com --confirm --json
 ```
 
+### `its entra groups edit-rule <group_id>`
+Edit a dynamic group's membershipRule. --add-upn appends an OR exception (grants a user who doesn't match the rule); --remove-upn strips one; --set-rule replaces the whole rule. add/remove never drop existing members. --confirm required; without it, prints the current→new diff
+Flags: `--add-upn` Append `or (user.userPrincipalName -eq "<upn>")` to the rule · `--remove-upn` Strip the OR exception for this UPN from the rule · `--set-rule` Replace the ENTIRE membershipRule (re-evaluates the whole group) · `--confirm` Apply the change · `--force` Skip the --add-upn existence check (allow a UPN that doesn't resolve)
+
 ## licences
 
 ### `its entra licences`
