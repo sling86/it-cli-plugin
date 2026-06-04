@@ -362,6 +362,26 @@ its dokploy env pull <app-id> --file .env.local
 its dokploy env pull <app-id> --file .env.local --json
 ```
 
+## environments
+
+### `its dokploy environments <projectId>`
+List a project's environments with their environmentId, name and shared-variable count. Pass the projectId.
+
+### `its dokploy environments env <environmentId>`
+Show an environment's SHARED env vars. Keys are visible by default; values are redacted unless --show-values. Pass the environmentId (from `its dokploy environments <projectId>`).
+Flags: `--show-values` Show actual values (otherwise redacted as ***)
+
+### `its dokploy environments push <environmentId>`
+Push an env file as an environment's SHARED env vars (replaces all). Upload local state to the upstream.
+Flags: `--file` Path to env file
+
+### `its dokploy environments pull <environmentId>`
+Pull an environment's SHARED env vars to a local file. Download upstream state to local.
+Flags: `--file` Output file path
+
+### `its dokploy environments set <environmentId> <pairs>`
+Set one or more SHARED env vars (KEY=value) on an environment without affecting the others.
+
 ## registries
 
 ### `its dokploy registries`
