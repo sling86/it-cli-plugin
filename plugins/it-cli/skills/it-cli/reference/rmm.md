@@ -137,10 +137,18 @@ its rmm clients --json
 its rmm clients --watch
 ```
 
+### `its rmm clients create`
+Create a client (POST /clients/). TRMM also creates its first site in the same call — pass --site for its name (default 'Default'). Idempotent — skips if a client of that name already exists.
+Flags: `--name` New client name · `--site` Name of the client's initial site (default 'Default')
+
+### `its rmm clients delete <client>`
+Delete a client by ID or name (DELETE /clients/{id}/). --confirm required. If the client still has agents, pass --move-to-site <siteId> to reassign them first (TRMM refuses otherwise).
+Flags: `--confirm` Confirm deletion · `--move-to-site` Site ID to move this client's agents to before deleting
+
 ## sites
 
 ### `its rmm sites`
-All RMM sites across every client. Site IDs feed --site filters on agent commands.
+All RMM sites across every client, with per-site agent_count. Site IDs feed --site filters on agent commands.
 ```bash
 its rmm sites
 its rmm sites --client "Head Office"
