@@ -1,6 +1,6 @@
 {
   "name": "it-cli",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Claude Code skill for the `its` IT-systems CLI — query and manage infrastructure across many providers from one shell.",
   "author": {
     "name": "Tony Malins"
