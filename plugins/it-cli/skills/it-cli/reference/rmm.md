@@ -147,6 +147,14 @@ its rmm sites --client "Head Office"
 its rmm sites --watch
 ```
 
+### `its rmm sites create`
+Create a site under a client (POST /clients/sites/). Idempotent — skips if a site of that name already exists for the client.
+Flags: `--client` Client name or ID · `--name` New site name
+
+### `its rmm sites delete <site_id>`
+Delete a site by ID (DELETE /clients/sites/{id}/). Fails if the site still has agents. --confirm required.
+Flags: `--confirm` Confirm deletion
+
 ## processes
 
 ### `its rmm processes <agent>`

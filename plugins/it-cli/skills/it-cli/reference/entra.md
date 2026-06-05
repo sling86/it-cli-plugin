@@ -196,6 +196,10 @@ its entra groups remove-member <group-id> --user jane.smith@example.com --confir
 Edit a dynamic group's membershipRule. --add-upn appends an OR exception (grants a user who doesn't match the rule); --remove-upn strips one; --set-rule replaces the whole rule. add/remove never drop existing members. --confirm required; without it, prints the current→new diff
 Flags: `--add-upn` Append `or (user.userPrincipalName -eq "<upn>")` to the rule · `--remove-upn` Strip the OR exception for this UPN from the rule · `--set-rule` Replace the ENTIRE membershipRule (re-evaluates the whole group) · `--confirm` Apply the change · `--force` Skip the --add-upn existence check (allow a UPN that doesn't resolve)
 
+### `its entra groups audit-rules [group_id]`
+Scan dynamic groups' membershipRules for dead user exceptions — hardcoded userPrincipalName/objectId/mail clauses whose account no longer exists (missing) or is disabled (a leaver still pinned). Pass a group ID to scan one; default scans all dynamic groups. --all also lists the OK refs.
+Flags: `--all` Include refs that resolve OK, not just dead/disabled
+
 ## licences
 
 ### `its entra licences`
