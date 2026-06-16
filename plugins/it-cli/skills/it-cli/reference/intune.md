@@ -43,6 +43,17 @@ its intune devices noncompliant
 its intune devices noncompliant --json
 ```
 
+## compliance
+
+### `its intune compliance why <device>`
+Explain why a device is non-compliant — lists every failing compliance setting (policy, setting, state, error). Resolve the device by id or name.
+Flags: `--all` Show every reported setting, not just the failing ones
+```bash
+its intune compliance why LAPTOP-042
+its intune compliance why 12345678-90ab-cdef-1234-567890abcdef
+its intune compliance why LAPTOP-042 --all
+```
+
 ## apps
 
 ### `its intune apps`

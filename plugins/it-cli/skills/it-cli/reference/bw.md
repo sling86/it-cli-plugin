@@ -65,16 +65,20 @@ its bw items favourites --json
 
 ### `its bw items create <name>`
 Create a new vault item (login, note, card, or identity). Idempotent on duplicate names — use update/edit to mutate an existing record.
-Flags: `--type` Item type: login (default), note, card, identity · `--username` Login username · `--password` Login password · `--uri` Login URL · `--totp` TOTP secret or otpauth URI · `--notes` Notes · `--notes-file` Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) · `--folder` Folder name (created if it does not exist) · `--vault` Named vault profile (omit for default)
+Flags: `--type` Item type: login (default), note, card, identity · `--username` Login username · `--password` Login password · `--uri` Login URL · `--totp` TOTP secret or otpauth URI · `--notes` Notes · `--notes-file` Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) · `--folder` Folder name (created if it does not exist) · `--field` Custom text field(s) — comma-separated name=value (e.g. --field lan_ip=10.0.0.1,rack=A3). On update, upserts by name. · `--field-hidden` Custom hidden field(s) — comma-separated name=value. Stored as a secret (masked in the UI like a password). · `--vault` Named vault profile (omit for default)
 ```bash
+its bw items create "Router" --username admin --password "s3cret"
+its bw items create "Router" --field lan_ip=10.0.0.1 --field-hidden api_token=abc123
 its bw items create "Server admin" --username admin --password "P@ssw0rd" --url https://server.example.com
 its bw items create "API keys" --type note --notes "stuff"
 ```
 
 ### `its bw items update <id>`
-Update a vault item (all fields are replaced — omitted fields are cleared).
-Flags: `--name` New name · `--username` Login username · `--password` Login password · `--uri` Login URL · `--totp` TOTP secret · `--notes` Notes · `--notes-file` Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) · `--folder` Folder name (created if needed) · `--confirm` Confirm the update · `--vault` Named vault profile (omit for default)
+Update a vault item. Preserve-by-default: only the flags you pass change — everything omitted (password, notes, URIs, TOTP, custom fields) is left intact. Use --field-remove to drop a custom field.
+Flags: `--name` New name · `--username` Login username · `--password` Login password · `--uri` Login URL · `--totp` TOTP secret · `--notes` Notes · `--notes-file` Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) · `--folder` Folder name (created if needed) · `--field` Custom text field(s) — comma-separated name=value (e.g. --field lan_ip=10.0.0.1,rack=A3). On update, upserts by name. · `--field-hidden` Custom hidden field(s) — comma-separated name=value. Stored as a secret (masked in the UI like a password). · `--field-remove` Custom field name(s) to remove — comma-separated (e.g. --field-remove old_ip,legacy_token). · `--confirm` Confirm the update · `--vault` Named vault profile (omit for default)
 ```bash
+its bw items update <id> --field lan_ip=10.0.0.2 --confirm
+its bw items update <id> --field-remove lan_ip --confirm
 its bw items update <item-id> --password "NewP@ss"
 its bw items update <item-id> --password "NewP@ss" --json
 ```

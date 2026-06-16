@@ -241,17 +241,6 @@ its unifi firewall groups
 its unifi firewall groups --json
 ```
 
-## ports
-
-### `its unifi ports`
-List port forwarding rules. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--site` Site name override
-```bash
-its unifi ports
-its unifi ports --json
-its unifi ports --watch
-```
-
 ## routes
 
 ### `its unifi routes`
@@ -261,6 +250,45 @@ Flags: `--site` Site name override
 its unifi routes
 its unifi routes --json
 its unifi routes --watch
+```
+
+## portforwards
+
+### `its unifi portforwards`
+List every WAN port-forward rule — your inbound attack surface. Columns: WAN port → forward IP:port, protocol and source restriction ("any" = open to the whole internet). Pass --json for the raw shape.
+Flags: `--site` Site name override
+```bash
+its unifi portforwards
+its unifi port-forwards
+its unifi portforwards --site t7kq3dcp
+its unifi portforwards --json
+```
+
+## port-forwards
+
+### `its unifi port-forwards`
+List every WAN port-forward rule — your inbound attack surface. Columns: WAN port → forward IP:port, protocol and source restriction ("any" = open to the whole internet). Pass --json for the raw shape.
+Flags: `--site` Site name override
+```bash
+its unifi portforwards
+its unifi port-forwards
+its unifi portforwards --site t7kq3dcp
+its unifi portforwards --json
+```
+
+## ports
+
+### `its unifi ports`
+List every WAN port-forward rule — your inbound attack surface. Columns: WAN port → forward IP:port, protocol and source restriction ("any" = open to the whole internet). Pass --json for the raw shape.
+Flags: `--site` Site name override
+```bash
+its unifi portforwards
+its unifi port-forwards
+its unifi portforwards --site t7kq3dcp
+its unifi portforwards --json
+its unifi ports
+its unifi ports --json
+its unifi ports --watch
 ```
 
 ## events
