@@ -192,6 +192,14 @@ its dokploy apps migrate <app-id>
 its dokploy apps migrate <app-id> --cmd "bun run db:seed"
 ```
 
+### `its dokploy apps env-runtime <app>`
+Read the env vars actually present in the running container (via docker exec) — the ground truth, not the saved record. Use this to catch the Swarm bug where saved vars never reach the container Keys shown; values redacted unless --show-values. Pass --diff to compare against the saved record.
+Flags: `--show-values` Show actual values (otherwise redacted as ***) · `--diff` Compare the saved record against the runtime — flags vars in the record but missing from the container (un-applied) and runtime-only vars
+
+### `its dokploy apps apply-env <app>`
+Make the saved env actually reach the container. On Docker Swarm a plain redeploy does NOT converge env-only changes — this stops the app (removes the swarm service), redeploys so Dokploy recreates it from the current env, then verifies every saved var is live. Causes a brief outage.
+Flags: `--timeout` Deploy timeout in seconds (default 600)
+
 ### `its dokploy apps health`
 Lightweight health sweep across ALL apps — replicas / last deploy / domain reachable. One row per app. Use `apps doctor <id>` for the deep dive on a specific app.
 Flags: `--project` Filter by project name · `--fail-only` Show only apps with non-OK verdict
@@ -199,6 +207,15 @@ Flags: `--project` Filter by project name · `--fail-only` Show only apps with n
 its dokploy apps health <app-id>
 its dokploy apps health <app-id> --json
 its dokploy apps health <app-id> --watch
+```
+
+### `its dokploy apps env-drift`
+Fleet sweep comparing each app's SAVED env record against its LIVE runtime env (via docker exec printenv). Flags apps where saved vars never reached the container — the generalised Swarm env-freeze bug One row per app. Fix a flagged app with `its dokploy apps apply-env <id>`.
+Flags: `--project` Filter by project name · `--drift-only` Show only apps where the record and container diverge
+```bash
+its dokploy apps env-drift
+its dokploy apps env-drift --project my-project
+its dokploy apps env-drift --drift-only
 ```
 
 ### `its dokploy apps doctor <app>`
@@ -341,18 +358,23 @@ its dokploy env <app-id> --watch
 
 ### `its dokploy env push <applicationId>`
 Push an env file to an application. Upload local state to the upstream.
-Flags: `--file` Path to env file
+Flags: `--file` Path to env file · `--force` Allow pushing an empty file (wipes ALL env on the app). Required because Dokploy keeps no env history — an accidental empty push is unrecoverable.
 ```bash
 its dokploy env push <app-id> --file .env.production
 its dokploy env push <app-id> --file .env.production --json
 ```
 
 ### `its dokploy env set <applicationId> <pairs>`
-Set one or more env vars (KEY=value) without affecting others.
+Set one or more env vars (KEY=value) without affecting others. NB: a plain set updates the record only — on Docker Swarm the running container will NOT pick the change up until the service is recreated. Pass --deploy to recreate + verify (brief outage), or run `dokploy apps apply-env <app>` later.
+Flags: `--deploy` After saving, recreate the swarm service (stop + deploy) and verify the new vars reached the container. Causes a brief outage. Without this, the change only lands in the record.
 ```bash
 its dokploy env set <app-id> --key DEBUG --value "true"
 its dokploy env set <app-id> --key DEBUG --value "true" --json
 ```
+
+### `its dokploy env unset <applicationId> <keys>`
+Remove one or more env vars by key, preserving all others. The inverse of `env set`. Record-only unless --deploy is passed.
+Flags: `--deploy` After saving, recreate the swarm service (stop + deploy) so the removal takes effect. Causes a brief outage.
 
 ### `its dokploy env pull <applicationId>`
 Pull env vars from an application to a local file. Download upstream state to local.
@@ -741,6 +763,10 @@ its dokploy compose delete <compose-id> --confirm
 
 ## backup
 
+### `its dokploy backup create`
+Create a scheduled backup config. Postgres example: its dokploy backup create --db-type postgres --db-id <postgresId> --schedule '0 2,14 * * *' --prefix prod-postgres/ --destination <destinationId> --database ccd --keep 60.
+Flags: `--db-type` postgres | mariadb | mysql | mongo | libsql | web-server (default: postgres) · `--db-id` Parent resource id (postgresId/mysqlId/...). Omit for web-server. · `--schedule` Cron expression, e.g. '0 2,14 * * *' · `--prefix` Destination path prefix, e.g. prod-postgres/ · `--destination` Destination id (its dokploy destinations list) · `--database` Database name to dump (default: web-server uses dokploy) · `--keep` keepLatestCount — how many backups to retain · `--disabled` Create the config disabled (default: enabled)
+
 ### `its dokploy backup get <backupId>`
 Get a backup config by id (schedule, destination, prefix). Pass the id (or any natural identifier) as the positional arg.
 ```bash
@@ -748,8 +774,13 @@ its dokploy backup get <backup-id>
 its dokploy backup get <backup-id> --json
 ```
 
+### `its dokploy backup update <backupId>`
+Update a backup config (schedule, prefix, keep count, enabled). Only provided flags change. e.g. its dokploy backup update <id> --schedule '0 1 * * *' --keep 7.
+Flags: `--schedule` Cron expression · `--prefix` Destination path prefix · `--keep` keepLatestCount · `--enabled` Set enabled true|false
+
 ### `its dokploy backup files <destinationId>`
 List backup files present in a remote destination (S3/MinIO bucket etc.).
+Flags: `--search` Path/prefix to list under (e.g. ccd-prod-postgres-tydlay). Empty lists the root.
 ```bash
 its dokploy backup files <destination-id>
 its dokploy backup files <destination-id> --json

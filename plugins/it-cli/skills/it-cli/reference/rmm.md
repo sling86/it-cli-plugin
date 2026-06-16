@@ -8,11 +8,13 @@ Tactical RMM endpoint management — agents, alerts, software, services, updates
 
 ### `its rmm agents`
 List all RMM agents with status, hostname, OS, site. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--status` Filter by status · `--type` Filter by type · `--client` Filter by client name · `--site` Filter by site name
+Flags: `--status` Filter by status · `--type` Filter by type · `--client` Filter by client name · `--site` Filter by site name · `--rebooted-since` Only agents whose last boot is more recent than this — ISO timestamp or relative span (7d, 24h, 30m)
 ```bash
 its rmm agents
 its rmm agents --status offline
 its rmm agents --site "head-office"
+its rmm agents --rebooted-since 24h
+its rmm agents --rebooted-since 2026-06-14
 its rmm agents --json
 its rmm agents --ai | ai "which agents are overdue?"
 ```

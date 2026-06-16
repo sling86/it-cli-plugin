@@ -285,6 +285,15 @@ Add a UPN, Entra security-group object id, or pre-formed claim LoginName to an S
 Remove a member from an SP site group. Destructive — use --confirm.
 Flags: `--confirm` Confirm removal
 
+## recycle-bin
+
+### `its sp recycle-bin <site>`
+List the site recycle bin. Reads classic SP REST (/_api/web/RecycleBin) — Graph's /drives surface has no recycle-bin sub-resource. Pass the site id or web URL as the positional arg.
+```bash
+its sp recycle-bin list <siteId>
+its sp recycle-bin list https://contractcandles.sharepoint.com/sites/IT
+```
+
 ## pages
 
 ### `its sp pages <siteId>`

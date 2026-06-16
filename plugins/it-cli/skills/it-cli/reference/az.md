@@ -211,3 +211,14 @@ its az cost summary
 its az cost summary --json
 its az cost summary --watch
 ```
+
+## advisor
+
+### `its az advisor`
+List Azure Advisor recommendations — surfaces cost, security, reliability and performance waste. Pass --json for raw shape.
+Flags: `--category` Filter by recommendation category · `--subscription` Subscription name or ID
+```bash
+its az advisor list
+its az advisor list --category Cost
+its az advisor list --category Security --json
+```

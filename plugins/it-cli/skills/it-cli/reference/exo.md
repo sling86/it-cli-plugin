@@ -38,7 +38,9 @@ its exo groups create "Marketing Team" --type Distribution --primary-smtp market
 
 ### `its exo groups delete <group>`
 Delete a distribution group. Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record.
+Flags: `--confirm` Required to perform this destructive deletion
 ```bash
+its exo groups delete sales@thf.co.uk --confirm
 its exo groups delete "Old DL" --confirm
 ```
 
@@ -51,7 +53,9 @@ its exo groups add-member "All Staff" --user jane.smith@example.com --json
 
 ### `its exo groups remove-member <group> <member>`
 Remove a member from a distribution group. Reverse of add-member. --confirm required.
+Flags: `--confirm` Required to remove the member
 ```bash
+its exo groups remove-member sales@thf.co.uk jo@thf.co.uk --confirm
 its exo groups remove-member "All Staff" jane.smith@example.com
 its exo groups remove-member "All Staff" jane.smith@example.com --json
 ```
@@ -105,8 +109,9 @@ its exo mailboxes add-permission shared@example.com --user jane.smith@example.co
 
 ### `its exo mailboxes remove-permission <mailbox> <user>`
 Remove mailbox access from a user. Revoke a permission. --confirm required.
-Flags: `--rights` Access rights to revoke
+Flags: `--rights` Access rights to revoke · `--confirm` Required to revoke the permission
 ```bash
+its exo mailboxes remove-permission shared@thf.co.uk jo@thf.co.uk --confirm
 its exo mailboxes remove-permission shared@example.com jane.smith@example.com
 its exo mailboxes remove-permission shared@example.com jane.smith@example.com --json
 ```
@@ -127,14 +132,19 @@ its exo mailboxes user-access jane.smith@example.com --json
 
 ### `its exo mailboxes set-forwarding <mailbox> <target>`
 Configure mailbox forwarding. Set a mailbox forward. --confirm required.
-Flags: `--keep-copy` Also deliver to the original mailbox
+Flags: `--keep-copy` Also deliver to the original mailbox · `--confirm` Required to set forwarding (mail-exfiltration risk)
 ```bash
+its exo mailboxes set-forwarding jo@thf.co.uk manager@thf.co.uk --confirm
 its exo mailboxes set-forwarding jane.smith@example.com --to "external@vendor.com" --keep
 its exo mailboxes set-forwarding jane.smith@example.com --to "external@vendor.com" --keep --json
 ```
 
 ### `its exo mailboxes set-type <mailbox> <type>`
 Convert a mailbox between user and shared (Set-Mailbox -Type). Common at offboarding — flip a leaver's mailbox to Shared.
+Flags: `--confirm` Required to change the mailbox type
+```bash
+its exo mailboxes set-type jo@thf.co.uk SharedMailbox --confirm
+```
 
 ### `its exo mailboxes set-visibility <mailbox>`
 Hide or show a mailbox in the global address list (GAL). Pass exactly one of --hide / --show.
@@ -146,8 +156,22 @@ Flags: `--hide` Hide from the GAL · `--show` Show in the GAL
 List mail flow (transport) rules. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its exo rules
+its exo rules
 its exo rules --json
 its exo rules --watch
+```
+
+### `its exo rules get <name>`
+Get one transport rule's full condition/action shape (Get-TransportRule). Flags mail-exfiltration verbs (RedirectMessageTo, BlindCopyTo) if present.
+```bash
+its exo rules get "External forward block"
+```
+
+### `its exo rules audit`
+Audit every transport rule for mail-exfiltration verbs (RedirectMessageTo, BlindCopyTo, AddToRecipients, CopyTo). A silent redirect/blind-copy to an external address is a classic data-exfiltration tripwire — review every flagged rule.
+```bash
+its exo rules audit
+its exo rules audit --json
 ```
 
 ## domains
@@ -234,7 +258,9 @@ its exo recipients add-send-as shared@example.com jane.smith@example.com --json
 
 ### `its exo recipients remove-send-as <identity> <trustee>`
 Revoke Send-As permission. Reverse of add-send-as.
+Flags: `--confirm` Required to revoke the Send-As permission
 ```bash
+its exo recipients remove-send-as shared@thf.co.uk jo@thf.co.uk --confirm
 its exo recipients remove-send-as shared@example.com jane.smith@example.com
 its exo recipients remove-send-as shared@example.com jane.smith@example.com --json
 ```
