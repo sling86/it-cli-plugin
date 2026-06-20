@@ -82,14 +82,14 @@ its pbi apps --json
 its pbi apps --watch
 ```
 
-## licenses
+## licences
 
-### `its pbi licenses`
+### `its pbi licences`
 List Power BI licence SKUs with consumption. Surfaces the most common fields; pass --json for raw shape.
 ```bash
-its pbi licenses
-its pbi licenses --json
-its pbi licenses --watch
+its pbi licences
+its pbi licences --json
+its pbi licences --watch
 ```
 
 ## activity

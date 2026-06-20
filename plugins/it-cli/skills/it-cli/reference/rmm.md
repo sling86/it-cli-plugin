@@ -65,6 +65,15 @@ Flags: `--confirm` Confirm the removal
 its rmm agents remove OFFICE-PC-01 --confirm
 ```
 
+### `its rmm agents prune`
+Bulk-remove stale agent records last seen before a threshold (and never-seen agents). Destructive — previews the target list by default and needs --confirm to delete. Doesn't uninstall the local agent service. Pair with `agents stale` to inspect first.
+Flags: `--older-than` Age threshold — days (30) or a span (30d, 12h, 2w). Agents last seen before this are pruned. · `--confirm` Actually delete the matched agent records
+```bash
+its rmm agents prune --older-than 90d
+its rmm agents prune --older-than 90d --confirm
+its rmm agents prune --older-than 6w --confirm
+```
+
 ### `its rmm agents run <agent>`
 Execute a one-shot shell command on the target agent. Returns stdout + stderr + exit code. Use --shell powershell|cmd|bash; default timeout is 90s.
 Flags: `--shell` Shell type · `--cmd` Command to execute (use --file for multi-line scripts) · `--file` Path to a local script file (overrides --cmd). PowerShell multi-line scripts auto-wrapped via base64 + temp file. · `--raw` Disable auto-wrapping for multi-line PowerShell (sends as-is) · `--timeout` Timeout in seconds
@@ -235,27 +244,60 @@ its rmm services disable OFFICE-PC-01 --service spooler --confirm --json
 
 ## updates
 
+### `its rmm updates report`
+Fleet Windows-Update compliance — fans out across agents and lists those with pending updates, most-critical-then-most-behind first, with separate critical/important columns. Narrow with --client/--site; --all also lists fully-patched agents. Pipe --csv/--json to export. One API call per agent, so it's slower than a single-agent query.
+Flags: `--client` Only agents in this client (substring) · `--site` Only agents in this site (substring) · `--all` Include fully-patched agents in the table
+```bash
+its rmm updates report
+its rmm updates report --client "Candle Retail"
+its rmm updates report --all
+```
+
 ### `its rmm updates <agent>`
-Windows Update queue — pending, installed, failed. Returns KB number + classification + size.
+Windows Update queue — pending, installed, failed. Shows KB, severity, install state, and the per-KB approval action (approve/ignore/nothing) — only `approve` updates get installed.
 ```bash
 its rmm updates OFFICE-PC-01
 its rmm updates OFFICE-PC-01 --json
 its rmm updates OFFICE-PC-01 --watch
 ```
 
-### `its rmm updates scan <agent>`
-Force the agent to re-scan Microsoft Update. Use after a long offline period or to refresh the pending list.
+### `its rmm updates scan [agent]`
+Force a re-scan of Microsoft Update. Single agent, or fan out across a client/site/all-online to refresh the pending list before an `updates report`.
+Flags: `--all-online` Fan out to every online agent · `--client` Fan out to online agents in this client (substring) · `--site` Fan out to online agents in this site (substring) · `--policy` Fan out to online agents under this automation policy id · `--confirm` Required to execute a fan-out (preview without it)
 ```bash
+its rmm updates scan OFFICE-PC
+its rmm updates scan --client "Candle Retail"
+its rmm updates scan --client "Candle Retail" --confirm
 its rmm updates scan OFFICE-PC-01
 its rmm updates scan OFFICE-PC-01 --json
 ```
 
-### `its rmm updates install <agent_id>`
-Install pending Windows updates on an agent (requires --confirm).
-Flags: `--confirm` Confirm the installation
+### `its rmm updates install [agent]`
+Install APPROVED pending Windows updates (TRMM installs only updates with action=approve — approve them first with `its rmm updates approve`). Single agent, or fan out across a client/site/all-online — both require --confirm (fan-out previews the targets without it). Single-agent install no-ops with a hint if nothing is approved. Reboot-after-install is controlled by the agent's patch policy (see `its rmm policies patch-policy`), not this command.
+Flags: `--all-online` Fan out to every online agent · `--client` Fan out to online agents in this client (substring) · `--site` Fan out to online agents in this site (substring) · `--policy` Fan out to online agents under this automation policy id · `--confirm` Required to execute a fan-out (preview without it)
 ```bash
+its rmm updates install OFFICE-PC --confirm
+its rmm updates install --client "Candle Retail"
+its rmm updates install --client "Candle Retail" --confirm
 its rmm updates install OFFICE-PC-01 --confirm
-its rmm updates install OFFICE-PC-01 --confirm --reboot
+its rmm updates install --client "Candle Retail"
+its rmm updates install --client "Candle Retail" --confirm
+```
+
+### `its rmm updates approve <agent>`
+Approve pending Windows updates so `updates install` will install them — TRMM installs ONLY approved updates, so an unapproved box is a no-op install. Target one --kb KB5034441 or --all-pending (the latter needs --confirm).
+Flags: `--kb` KB to act on (e.g. KB5034441 or 5034441) · `--all-pending` Act on every not-yet-installed update · `--confirm` Required for --all-pending
+```bash
+its rmm updates approve OFFICE-PC --kb KB5034441
+its rmm updates approve OFFICE-PC --all-pending --confirm
+```
+
+### `its rmm updates defer <agent>`
+Defer (ignore) pending Windows updates so install skips them. Target one --kb KB5034441 or --all-pending (the latter needs --confirm). Re-approve later with `updates approve`.
+Flags: `--kb` KB to act on (e.g. KB5034441 or 5034441) · `--all-pending` Act on every not-yet-installed update · `--confirm` Required for --all-pending
+```bash
+its rmm updates defer OFFICE-PC --kb KB5034441
+its rmm updates defer OFFICE-PC --all-pending --confirm
 ```
 
 ## software
@@ -310,10 +352,15 @@ its rmm scripts get <script-id>
 its rmm scripts get <script-id> --json
 ```
 
-### `its rmm scripts run <agent>`
-Execute a saved RMM script on the target agent. Streams stdout/stderr back; use --timeout for long-running jobs (default 120s).
-Flags: `--script` Script ID · `--args` Script arguments (comma-separated) · `--timeout` Timeout in seconds · `--raw` Print the script's raw stdout (and stderr) directly, instead of JSON-wrapped output with escaped \r\n
+### `its rmm scripts run [agent]`
+Execute a saved RMM script on a target agent, or fan it out across a fleet with --all-online/--client/--site/--policy (online agents only). Streams stdout/stderr back; use --timeout for long-running jobs (default 120s). Fan-out previews the target list and needs --confirm to execute.
+Flags: `--script` Script ID · `--args` Script arguments (comma-separated) · `--timeout` Timeout in seconds · `--raw` Print the script's raw stdout (and stderr) directly, instead of JSON-wrapped output with escaped \r\n (single-agent only) · `--all-online` Fan out to every online agent · `--client` Fan out to online agents in this client (substring) · `--site` Fan out to online agents in this site (substring) · `--policy` Fan out to online agents under this automation policy id · `--confirm` Required to execute a fan-out run (preview without it)
 ```bash
+its rmm scripts run OFFICE-PC --script 12
+its rmm scripts run --all-online --script 12
+its rmm scripts run --all-online --script 12 --confirm
+its rmm scripts run --client "Candle Retail" --script 12 --confirm
+its rmm scripts run --site "head-office" --script 12 --confirm
 its rmm scripts run OFFICE-PC-01 --script "Restart Print Spooler"
 its rmm scripts run OFFICE-PC-01 --script "Long Audit" --timeout 600
 ```
@@ -351,12 +398,47 @@ its rmm checks OFFICE-PC-01 --json
 its rmm checks OFFICE-PC-01 --watch
 ```
 
-### `its rmm checks create <agent>`
-Attach a script-based check to an agent. Set --interval, --severity, --fail-count to tune alerting.
-Flags: `--script` Script ID for the check
+### `its rmm checks failing`
+Fleet-wide failing-checks sweep — fans out across online agents and surfaces every check currently failing, worst-first. The fast 'what's red across the estate right now' view. Narrow with --client/--site.
+Flags: `--client` Only agents in this client (substring) · `--site` Only agents in this site (substring)
 ```bash
+its rmm checks failing
+its rmm checks failing --client "Candle Retail"
+```
+
+### `its rmm checks results <agent>`
+Drill into one check's live result on an agent — status, last run, fail count, return code, and captured stdout/stderr. Pass --check <id> (find it via `its rmm checks <agent>`).
+Flags: `--check` Check ID to inspect
+```bash
+its rmm checks results OFFICE-PC --check 7
+```
+
+### `its rmm checks run <agent>`
+Force all of an agent's checks to run now (POST /checks/<agent>/run/) instead of waiting for the next scheduled cycle. Returns immediately; fresh results land on the agent's next check-in.
+```bash
+its rmm checks run OFFICE-PC
+```
+
+### `its rmm checks create <agent>`
+Attach a check to an agent. Use --type to pick: diskspace/cpuload/memory/ping/winsvc/script (defaults to script when --script is given). Tune alerting with --severity, --fails, --interval.
+Flags: `--type` Check type · `--severity` Alert severity (default error) · `--fails` Failures before alert (default 1) · `--interval` Run interval seconds, 0 = inherit (default 0) · `--disk` diskspace: drive (e.g. C:) · `--error` diskspace/cpuload/memory: error threshold % · `--warning` diskspace/cpuload/memory: warning threshold % · `--ip` ping: host/IP to ping · `--service` winsvc: Windows service name · `--restart-if-stopped` winsvc: restart the service if found stopped · `--pass-if-pending` winsvc: pass when start is pending · `--pass-if-missing` winsvc: pass when the service doesn't exist · `--script` script: script ID · `--timeout` script: timeout seconds (default 120) · `--args` script: arguments (comma-separated)
+```bash
+its rmm checks create OFFICE-PC --type diskspace --disk C: --error 10 --warning 25
+its rmm checks create OFFICE-PC --type cpuload --error 90 --warning 75
+its rmm checks create SRV-01 --type winsvc --service Spooler --restart-if-stopped
+its rmm checks create SRV-01 --type ping --ip 10.10.0.1
+its rmm checks create OFFICE-PC --script 42 --timeout 300
 its rmm checks create OFFICE-PC-01 --script <script-id> --interval 600
 its rmm checks create OFFICE-PC-01 --script <script-id> --interval 600 --json
+```
+
+### `its rmm checks edit <agent>`
+Retune an existing check without delete+recreate — change interval, severity, fail-count, or thresholds. PUT is partial, so only the flags you pass change.
+Flags: `--check` Check ID to edit · `--severity` Alert severity · `--fails` Failures before alert · `--interval` Run interval seconds · `--error` Error threshold % (diskspace/cpuload/memory) · `--warning` Warning threshold % (diskspace/cpuload/memory) · `--timeout` Script check: timeout seconds · `--args` Script check: comma-separated script args (replaces existing)
+```bash
+its rmm checks edit OFFICE-PC --check 7 --warning 60 --error 80
+its rmm checks edit OFFICE-PC --check 7 --severity warning --fails 3
+its rmm checks edit OFFICE-PC --check 7 --timeout 300 --args -Verbose,-Force
 ```
 
 ### `its rmm checks delete [agent_id]`
@@ -416,9 +498,12 @@ its rmm policies checks <policy-id> --json
 ```
 
 ### `its rmm policies add-check <policy_id>`
-Add a script-check to a policy. Uses POST /checks/ with `policy` set and `agent` OMITTED — including agent:null returns 404 because the route resolver hits the agent path first
-Flags: `--script` Script ID · `--timeout` Timeout seconds (default 90) · `--interval` Run interval seconds (default 86400 — daily) · `--severity` Alert severity: info | warning | error · `--fails-before-alert` Consecutive failures before alerting (default 1)
+Add a check to a policy (applies to every agent under it). --type: diskspace/cpuload/memory/ping/winsvc/script (defaults to script when --script is given). Uses POST /checks/ with `policy` set and `agent` OMITTED — including agent:null returns 404 because the route resolver hits the agent path first
+Flags: `--type` Check type · `--severity` Alert severity (default error; script branch defaults warning) · `--fails` Failures before alert (default 1) · `--interval` Run interval seconds (script defaults 86400 daily, others 0=inherit) · `--disk` diskspace: drive (e.g. C:) · `--error` diskspace/cpuload/memory: error threshold % · `--warning` diskspace/cpuload/memory: warning threshold % · `--ip` ping: host/IP · `--service` winsvc: Windows service name · `--restart-if-stopped` winsvc: restart if stopped · `--pass-if-pending` winsvc: pass when start pending · `--pass-if-missing` winsvc: pass when service absent · `--script` script: Script ID · `--timeout` script: timeout seconds (default 90)
 ```bash
+its rmm policies add-check 4 --type diskspace --disk C: --error 10 --warning 25
+its rmm policies add-check 4 --type winsvc --service Spooler --restart-if-stopped
+its rmm policies add-check 4 --script 42
 its rmm policies add-check <policy-id> --script <script-id>
 its rmm policies add-check <policy-id> --script <script-id> --json
 ```

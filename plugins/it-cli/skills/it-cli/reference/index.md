@@ -2,20 +2,20 @@
 
 > Auto-generated from the live command definitions. Do not edit by hand.
 
-**20 providers** · **193 resources** · **663 commands**. Pick a provider for its full command list.
+**20 providers** · **195 resources** · **675 commands**. Pick a provider for its full command list.
 
 | Provider | Alias | Resources | Commands |
 |----------|-------|-----------|----------|
-| [Tactical RMM](./rmm.md) | `rmm` | 16 | 57 |
+| [Tactical RMM](./rmm.md) | `rmm` | 16 | 65 |
 | [Entra ID](./entra.md) | `entra` | 21 | 100 |
-| [Dokploy](./dokploy.md) | `dokploy` | 25 | 114 |
+| [Dokploy](./dokploy.md) | `dokploy` | 25 | 116 |
 | [Bitwarden](./bw.md) | `bw` | 10 | 37 |
 | [SharePoint](./sp.md) | `sp` | 11 | 46 |
-| [UniFi Network](./unifi.md) | `unifi` | 16 | 40 |
+| [UniFi Network](./unifi.md) | `unifi` | 17 | 41 |
 | [Wrike](./wrike.md) | `wrike` | 12 | 48 |
 | [Azure CLI](./az.md) | `az` | 11 | 24 |
 | [Exchange Online](./exo.md) | `exo` | 8 | 35 |
-| [Intune](./intune.md) | `intune` | 16 | 41 |
+| [Intune](./intune.md) | `intune` | 17 | 42 |
 | [UniFi Protect](./protect.md) | `protect` | 4 | 6 |
 | [Power BI](./pbi.md) | `pbi` | 6 | 21 |
 | [Power Platform](./pa.md) | `pa` | 4 | 11 |
