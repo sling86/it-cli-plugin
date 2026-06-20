@@ -377,3 +377,9 @@ its unifi dashboard
 its unifi dashboard --json
 its unifi dashboard --watch
 ```
+
+## audit
+
+### `its unifi audit`
+Audit RF and firewall/VLAN posture — co-channel overlap, unisolated VLANs, insecure WiFi defaults.
+Flags: `--site` Site name override
