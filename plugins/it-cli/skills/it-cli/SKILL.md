@@ -152,6 +152,6 @@ If `its` exposes a command for what you want, use it. Only reach for the bare CL
 ## Safety rules
 
 - **Destructive actions** (delete, remove, disable, block, reboot, purge) — confirm with the user before executing. Most accept `--confirm`; preview mutations with `--dry-run` first.
-- **Secret redaction is on by default.** Any key that looks like a credential (`password`, `clientSecret`, `privateKey`, `refresh_token`, `apiKey`, `token`, `secret`, …) and any value shaped like a PEM key or JWT is replaced with `***REDACTED***` in output.
-- Opt out with `--include-secrets` only when you genuinely need the raw value (e.g. a BitLocker recovery key for a handover). **Every use is audit-logged** to `~/.its/audit.log`. Never paste `--include-secrets` output into chat, tickets, or AI tools.
+- **Secret redaction is on by default.** Any key that looks like a credential (`password`, `clientSecret`, `privateKey`, `refresh_token`, `apiKey`, `token`, `secret`, …) and any value shaped like a PEM key or JWT is replaced with `***REDACTED***` in output. Bitwarden **hidden custom fields** are also masked in every mode, and **live TOTP codes** are masked whenever output isn't an interactive terminal (piped / `--ai` / captured) — so nothing secret lands in an AI transcript by default. `its secrets` only reports `SET`/`NOT SET`, never values.
+- Opt out with `--include-secrets` only when you genuinely need the raw value (e.g. a BitLocker recovery key for a handover). **Every use is audit-logged** to `~/.its/audit.log`. Never paste `--include-secrets` output into chat, tickets, or AI tools. To hand a secret to a human without printing it, prefer `--copy` (clipboard, auto-clears).
 - Use `its <provider> setup --check` if unsure whether a provider is configured.

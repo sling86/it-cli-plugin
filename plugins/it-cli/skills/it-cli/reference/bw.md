@@ -162,7 +162,7 @@ its bw folders delete "Old stuff" --confirm
 Get the password for an item by search query. Surfaces the most common fields; pass --json for raw shape.
 Flags: `--copy` Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. · `--clear-after` Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. · `--vault` Named vault profile (omit for default)
 ```bash
-its bw password "server-login"
+its bw password "server-login" --include-secrets
 its bw password "server-login" --copy
 its bw password "server-login"
 its bw password "server-login" --copy

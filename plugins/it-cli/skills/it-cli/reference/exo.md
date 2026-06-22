@@ -184,6 +184,35 @@ its exo domains --json
 its exo domains --watch
 ```
 
+## dkim
+
+### `its exo dkim`
+List DKIM signing config for every domain. Pass --json for raw shape.
+
+### `its exo dkim get <domain>`
+Get DKIM signing config for a domain (Enabled, Status, selector key sizes, RotateOnDate).
+
+### `its exo dkim rotate <domain>`
+Rotate the DKIM signing key for a domain (Rotate-DkimSigningConfig). Mutation — requires --confirm.
+Flags: `--confirm` Required to perform the key rotation · `--key-size` Key size in bits
+```bash
+its exo dkim rotate example.com --confirm
+```
+
+### `its exo dkim enable <domain>`
+Enable DKIM signing for a domain (Set-DkimSigningConfig). Mutation — requires --confirm.
+Flags: `--confirm` Required to change the signing state
+```bash
+its exo dkim enable example.com --confirm
+```
+
+### `its exo dkim disable <domain>`
+Disable DKIM signing for a domain (Set-DkimSigningConfig). Mutation — requires --confirm.
+Flags: `--confirm` Required to change the signing state
+```bash
+its exo dkim disable example.com --confirm
+```
+
 ## trace
 
 ### `its exo trace`
@@ -196,7 +225,8 @@ its exo trace --sender jane.smith@example.com --since 24h --watch
 ```
 
 ### `its exo trace detail <trace-id> <recipient>`
-Get hop-by-hop detail for a traced message. Single mailbox detail incl. quotas + rules.
+Get hop-by-hop detail for a traced message (Get-MessageTraceDetailV2). Surfaces the FAIL reason from each hop's Data blob; --json keeps the raw Data XML.
+Flags: `--days` Days back to search (max 10 per query)
 ```bash
 its exo trace detail <msg-id>
 its exo trace detail <msg-id> --json

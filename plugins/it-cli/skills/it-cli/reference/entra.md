@@ -8,12 +8,13 @@ Microsoft Entra ID (Azure AD) identity management — users, groups, licences, r
 
 ### `its entra users`
 List users from the Entra ID directory. Defaults to first 50 — use --all to page through every user, --filter for OData expressions, or --domain for a quick UPN-suffix match.
-Flags: `--top` Number of results (max 100) · `--all` Fetch all results (overrides --top) · `--filter` OData filter expression · `--enabled` Only show enabled accounts · `--domain` Filter by UPN domain (e.g. example.com) — server-side endsWith match
+Flags: `--top` Number of results (max 100) · `--all` Fetch all results (overrides --top) · `--filter` OData filter expression · `--search` Fuzzy substring match across displayName, mail, and UPN (Graph $search) · `--enabled` Only show enabled accounts · `--domain` Filter by UPN domain (e.g. example.com) — server-side endsWith match
 ```bash
 its entra users
 its entra users --all
 its entra users --enabled
 its entra users --domain example.com
+its entra users --search smith
 its entra users --fields displayName,upn,jobTitle
 ```
 
