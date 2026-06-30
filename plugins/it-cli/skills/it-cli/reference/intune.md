@@ -220,7 +220,7 @@ its intune group find "All Devices" --json
 ## assignments
 
 ### `its intune assignments audit`
-Audit Intune assignments — per-target matrix (which configs/compliance/apps hit each group) plus orphan resources with no assignment. Rows show group GUIDs (names aren't resolved cross-provider).
+Audit Intune assignments — per-target matrix (which configs/compliance/apps hit each group) plus orphan resources with no assignment. Group GUIDs are resolved to display names.
 Flags: `--top` Number of each resource type to fetch (default 100) · `--all` Fetch up to 1000 of each resource type (overrides --top)
 ```bash
 its intune assignments audit

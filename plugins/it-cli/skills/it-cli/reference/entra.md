@@ -355,6 +355,7 @@ its entra tap --watch
 
 ### `its entra tap revoke <user_id> <method_id>`
 Revoke a Temporary Access Pass. Reverse an assignment. --confirm where required.
+Flags: `--confirm` Confirm revocation
 ```bash
 its entra tap revoke jane.smith@example.com <method-id>
 its entra tap revoke jane.smith@example.com <method-id> --json
@@ -411,7 +412,7 @@ its entra ca create @./policy.json --json
 
 ### `its entra ca delete <id_or_name>`
 Delete a Conditional Access policy by id or displayName. Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record.
-Flags: `--dry-run` Print the DELETE request without sending
+Flags: `--dry-run` Print the DELETE request without sending · `--confirm` Confirm deletion
 ```bash
 its entra ca delete "Block legacy auth" --confirm
 ```

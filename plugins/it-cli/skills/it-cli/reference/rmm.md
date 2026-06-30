@@ -335,6 +335,18 @@ its rmm alerts get <alert-id>
 its rmm alerts get <alert-id> --json
 ```
 
+### `its rmm alerts resolve <alert_id>`
+Mark an alert resolved (clears it from the active dashboard). Needs --confirm.
+Flags: `--confirm` Confirm the resolve
+
+### `its rmm alerts snooze <alert_id>`
+Suppress an alert for N days (default 1). Needs --confirm.
+Flags: `--days` Days to snooze for · `--confirm` Confirm the snooze
+
+### `its rmm alerts unsnooze <alert_id>`
+Lift a snooze early so the alert can fire again. Needs --confirm.
+Flags: `--confirm` Confirm the unsnooze
+
 ## scripts
 
 ### `its rmm scripts`

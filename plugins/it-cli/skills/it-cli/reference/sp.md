@@ -183,7 +183,7 @@ Create a sharing link for a file/folder (Graph createLink) and return its URL. -
 Flags: `--drive` Drive ID · `--item` Item ID · `--type` Link type · `--scope` Link scope
 
 ### `its sp files move <siteId>`
-Move or rename a file. Move an item between folders. --confirm required.
+Move or rename a file. Move an item between folders (reversible).
 Flags: `--drive` Drive ID · `--item` Item ID · `--name` New file name · `--parent` New parent folder ID
 ```bash
 its sp files move <site-id> --from "Shared Documents/old.docx" --to "Shared Documents/new.docx"
@@ -291,7 +291,7 @@ Flags: `--confirm` Confirm removal
 List the site recycle bin. Reads classic SP REST (/_api/web/RecycleBin) — Graph's /drives surface has no recycle-bin sub-resource. Pass the site id or web URL as the positional arg.
 ```bash
 its sp recycle-bin list <siteId>
-its sp recycle-bin list https://contractcandles.sharepoint.com/sites/IT
+its sp recycle-bin list https://example.sharepoint.com/sites/IT
 ```
 
 ## pages

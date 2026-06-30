@@ -36,7 +36,7 @@ its cf zones get example.com --json
 
 ### `its cf zones purge <zone>`
 Purge zone cache (everything, or specific URLs with --file).
-Flags: `--file` URL to purge (repeat for multiple). Omit to purge everything.
+Flags: `--file` URL to purge (repeat for multiple). Omit to purge everything. · `--confirm` Confirm purging the entire zone cache (not needed with --file)
 ```bash
 its cf zones purge example.com --confirm
 ```
@@ -81,7 +81,7 @@ its cf dns update <record-id> --zone example.com --content 5.6.7.8 --json
 
 ### `its cf dns delete <record_id>`
 Delete a DNS record. Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record.
-Flags: `--zone` Zone domain or id
+Flags: `--zone` Zone domain or id · `--confirm` Confirm deletion
 ```bash
 its cf dns delete --zone example.com --name www --confirm
 ```
