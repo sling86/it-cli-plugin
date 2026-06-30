@@ -57,13 +57,13 @@ its pa flows start <flow-id> --env <env-id> --json
 
 ### `its pa flows delete <flow_id>`
 Delete a flow (admin). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record.
-Flags: `--environment` Environment id (required)
+Flags: `--environment` Environment id (required) · `--confirm` Confirm deletion
 ```bash
 its pa flows delete <flow-id> --env <env-id> --confirm
 ```
 
 ### `its pa flows set-owner <flow_id>`
-Change ownership / permissions on a cloud flow (admin). --owner <upn|guid> upserts a principal (default role Owner); --remove <upn|guid> revokes one. Idempotent. Used to reclaim flows from disabled accounts during licence reclaim
+Change ownership / permissions on a cloud flow (admin). --owner <upn|guid> upserts a principal (default role CanEdit = full co-owner); --remove <upn|guid> revokes one. Idempotent. Used to reclaim flows from disabled accounts during licence reclaim
 Flags: `--environment` Environment id (required) · `--owner` Principal to grant the role to (UPN or AAD object id). Mutually exclusive with --remove. · `--remove` Principal to revoke (UPN or AAD object id). Mutually exclusive with --owner. · `--role` Permission tier when granting · `--confirm` Required to execute the mutation
 
 ### `its pa flows runs <flow_id>`

@@ -174,6 +174,20 @@ its exo rules audit
 its exo rules audit --json
 ```
 
+### `its exo rules disable <name>`
+Disable a transport rule (Disable-TransportRule) — remediate a flagged mail-exfiltration rule. Reversible with `rules enable`. Changes org mail flow — use --confirm.
+Flags: `--confirm` Confirm disabling the rule
+```bash
+its exo rules disable "Evil redirect" --confirm
+```
+
+### `its exo rules enable <name>`
+Enable a transport rule (Enable-TransportRule). Reversible with `rules disable`. Changes org mail flow — use --confirm.
+Flags: `--confirm` Confirm enabling the rule
+```bash
+its exo rules enable "Block external forward" --confirm
+```
+
 ## domains
 
 ### `its exo domains`

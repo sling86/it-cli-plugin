@@ -172,7 +172,7 @@ Flags: `--subject` Replace subject · `--start` Replace start datetime (ISO) · 
 
 ### `its outlook events delete <event_id>`
 Delete a calendar event.
-Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--confirm` Confirm deletion
 
 ### `its outlook events respond <event_id> <response>`
 Respond to a meeting invite — accept, decline, or tentatively accept.
@@ -223,7 +223,7 @@ Flags: `--name` Display name · `--sequence` Run-order (lower runs first) · `--
 
 ### `its outlook rules delete <rule_id>`
 Delete an inbox rule.
-Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--confirm` Confirm deletion
 
 ## contacts
 

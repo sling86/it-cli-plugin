@@ -62,6 +62,7 @@ its export [--data]             # Export config (+ optionally live data)
 | `--dry-run`         | Preview mutations — print method + URL + body, skip send               |
 | `--include-secrets` | Disable global secret redaction (audit-logged — see Safety)            |
 | `--auth <mode>`     | OAuth mode for Graph providers — `auto` (default; delegated→app), `delegated`, `app` |
+| `--profile <name>`  | Force a delegated identity for one call, overriding the provider→profile map (see Auth profiles) |
 
 ### How `--filter` works
 
@@ -87,7 +88,8 @@ For a command you can already name, prefer **live help** — `its <provider> <re
 | Intune | `intune` | Managed devices, apps, scripts, remediations, compliance, ESP, Autopilot | [intune](./reference/intune.md) |
 | Exchange Online | `exo` | Distribution groups, mailboxes, permissions, forwarding, rules, message trace | [exo](./reference/exo.md) |
 | SharePoint | `sp` | Sites, drives, files, lists, permissions, search | [sp](./reference/sp.md) |
-| Outlook | `outlook` | Signed-in user's mail, calendar, contacts (delegated) | [outlook](./reference/outlook.md) |
+| Outlook | `outlook` | Mail, calendar, contacts — signed-in user (delegated) or any mailbox (`--as <upn>` app-only) | [outlook](./reference/outlook.md) |
+| Microsoft Teams | `teams` | Signed-in user's chats, messages, presence (delegated-only) | [teams](./reference/teams.md) |
 | Dokploy | `dokploy` | Apps, projects, databases, domains, env vars, deployments | [dokploy](./reference/dokploy.md) |
 | Bitwarden | `bw` | Vault search, item/password/TOTP retrieval, password audits | [bw](./reference/bw.md) |
 | UniFi Network | `unifi` | Devices, clients, WLANs, firewall, PoE, alarms, guests | [unifi](./reference/unifi.md) |
@@ -100,9 +102,12 @@ For a command you can already name, prefer **live help** — `its <provider> <re
 | PeopleHR | `hr` | Employee directory, starters, leavers | [hr](./reference/hr.md) |
 | Business Central | `bc` | Companies, OData entity queries | [bc](./reference/bc.md) |
 | GitHub | `gh` | Branch protection, webhooks (via local `gh`) | [gh](./reference/gh.md) |
+| M365 Service Health | `m365` | Service health, incidents, message centre | [m365](./reference/m365.md) |
 | Docs UI | `docs` | Browser-based command explorer | [docs](./reference/docs.md) |
 
 **Microsoft providers share one Entra app registration.** Entra, Intune, SharePoint, Power BI and Business Central reuse `TENANT_ID` / `CLIENT_ID` / `CLIENT_SECRET`. Set up once, several providers light up.
+
+**Auth profiles — run some providers as one identity, others as another.** `its auth login --profile <name>` signs into a named slot (browser picker = pick a different account each time); `its auth use <profile> --default | --provider a,b,c` maps providers to it (stored in `~/.its/auth-map.json`). Resolution: `--profile` flag > per-provider map > default > the unnamed slot. Typical setup: an admin account as `default` for tenant tools (entra/intune/sp), your own user for `teams`/`outlook`. `its auth status` lists every profile + the map. No map set = single-identity behaviour, unchanged.
 
 ## Power queries — combine flags
 

@@ -480,6 +480,7 @@ its dokploy mounts update <mount-id> --host "/data" --container "/app/data" --js
 
 ### `its dokploy mounts remove <mountId>`
 Remove a mount. Permanent — use --confirm.
+Flags: `--confirm` Confirm removal
 ```bash
 its dokploy mounts remove <mount-id> --confirm
 ```
