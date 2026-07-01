@@ -384,3 +384,14 @@ its wrike dashboard
 its wrike dashboard --json
 its wrike dashboard --watch
 ```
+
+## auth
+
+### `its wrike auth login`
+Sign in to Wrike via OAuth (browser). Requires WRIKE_CLIENT_ID/WRIKE_CLIENT_SECRET from a Wrike app registration — run `its wrike setup` first.
+
+### `its wrike auth logout`
+Clear the persisted Wrike OAuth token.
+
+### `its wrike auth status`
+Show Wrike OAuth sign-in state.

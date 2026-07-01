@@ -2,7 +2,7 @@
 
 > Auto-generated from the live command definitions. Do not edit by hand.
 
-**21 providers** · **198 resources** · **690 commands**. Pick a provider for its full command list.
+**21 providers** · **199 resources** · **693 commands**. Pick a provider for its full command list.
 
 | Provider | Alias | Resources | Commands |
 |----------|-------|-----------|----------|
@@ -12,7 +12,7 @@
 | [Bitwarden](./bw.md) | `bw` | 10 | 37 |
 | [SharePoint](./sp.md) | `sp` | 11 | 46 |
 | [UniFi Network](./unifi.md) | `unifi` | 17 | 43 |
-| [Wrike](./wrike.md) | `wrike` | 12 | 48 |
+| [Wrike](./wrike.md) | `wrike` | 13 | 51 |
 | [Azure CLI](./az.md) | `az` | 11 | 24 |
 | [Exchange Online](./exo.md) | `exo` | 9 | 42 |
 | [Intune](./intune.md) | `intune` | 17 | 42 |
