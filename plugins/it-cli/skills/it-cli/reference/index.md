@@ -2,7 +2,7 @@
 
 > Auto-generated from the live command definitions. Do not edit by hand.
 
-**21 providers** · **199 resources** · **693 commands**. Pick a provider for its full command list.
+**21 providers** · **201 resources** · **695 commands**. Pick a provider for its full command list.
 
 | Provider | Alias | Resources | Commands |
 |----------|-------|-----------|----------|
@@ -21,7 +21,7 @@
 | [Power Platform](./pa.md) | `pa` | 4 | 11 |
 | [Cloudflare](./cf.md) | `cf` | 5 | 16 |
 | [PeopleHR](./hr.md) | `hr` | 4 | 8 |
-| [Business Central](./bc.md) | `bc` | 4 | 5 |
+| [Business Central](./bc.md) | `bc` | 6 | 7 |
 | [Docs UI](./docs.md) | `docs` | 5 | 5 |
 | [GitHub](./gh.md) | `gh` | 2 | 4 |
 | [Outlook](./outlook.md) | `outlook` | 11 | 42 |
