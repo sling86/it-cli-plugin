@@ -750,6 +750,29 @@ Flags: `--redirect-uri` Web redirect URI. Repeatable — pass multiple --redirec
 Rotate / add a client secret on an existing app registration. The plaintext secretText is only returned once.
 Flags: `--name` Display name for the secret · `--months` Lifetime in months
 
+### `its entra apps secrets`
+Credential expiry dashboard — every client secret and certificate across all app registrations, with days-left and a status of EXPIRED, expiring (within --warn-days), long-lived (>2y), or ok.
+Flags: `--warn-days` Flag credentials expiring within this many days · `--expiring` Only show EXPIRED and expiring credentials
+
+### `its entra apps rotate <app>`
+Mint a new client secret on an app registration and store it straight into the OS keychain (--env-key) and/or Bitwarden (--bw). Additive — existing credentials are untouched unless --prune-expired. Output carries a fingerprint, never the secret (unless --include-secrets).
+Flags: `--name` Display name for the new secret (default its-rotated-YYYY-MM) · `--months` Lifetime in months · `--env-key` Store the secret in the OS keychain under this env var name (must be a known secret key, e.g. CLIENT_SECRET) · `--bw` Upsert a "<app> - <secret name>" login item in the Bitwarden Infrastructure folder · `--prune-expired` Also remove credentials that had already expired before this rotation (prompts per credential unless --confirm) · `--confirm` Skip the interactive confirmation
+
+### `its entra apps plan`
+Diff the apps manifest against live tenant state — read-only. Shows what apply would create or grant (+), change (~), plus warnings (!) and manual steps (✋). Declaration (requiredResourceAccess) and grant (appRoleAssignments / delegated consent) are diffed separately. Manifest resolution: --manifest > ITS_APPS_MANIFEST > manifest/entra-apps.jsonc (cwd-relative).
+Flags: `--manifest` Path to the JSONC apps manifest · `--app` Only plan one manifest entry (by name or appId) · `--exit-code` Exit 1 when there is actionable drift (CI guard) · `--changes-only` Hide manual-step and report-only rows — show only actionable changes and warnings
+
+### `its entra apps apply`
+Execute the manifest plan against the tenant — ADDITIVE ONLY, nothing is ever removed. Per app: create app → create SP → refetch → add owners → one coalesced requiredResourceAccess PATCH → redirect/public-client PATCHes → app-role grants → delegated scope-union grants. Needs Graph permissions Application.ReadWrite.All + AppRoleAssignment.ReadWrite.All + DelegatedPermissionGrant.ReadWrite.All — easiest run as an admin via --auth az, or a delegated admin sign-in (its auth login). Use --dry-run for a write-free preview.
+Flags: `--manifest` Path to the JSONC apps manifest · `--app` Only apply one manifest entry (by name or appId) · `--confirm` Skip the interactive confirmation
+
+### `its entra apps export <appIds>`
+Reverse-map live app registrations into manifest fragments — declared permission GUIDs resolve back to value names via each resource SP (unresolved ids stay as raw GUIDs with a note), owners become UPNs, redirect URIs keep their web/publicClient buckets. Paste the output into the manifest's "apps" array. Never dumps the tenant — pass explicit appIds.
+
+### `its entra apps audit`
+Security-posture audit across all app registrations — god-apps (app-role grant counts near the ~40-role token roles-claim overflow that broke Intune), expired and long-lived secrets, credential-less and secret-only apps, ownerless apps, stale sign-in activity (beta report, degrades gracefully), and apps missing from the manifest (when one is readable). Unused-grants is out of scope — no per-permission usage signal exists without premium logs.
+Flags: `--god-threshold` App-role grant count above which an app is critical · `--stale-days` Days without a sign-in before an app counts as stale · `--max-secret-months` Flag secrets whose lifetime exceeds this many months · `--manifest` Path to the JSONC apps manifest for the not-in-manifest check · `--severity` Only show findings at or above this severity
+
 ## admin-bootstrap
 
 ### `its entra admin-bootstrap run <user_id>`
