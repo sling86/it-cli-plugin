@@ -61,7 +61,7 @@ its export [--data]             # Export config (+ optionally live data)
 | `--stdin`           | Fan a command out over a piped JSON array (one call per row)            |
 | `--dry-run`         | Preview mutations — print method + URL + body, skip send               |
 | `--include-secrets` | Disable global secret redaction (audit-logged — see Safety)            |
-| `--auth <mode>`     | OAuth mode for Graph providers — `auto` (default; delegated→app), `delegated`, `app` |
+| `--auth <mode>`     | OAuth mode — `auto` (default; delegated→app), `delegated`, `app`, `az` (broker tokens from the operator's Azure CLI session — for privileged one-shot ops) |
 | `--profile <name>`  | Force a delegated identity for one call, overriding the provider→profile map (see Auth profiles) |
 
 ### How `--filter` works
