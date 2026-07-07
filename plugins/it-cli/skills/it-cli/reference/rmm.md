@@ -378,7 +378,7 @@ its rmm scripts run OFFICE-PC-01 --script "Long Audit" --timeout 600
 ```
 
 ### `its rmm scripts upload-local <agent> <path>`
-Upload a local .ps1/.sh/.py script to TRMM, run it on the agent, capture output, and delete the script afterwards. Use for ad-hoc D:/it-scripts/... invocations (Fix-DymoPrinter, Invoke-CorruptionCheck, Get-ShutdownDiagnostics). Pass --keep to leave the script registered.
+Upload a local .ps1/.sh/.py script to TRMM, run it on the agent, capture output, and delete the script afterwards. Use for ad-hoc D:/it/it-scripts/... invocations (Fix-DymoPrinter, Invoke-CorruptionCheck, Get-ShutdownDiagnostics). Pass --keep to leave the script registered.
 Flags: `--shell` Script shell (defaults to auto-detect from extension: ps1=powershell, sh=shell, py=python, nu=nushell, ts=deno) · `--args` Script arguments (comma-separated) · `--timeout` Timeout in seconds (default 120) · `--keep` Leave the uploaded script registered in TRMM after execution · `--category` Category for the uploaded script (default 'Ad-hoc')
 ```bash
 its rmm scripts upload-local ./fix-printers.ps1
