@@ -23,10 +23,22 @@ its <provider> <resource> [action] [positional_args...] [--flags]
 
 When you intend to parse or reason about the result, **always** pass `--ai` — output becomes minified single-line JSON. Only omit it when the user explicitly wants the human-formatted table.
 
+## Seeing `***REDACTED***`? Add `--include-secrets`
+
+Secrets are masked by **default** in every output mode — passwords, keys, tokens, TOTP seeds, Bitwarden hidden fields. When that happens you'll get `***REDACTED***` in the data **and** a stderr line like `2 secret fields hidden — re-run with --include-secrets to reveal`. To actually obtain the value (e.g. a server password, a BitLocker recovery key), **re-run the exact same command with `--include-secrets`**:
+
+```bash
+its bw password "server-login"                   # -> ***REDACTED*** (masked)
+its bw password "server-login" --include-secrets # -> the real password
+```
+
+Every `--include-secrets` use is audit-logged. **Never paste the revealed value into chat, a ticket, or any AI transcript.** To hand a secret to a human without printing it, prefer `--copy` (clipboard, auto-clears).
+
 ## Global commands (cross-provider)
 
 ```bash
-its status                      # Health check — every provider, configured/reachable
+its setup                       # Configuration overview — which providers are set up + the exact setup command for the rest
+its status                      # Health check — every provider, configured/reachable (--test probes connectivity)
 its config                      # Show configuration — env vars (masked), secrets, sessions
 its digest                      # Morning snapshot — counts + warnings across providers
 its find <query>                # Cross-provider text search (users, devices, tickets, files)

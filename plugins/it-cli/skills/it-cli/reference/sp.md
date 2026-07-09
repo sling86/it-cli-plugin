@@ -80,8 +80,8 @@ its sp drives folder <site-id> --path "Shared Documents/Marketing" --json
 Get file or folder details. Pass the id (or any natural identifier) as the positional arg.
 Flags: `--drive` Drive ID · `--item` Item ID
 ```bash
-its sp drives get <site-id> --path "Shared Documents/report.pdf"
-its sp drives get <site-id> --path "Shared Documents/report.pdf" --json
+its sp drives get <site-id> --drive <drive-id> --item <item-id>
+its sp drives get <site-id> --drive <drive-id> --item <item-id> --json
 ```
 
 ## lists
@@ -159,23 +159,23 @@ its sp files download --user tony@example.com --item <id> | sha256sum
 Upload a text file. Stream a local file to the resource.
 Flags: `--drive` Drive ID · `--path` Parent path (default /) · `--name` File name · `--content` Text content to upload · `--content-file` Read --content from a local UTF-8 file (use for content > ~15KB — Windows command-line cap)
 ```bash
-its sp files upload <site-id> --path "Shared Documents/report.pdf" --file ./report.pdf
-its sp files upload <site-id> --path "Shared Documents/report.pdf" --file ./report.pdf --json
+its sp files upload <site-id> --drive <drive-id> --path "Shared Documents" --name report.pdf --content-file ./report.pdf
+its sp files upload <site-id> --drive <drive-id> --path "Shared Documents" --name report.pdf --content-file ./report.pdf --json
 ```
 
 ### `its sp files folder <siteId>`
 Create a folder. Returns the contents of a folder by path.
 Flags: `--drive` Drive ID · `--parent` Parent item ID · `--name` Folder name
 ```bash
-its sp files folder <site-id> --path "Shared Documents"
-its sp files folder <site-id> --path "Shared Documents" --json
+its sp files folder <site-id> --drive <drive-id> --parent <parent-id> --name "New Folder"
+its sp files folder <site-id> --drive <drive-id> --parent <parent-id> --name "New Folder" --json
 ```
 
 ### `its sp files delete <siteId>`
 Delete a file or folder (moves to recycle bin). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record.
 Flags: `--drive` Drive ID · `--item` Item ID · `--confirm` Confirm deletion
 ```bash
-its sp files delete <site-id> --path "Shared Documents/old.docx" --confirm
+its sp files delete <site-id> --drive <drive-id> --item <item-id> --confirm
 ```
 
 ### `its sp files share <siteId>`
@@ -186,24 +186,24 @@ Flags: `--drive` Drive ID · `--item` Item ID · `--type` Link type · `--scope`
 Move or rename a file. Move an item between folders (reversible).
 Flags: `--drive` Drive ID · `--item` Item ID · `--name` New file name · `--parent` New parent folder ID
 ```bash
-its sp files move <site-id> --from "Shared Documents/old.docx" --to "Shared Documents/new.docx"
-its sp files move <site-id> --from "Shared Documents/old.docx" --to "Shared Documents/new.docx" --json
+its sp files move <site-id> --drive <drive-id> --item <item-id> --name "new.docx" --parent <parent-id>
+its sp files move <site-id> --drive <drive-id> --item <item-id> --name "new.docx" --parent <parent-id> --json
 ```
 
 ### `its sp files checkout <siteId>`
 Check out a file for editing. Locks the item against concurrent edits.
 Flags: `--drive` Drive ID · `--item` Item ID
 ```bash
-its sp files checkout <site-id> --path "Shared Documents/draft.docx"
-its sp files checkout <site-id> --path "Shared Documents/draft.docx" --json
+its sp files checkout <site-id> --drive <drive-id> --item <item-id>
+its sp files checkout <site-id> --drive <drive-id> --item <item-id> --json
 ```
 
 ### `its sp files checkin <siteId>`
 Check in a file. Releases the lock after editing.
 Flags: `--drive` Drive ID · `--item` Item ID · `--comment` Check-in comment · `--type` Check-in type: minor, major, or overwrite
 ```bash
-its sp files checkin <site-id> --path "Shared Documents/draft.docx" --comment "v2"
-its sp files checkin <site-id> --path "Shared Documents/draft.docx" --comment "v2" --json
+its sp files checkin <site-id> --drive <drive-id> --item <item-id> --comment "v2"
+its sp files checkin <site-id> --drive <drive-id> --item <item-id> --comment "v2" --json
 ```
 
 ### `its sp files versions <siteId>`
@@ -255,8 +255,8 @@ its sp permissions item <site-id> --item <item-id> --json
 Create a sharing link. Creates a sharing link / direct grant.
 Flags: `--drive` Drive ID · `--item` Item ID · `--type` Link type: view, edit, or embed · `--scope` Link scope: anonymous or organization
 ```bash
-its sp permissions share --item <item-id> --user jane.smith@example.com --role read
-its sp permissions share --item <item-id> --user jane.smith@example.com --role read --json
+its sp permissions share <site-id> --item <item-id> --type view --scope organization
+its sp permissions share <site-id> --item <item-id> --type view --scope organization --json
 ```
 
 ### `its sp permissions grant-app <siteId>`
@@ -267,7 +267,7 @@ Flags: `--role` Role to grant: read, write, or fullcontrol · `--app` Client (ob
 Remove a sharing permission. Permanent — use --confirm.
 Flags: `--drive` Drive ID · `--item` Item ID · `--permission` Permission ID to remove · `--confirm` Confirm removal
 ```bash
-its sp permissions remove <site-id> --item <item-id> --perm <perm-id> --confirm
+its sp permissions remove <site-id> --drive <drive-id> --item <item-id> --permission <permission-id> --confirm
 ```
 
 ## groups
@@ -360,5 +360,5 @@ its sp graph put "/sites/<site-id>/drive/items/<item-id>/content" --body @./file
 Raw Graph DELETE — pass any /v1.0 or /beta path (use --beta for beta).
 Flags: `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
-its sp graph delete "/sites/<site-id>/lists/<list-id>" --confirm
+its sp graph delete "/sites/<site-id>/lists/<list-id>"
 ```

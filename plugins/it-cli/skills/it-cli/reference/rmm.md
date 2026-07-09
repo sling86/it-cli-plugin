@@ -87,7 +87,7 @@ its rmm agents run LINUX-WEB-01 --shell bash --cmd "uname -a && uptime"
 Command + script execution history for one agent. Shows time, type, exit status, who ran it, and the truncated payload.
 ```bash
 its rmm agents history OFFICE-PC-01
-its rmm agents history OFFICE-PC-01 --days 7
+its rmm agents history OFFICE-PC-01 --json
 ```
 
 ### `its rmm agents notes <agent>`
@@ -108,7 +108,7 @@ its rmm agents pending OFFICE-PC-01 --json
 Send a magic packet via another online agent on the same LAN. Doesn't work across VLANs / VPN — agent must be on a network with a reachable RMM peer.
 ```bash
 its rmm agents wake OFFICE-PC-01
-its rmm agents wake OFFICE-PC-01 --site "Head Office"
+its rmm agents wake c3e5f1a7-...
 ```
 
 ### `its rmm agents edit <agent>`
@@ -162,7 +162,7 @@ Flags: `--confirm` Confirm deletion · `--move-to-site` Site ID to move this cli
 All RMM sites across every client, with per-site agent_count. Site IDs feed --site filters on agent commands.
 ```bash
 its rmm sites
-its rmm sites --client "Head Office"
+its rmm sites --filter "client=Head Office"
 its rmm sites --watch
 ```
 
@@ -180,7 +180,7 @@ Flags: `--confirm` Confirm deletion
 Live process snapshot from the agent — sorted by CPU%, top 50. Use `processes top` instead when you only want the heavy hitters.
 ```bash
 its rmm processes OFFICE-PC-01
-its rmm processes OFFICE-PC-01 --name "chrome"
+its rmm processes OFFICE-PC-01 --filter name=chrome
 its rmm processes OFFICE-PC-01 --watch
 ```
 
@@ -192,12 +192,12 @@ its rmm processes top OFFICE-PC-01
 its rmm processes top OFFICE-PC-01 --json
 ```
 
-### `its rmm processes kill <agent_id>`
+### `its rmm processes kill <agent>`
 Terminate a process by PID. Destructive — needs --confirm. Use `processes list` first to find the PID.
 Flags: `--pid` Process ID to kill · `--confirm` Confirm the kill
 ```bash
 its rmm processes kill OFFICE-PC-01 --pid 1234 --confirm
-its rmm processes kill OFFICE-PC-01 --name "notepad" --confirm
+its rmm processes OFFICE-PC-01 --filter name=notepad
 ```
 
 ## services
@@ -206,40 +206,40 @@ its rmm processes kill OFFICE-PC-01 --name "notepad" --confirm
 Windows / Linux service inventory for one agent. Filter with --status running|stopped|paused.
 ```bash
 its rmm services OFFICE-PC-01
-its rmm services OFFICE-PC-01 --status running
-its rmm services OFFICE-PC-01 --status stopped
+its rmm services OFFICE-PC-01 --filter status=running
+its rmm services OFFICE-PC-01 --filter status=stopped
 ```
 
 ### `its rmm services get <agent>`
 Service detail — startup type, dependencies, current state, last exit code.
 Flags: `--name` Service name
 ```bash
-its rmm services get OFFICE-PC-01 --service spooler
-its rmm services get OFFICE-PC-01 --service spooler --json
+its rmm services get OFFICE-PC-01 --name spooler
+its rmm services get OFFICE-PC-01 --name spooler --json
 ```
 
 ### `its rmm services control <agent>`
 Control a service (start/stop/restart). Stop requires --confirm.
 Flags: `--name` Service name · `--action` Action to perform · `--confirm` Required for stop action
 ```bash
-its rmm services control OFFICE-PC-01 --service spooler --action restart
-its rmm services control OFFICE-PC-01 --service spooler --action start
+its rmm services control OFFICE-PC-01 --name spooler --action restart
+its rmm services control OFFICE-PC-01 --name spooler --action start
 ```
 
 ### `its rmm services enable <agent>`
 Set startup type to Automatic and start the service if stopped. Idempotent.
 Flags: `--name` Service name
 ```bash
-its rmm services enable OFFICE-PC-01 --service spooler
-its rmm services enable OFFICE-PC-01 --service spooler --json
+its rmm services enable OFFICE-PC-01 --name spooler
+its rmm services enable OFFICE-PC-01 --name spooler --json
 ```
 
 ### `its rmm services disable <agent>`
 Set a service startup type to Disabled (requires --confirm).
 Flags: `--name` Service name · `--confirm` Confirm the disable
 ```bash
-its rmm services disable OFFICE-PC-01 --service spooler --confirm
-its rmm services disable OFFICE-PC-01 --service spooler --confirm --json
+its rmm services disable OFFICE-PC-01 --name spooler --confirm
+its rmm services disable OFFICE-PC-01 --name spooler --confirm --json
 ```
 
 ## updates
@@ -323,8 +323,8 @@ its rmm software search "Adobe"
 Active and resolved alerts across the fleet. Filter by --severity info|warning|error or --resolved.
 Flags: `--severity` Filter by severity (info/warning/error) · `--resolved` Show resolved alerts
 ```bash
-its rmm alerts --status active
-its rmm alerts --client "Head Office"
+its rmm alerts
+its rmm alerts --resolved
 its rmm alerts --severity error
 ```
 
@@ -474,8 +474,8 @@ its rmm tasks OFFICE-PC-01 --watch
 Create an automated task that runs a script on an agent. Default is a manual task (run on demand); add --daily-time HH:MM for a daily schedule (+ --weekdays to limit days). Resolves the agent by id/hostname/username, including offline agents.
 Flags: `--script` Script ID to run · `--name` Task name (default: derived from the script ID) · `--args` Script arguments (comma-separated, e.g. -Mode,Notify) · `--timeout` Per-run timeout in seconds (default 90) · `--daily-time` Run daily at HH:MM (24h) — turns this into a scheduled task · `--weekdays` With --daily-time: restrict to these days (mon,tue,wed,thu,fri,sat,sun); default every day · `--run-asap` Run as soon as possible if a scheduled run was missed
 ```bash
-its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --cron "0 3 * * 0"
-its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --cron "0 3 * * 0" --json
+its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --daily-time "03:00" --weekdays sun
+its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --daily-time "03:00" --weekdays sun --json
 ```
 
 ### `its rmm tasks delete`

@@ -18,7 +18,7 @@ Flags: `--branch` Branch
 
 ### `its gh webhook setup <repo> <url>`
 Create a push-event webhook on <owner/repo> pointing at <url>. Idempotent — bails if a hook with the same URL already exists.
-Flags: `--secret` Webhook secret (defaults to a stable string per URL) · `--events` Comma-separated events (default: push)
+Flags: `--secret` Webhook secret (defaults to a random secret, printed once - save it) · `--events` Comma-separated events (default: push)
 
 ### `its gh webhook <repo>`
 List webhooks on <owner/repo>.

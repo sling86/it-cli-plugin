@@ -64,9 +64,9 @@ Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_U
 
 ### `its outlook mail delete [message_id]`
 Delete one or more messages (moves to Deleted Items). Pass a single id positionally, or pipe `mail list --json` to stdin with --stdin for bulk delete.
-Flags: `--confirm` Required for bulk (--stdin) deletes · `--stdin` Read newline/JSON list of message ids from stdin · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+Flags: `--confirm` Required for every delete (single and bulk) · `--stdin` Read newline/JSON list of message ids from stdin · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
 ```bash
-its outlook mail delete <message_id>
+its outlook mail delete <message_id> --confirm
 its outlook mail --filter "from/emailAddress/address eq 'spammer@x'" --json | its outlook mail delete --stdin --confirm
 ```
 

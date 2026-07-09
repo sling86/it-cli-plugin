@@ -142,7 +142,7 @@ Show container logs for an application via Dokploy API (no SSH). Pass --follow t
 Flags: `--follow` Follow log output (uses SSH stream) · `--tail` Number of lines to show · `--since` Show logs since duration (e.g. 1h, 30m). Only honoured by --follow / --build paths — readLogs API ignores it. · `--build` Read the docker build log (/etc/dokploy/logs/<appName>/*.log) instead of the running container log · `--ssh` Force SSH path even without --follow (legacy fallback)
 ```bash
 its dokploy apps logs <app-id>
-its dokploy apps logs <app-id> --lines 200
+its dokploy apps logs <app-id> --tail 200
 ```
 
 ### `its dokploy apps monitoring <app>`
@@ -368,8 +368,8 @@ its dokploy env push <app-id> --file .env.production --json
 Set one or more env vars (KEY=value) without affecting others. NB: a plain set updates the record only — on Docker Swarm the running container will NOT pick the change up until the service is recreated. Pass --deploy to recreate + verify (brief outage), or run `dokploy apps apply-env <app>` later. Pass --dry-run to preview which keys would change (no values, nothing saved).
 Flags: `--deploy` After saving, recreate the swarm service (stop + deploy) and verify the new vars reached the container. Causes a brief outage. Without this, the change only lands in the record. · `--force-mask` Override the redaction-mask guard and write values like `***REDACTED***` verbatim. Almost never what you want — the guard exists to stop a masked round-trip clobbering real secrets
 ```bash
-its dokploy env set <app-id> --key DEBUG --value "true"
-its dokploy env set <app-id> --key DEBUG --value "true" --json
+its dokploy env set <app-id> DEBUG=true
+its dokploy env set <app-id> DEBUG=true --json
 ```
 
 ### `its dokploy env unset <applicationId> <keys>`
@@ -466,16 +466,16 @@ its dokploy mounts <app-id> --watch
 Add a mount to an application (--type bind|volume|file). Use --ensure-host-path with bind to create the host directory.
 Flags: `--type` Mount type · `--src` Source: host path (bind), volume name (volume), or initial content path (file) · `--dst` Mount path inside the container · `--content` Inline file content (--type file) · `--content-file` Read --content from a local UTF-8 file (use for content > ~15KB — Windows command-line cap) · `--ensure-host-path` For --type bind: create the host directory on the swarm node and chown to uid 1000 (avoids 'bind source path does not exist' deploy failures). Requires SSH.
 ```bash
-its dokploy mounts add <app-id> --type bind --host /data --container /app/data
-its dokploy mounts add <app-id> --type bind --host /data --container /app/data --json
+its dokploy mounts add <app-id> --type bind --src /data --dst /app/data
+its dokploy mounts add <app-id> --type bind --src /data --dst /app/data --json
 ```
 
 ### `its dokploy mounts update <mountId>`
 Update an existing mount. PATCH semantics — only the supplied fields change.
 Flags: `--src` New source (host path / volume name / file path) · `--dst` New mount path inside the container · `--content` New inline file content (file mounts) · `--content-file` Read --content from a local UTF-8 file (use for content > ~15KB — Windows command-line cap)
 ```bash
-its dokploy mounts update <mount-id> --host "/data" --container "/app/data"
-its dokploy mounts update <mount-id> --host "/data" --container "/app/data" --json
+its dokploy mounts update <mount-id> --src "/data" --dst "/app/data"
+its dokploy mounts update <mount-id> --src "/data" --dst "/app/data" --json
 ```
 
 ### `its dokploy mounts remove <mountId>`
@@ -589,13 +589,15 @@ its dokploy containers restart <container-id> --json
 ```
 
 ### `its dokploy containers kill <containerId>`
-Kill a container by ID (not app name). Lower-level than `apps kill` — operates on a single container without re-deploying.
+Kill a container by ID (not app name). Lower-level than `apps kill` — operates on a single container without re-deploying. Destructive — needs --confirm.
+Flags: `--confirm` Confirm this destructive action
 ```bash
 its dokploy containers kill <container-id> --confirm
 ```
 
 ### `its dokploy containers remove <containerId>`
-Remove a container by ID (not app name). Lower-level than `apps stop` — operates on a single container without re-deploying.
+Remove a container by ID (not app name). Lower-level than `apps stop` — operates on a single container without re-deploying. Destructive — needs --confirm.
+Flags: `--confirm` Confirm this destructive action
 ```bash
 its dokploy containers remove <container-id> --confirm
 ```

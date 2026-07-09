@@ -76,8 +76,8 @@ its entra users invite contractor@vendor.com --no-email --redirect "https://myap
 Create a new user. Idempotent on duplicate names — use update/edit to mutate an existing record.
 Flags: `--displayName` Display name · `--upn` User principal name · `--password` Initial password · `--jobTitle` Job title · `--department` Department · `--company` Company name · `--office` Office location · `--usage` Usage location (e.g. GB)
 ```bash
-its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!" --force-change
-its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!" --force-change --json
+its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!"
+its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!" --json
 ```
 
 ### `its entra users enable <id>`
@@ -109,7 +109,7 @@ Disable a user account (requires --confirm). Pass --revoke-sessions to also kill
 Flags: `--confirm` Confirm the disable · `--revoke-sessions` Also call /revokeSignInSessions — invalidates refresh tokens and forces re-auth on all clients
 ```bash
 its entra users disable jane.smith@example.com --confirm
-its entra users disable jane.smith@example.com --revoke --confirm
+its entra users disable jane.smith@example.com --revoke-sessions --confirm
 ```
 
 ### `its entra users revoke-sessions <id>`
@@ -221,7 +221,7 @@ Flags: `--sku` SKU ID (GUID), or comma-separated list of GUIDs
 its entra licences assign jane@x.com --sku <guid>
 its entra licences assign jane@x.com --sku <guid1>,<guid2>,<guid3>
 its entra licences assign jane.smith@example.com --sku SPB
-its entra licences assign jane.smith@example.com --sku SPB --location GB
+its entra licences assign jane.smith@example.com --sku SPB,ENTERPRISEPACK
 ```
 
 ### `its entra licences remove <user_id>`
@@ -229,14 +229,14 @@ Remove a licence from a user (requires --confirm). Permanent — use --confirm.
 Flags: `--sku` SKU ID (GUID) · `--confirm` Confirm the removal
 ```bash
 its entra licences remove jane.smith@example.com --sku SPB --confirm
-its entra licences remove jane.smith@example.com --all --confirm
+its entra onboarding convert-mailbox jane.smith@example.com --confirm
 ```
 
 ### `its entra licences users <sku_id>`
 List users assigned a specific licence SKU. List by resource membership; use --json for the raw shape.
 ```bash
-its entra licences users --sku SPB
-its entra licences users --sku SPB --json
+its entra licences users SPB
+its entra licences users SPB --json
 ```
 
 ### `its entra licences unlicensed`
@@ -342,7 +342,7 @@ Create a Temporary Access Pass for a user (does not work for B2B guests).
 Flags: `--ttl` Lifetime (e.g. 30m, 1h, 8h, 1d). Default 1h · `--one-time` Pass is usable only once · `--start-time` ISO 8601 timestamp for scheduled start (e.g. 2026-04-21T09:00:00Z)
 ```bash
 its entra tap create jane.smith@example.com
-its entra tap create jane.smith@example.com --lifetime 480 --usable-once false
+its entra tap create jane.smith@example.com --ttl 8h
 ```
 
 ### `its entra tap <user_id>`
@@ -421,8 +421,8 @@ its entra ca delete "Block legacy auth" --confirm
 Add a user to a CA policy's excludeUsers — atomic mutation, no need to rebuild the users object.
 Flags: `--dry-run` Print the PATCH request without sending
 ```bash
-its entra ca exclude-user <policy-id> --user jane.smith@example.com
-its entra ca exclude-user "Require MFA for admins" --user jane.smith@example.com
+its entra ca exclude-user <policy-id> jane.smith@example.com
+its entra ca exclude-user "Require MFA for admins" jane.smith@example.com
 ```
 
 ### `its entra ca unexclude-user <id_or_name> <user>`
@@ -466,7 +466,7 @@ its entra authmethods get TemporaryAccessPass --json
 
 ### `its entra authmethods enable <method>`
 Enable a method tenant-wide (sets state=enabled on the method configuration). Pass --target <groupId> or --target all-users to scope.
-Flags: `--target` Optional include target — group ID or 'all_users'. Adds a default include target if specified. · `--dry-run` Print the PATCH request without sending
+Flags: `--target` Optional include target — group ID or 'all_users'. Adds a default include target if specified. · `--dry-run` Print the PATCH request without sending · `--confirm` Confirm this tenant-wide policy change
 ```bash
 its entra authmethods enable Fido2
 its entra authmethods enable Fido2 --json
@@ -474,7 +474,7 @@ its entra authmethods enable Fido2 --json
 
 ### `its entra authmethods disable <method>`
 Disable a method tenant-wide (state=disabled). Switch to inactive state. Idempotent.
-Flags: `--dry-run` Print the PATCH request without sending
+Flags: `--dry-run` Print the PATCH request without sending · `--confirm` Confirm this tenant-wide policy change
 ```bash
 its entra authmethods disable Sms
 its entra authmethods disable Sms --json
@@ -482,7 +482,7 @@ its entra authmethods disable Sms --json
 
 ### `its entra authmethods patch <method>`
 Patch a method configuration with a custom body (inline or @path/to/file.json).
-Flags: `--body` Inline JSON or @path/to/body.json — the PATCH body for the method config · `--dry-run` Print the PATCH request without sending
+Flags: `--body` Inline JSON or @path/to/body.json — the PATCH body for the method config · `--dry-run` Print the PATCH request without sending · `--confirm` Confirm this tenant-wide policy change
 ```bash
 its entra authmethods patch TemporaryAccessPass @./tap-policy.json
 its entra authmethods patch TemporaryAccessPass @./tap-policy.json --json
@@ -591,9 +591,9 @@ its entra xtenant partner-set <partner-tenant-id> --trust-mfa on --json
 List directory audit logs. Surfaces the most common fields; pass --json for raw shape.
 Flags: `--filter` OData filter expression · `--top` Number of results · `--all` Fetch all results (overrides --top) · `--category` Filter by category · `--initiated-by` Filter by initiating user ID (GUID) or app ID · `--target` Filter by target resource ID (GUID) · `--activity` Filter by activityDisplayName (exact match, e.g. 'Add member to group') · `--result` Filter by result
 ```bash
-its entra audit --since 24h
-its entra audit --user jane.smith@example.com
-its entra audit --since 24h --watch
+its entra audit --filter "activityDateTime ge 2024-01-01T00:00:00Z"
+its entra audit --target <user-id>
+its entra audit --filter "activityDateTime ge 2024-01-01T00:00:00Z" --watch
 ```
 
 ## security
@@ -680,8 +680,8 @@ its entra onboarding summary jane.smith@example.com --watch
 Copy group memberships from one user to another. Idempotent — already-shared groups are skipped.
 Flags: `--source` Source user ID or UPN · `--target` Target user ID or UPN
 ```bash
-its entra onboarding copy-groups --from peer@example.com --to jane.smith@example.com
-its entra onboarding copy-groups --from peer@example.com --to jane.smith@example.com --json
+its entra onboarding copy-groups --source peer@example.com --target jane.smith@example.com
+its entra onboarding copy-groups --source peer@example.com --target jane.smith@example.com --json
 ```
 
 ### `its entra onboarding convert-mailbox <user_id>`
@@ -713,7 +713,7 @@ its entra offboarding run jane.smith@example.com --confirm --json
 ## break-glass
 
 ### `its entra break-glass audit`
-Audit break-glass accounts (BG01 + BG02) — GA role, CA exclusions, sign-in hygiene, password age, FIDO2. Non-zero exit on any gap. Override UPNs with ENTRA_BG01_UPN / ENTRA_BG02_UPN.
+Audit your two break-glass accounts (BG01 password + BG02 FIDO2) — GA role, CA exclusions, sign-in hygiene, password age, FIDO2. Non-zero exit on any gap. Set the UPNs via ENTRA_BG01_UPN / ENTRA_BG02_UPN (or --bg01/--bg02).
 Flags: `--bg01` Override BG01 UPN (defaults to ENTRA_BG01_UPN env) · `--bg02` Override BG02 UPN (defaults to ENTRA_BG02_UPN env)
 ```bash
 its entra break-glass audit
@@ -817,5 +817,5 @@ its entra graph put "/users/<id>/photo/$value" --body @./photo.jpg --json
 Raw Graph DELETE — pass any /v1.0 or /beta path (use --beta for beta).
 Flags: `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
-its entra graph delete "/users/<id>" --confirm
+its entra graph delete "/users/<id>"
 ```
