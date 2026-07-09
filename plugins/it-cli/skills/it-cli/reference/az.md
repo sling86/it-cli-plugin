@@ -24,8 +24,8 @@ its az account get --json
 ### `its az account set <subscription>`
 Switch active subscription. Single-value write; idempotent on no-op.
 ```bash
-its az account set --subscription <sub-id>
-its az account set --subscription "Production"
+its az account set <sub-id>
+its az account set "Production"
 ```
 
 ## groups
@@ -64,7 +64,7 @@ List virtual machines with power state. Surfaces the most common fields; pass --
 Flags: `--rg` Resource group · `--subscription` Subscription
 ```bash
 its az vm
-its az vm --status running
+its az vm --filter powerState=running
 its az vm --watch
 ```
 
@@ -81,7 +81,7 @@ Start a VM. Start the resource. Idempotent.
 Flags: `--rg` Resource group (required) · `--confirm` Confirm the operation
 ```bash
 its az vm start my-vm --rg my-rg
-its az vm start my-vm --rg my-rg --no-wait
+its az vm start my-vm --rg my-rg --confirm
 ```
 
 ### `its az vm stop <name>`
@@ -132,8 +132,8 @@ its az keyvault --watch
 ### `its az keyvault secrets <vault>`
 List secret names in a Key Vault. List vault secret names (values aren't returned by default).
 ```bash
-its az keyvault secrets --vault my-kv
-its az keyvault secrets --vault my-kv --json
+its az keyvault secrets my-kv
+its az keyvault secrets my-kv --json
 ```
 
 ## nsg

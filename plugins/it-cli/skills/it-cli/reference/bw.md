@@ -11,7 +11,7 @@ List all vault items. Surfaces the most common fields; pass --json for raw shape
 Flags: `--type` Filter by type (login/note/card/identity) · `--folder` Filter by folder name · `--favourite` Show only favourites · `--vault` Named vault profile (omit for default)
 ```bash
 its bw items
-its bw items --collection "Servers"
+its bw items --folder "Servers"
 its bw items --watch
 ```
 
@@ -69,7 +69,7 @@ Flags: `--type` Item type: login (default), note, card, identity · `--username`
 ```bash
 its bw items create "Router" --username admin --password "s3cret"
 its bw items create "Router" --field lan_ip=10.0.0.1 --field-hidden api_token=abc123
-its bw items create "Server admin" --username admin --password "P@ssw0rd" --url https://server.example.com
+its bw items create "Server admin" --username admin --password "P@ssw0rd" --uri https://server.example.com
 its bw items create "API keys" --type note --notes "stuff"
 ```
 
@@ -79,16 +79,16 @@ Flags: `--name` New name · `--username` Login username · `--password` Login pa
 ```bash
 its bw items update <id> --field lan_ip=10.0.0.2 --confirm
 its bw items update <id> --field-remove lan_ip --confirm
-its bw items update <item-id> --password "NewP@ss"
-its bw items update <item-id> --password "NewP@ss" --json
+its bw items update <item-id> --password "NewP@ss" --confirm
+its bw items update <item-id> --password "NewP@ss" --confirm --json
 ```
 
 ### `its bw items move <id>`
 Move vault items to a folder. Move an item between folders. --confirm required.
 Flags: `--folder` Destination folder name (created if needed) · `--confirm` Confirm the move · `--vault` Named vault profile (omit for default)
 ```bash
-its bw items move <item-id> --folder "Servers"
-its bw items move <item-id> --folder "Servers" --json
+its bw items move <item-id> --folder "Servers" --confirm
+its bw items move <item-id> --folder "Servers" --confirm --json
 ```
 
 ### `its bw items delete <id>`
@@ -102,15 +102,15 @@ its bw items delete <item-id> --confirm
 Restore a vault item from the trash. Restore a soft-deleted item from trash.
 Flags: `--confirm` Confirm the restore · `--vault` Named vault profile (omit for default)
 ```bash
-its bw items restore <item-id>
-its bw items restore <item-id> --json
+its bw items restore <item-id> --confirm
+its bw items restore <item-id> --confirm --json
 ```
 
 ### `its bw items purge <id>`
 PERMANENTLY delete a vault item. This CANNOT be undone.
 Flags: `--confirm` Confirm permanent deletion (REQUIRED) · `--yes-permanently-delete` Double-confirm that you understand this is irreversible · `--vault` Named vault profile (omit for default)
 ```bash
-its bw items purge <item-id> --confirm
+its bw items purge <item-id> --confirm --yes-permanently-delete
 ```
 
 ## folders

@@ -26,21 +26,21 @@ its pbi workspaces members <workspace-id> --json
 Add a user/group/app to a workspace (admin). Add a primary user; idempotent.
 Flags: `--user` User UPN, group ID, or app ID to grant access · `--principal-type` Principal type (default: User) · `--access` Access right (default: Member)
 ```bash
-its pbi workspaces add-user <workspace-id> --user jane.smith@example.com --role Member
-its pbi workspaces add-user <workspace-id> --user jane.smith@example.com --role Member --json
+its pbi workspaces add-user <workspace-id> --user jane.smith@example.com --access Member
+its pbi workspaces add-user <workspace-id> --user jane.smith@example.com --access Member --json
 ```
 
 ### `its pbi workspaces update-user <workspace_id>`
 Update a user's access right on a workspace. Change the primary user.
 Flags: `--user` User UPN, group ID, or app ID whose access to update · `--principal-type` Principal type (default: User) · `--access` New access right
 ```bash
-its pbi workspaces update-user <workspace-id> --user jane.smith@example.com --role Admin
-its pbi workspaces update-user <workspace-id> --user jane.smith@example.com --role Admin --json
+its pbi workspaces update-user <workspace-id> --user jane.smith@example.com --access Admin
+its pbi workspaces update-user <workspace-id> --user jane.smith@example.com --access Admin --json
 ```
 
 ### `its pbi workspaces remove-user <workspace_id>`
-Remove a user/group/app from a workspace (admin). Reverse of add-user.
-Flags: `--user` User UPN, group ID, or app ID to remove
+Remove a user/group/app from a workspace (admin, requires --confirm). Reverse of add-user.
+Flags: `--user` User UPN, group ID, or app ID to remove · `--confirm` Confirm the removal
 ```bash
 its pbi workspaces remove-user <workspace-id> --user jane.smith@example.com --confirm
 its pbi workspaces remove-user <workspace-id> --user jane.smith@example.com --confirm --json
@@ -153,21 +153,21 @@ its pbi my datasets --json
 Add a user/group/app to a workspace using the signed-in user's permissions (sidesteps SP admin-API restrictions when you're a workspace admin).
 Flags: `--user` User UPN, group ID, or app ID to grant access · `--principal-type` Principal type (default: User) · `--access` Access right (default: Viewer)
 ```bash
-its pbi my add-workspace-user <workspace-id> --user jane.smith@example.com --role Member
-its pbi my add-workspace-user <workspace-id> --user jane.smith@example.com --role Member --json
+its pbi my add-workspace-user <workspace-id> --user jane.smith@example.com --access Member
+its pbi my add-workspace-user <workspace-id> --user jane.smith@example.com --access Member --json
 ```
 
 ### `its pbi my update-workspace-user <workspace_id>`
 Update a user's access right on a workspace using the signed-in user's permissions.
 Flags: `--user` User UPN, group ID, or app ID whose access to update · `--principal-type` Principal type (default: User) · `--access` New access right
 ```bash
-its pbi my update-workspace-user <workspace-id> --user jane.smith@example.com --role Admin
-its pbi my update-workspace-user <workspace-id> --user jane.smith@example.com --role Admin --json
+its pbi my update-workspace-user <workspace-id> --user jane.smith@example.com --access Admin
+its pbi my update-workspace-user <workspace-id> --user jane.smith@example.com --access Admin --json
 ```
 
 ### `its pbi my remove-workspace-user <workspace_id>`
-Remove a user/group/app from a workspace using the signed-in user's permissions.
-Flags: `--user` User UPN, group ID, or app ID to remove
+Remove a user/group/app from a workspace using the signed-in user's permissions (requires --confirm).
+Flags: `--user` User UPN, group ID, or app ID to remove · `--confirm` Confirm the removal
 ```bash
 its pbi my remove-workspace-user <workspace-id> --user jane.smith@example.com --confirm
 its pbi my remove-workspace-user <workspace-id> --user jane.smith@example.com --confirm --json

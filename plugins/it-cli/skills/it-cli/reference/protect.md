@@ -44,9 +44,9 @@ its protect nvr --watch
 List recent Protect events (motion, smart detections). Surfaces the most common fields; pass --json for raw shape.
 Flags: `--hours` Hours to look back (default 24) · `--limit` Maximum events to return (default 30)
 ```bash
-its protect events --since 1h
-its protect events --camera <camera-id> --since 24h
-its protect events --since 1h --watch
+its protect events --hours 1
+its protect events --filter camera=<camera-name> --hours 24
+its protect events --hours 1 --watch
 ```
 
 ## dashboard

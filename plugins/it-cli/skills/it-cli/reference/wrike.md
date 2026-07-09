@@ -11,7 +11,7 @@ List IT support tickets. Surfaces the most common fields; pass --json for raw sh
 Flags: `--status` Filter by status · `--priority` Filter by priority/importance · `--limit` Maximum number of tickets
 ```bash
 its wrike tickets
-its wrike tickets --importance High
+its wrike tickets --priority High
 its wrike tickets --watch
 ```
 
@@ -70,8 +70,8 @@ its wrike tickets set-due <task-id> 2026-06-01 --json
 ### `its wrike tickets assign <taskId> <userId>`
 Add an assignee to a ticket. Idempotent — assigning twice is a no-op.
 ```bash
-its wrike tickets assign <task-id> --user jane.smith@example.com
-its wrike tickets assign <task-id> --user jane.smith@example.com --json
+its wrike tickets assign <task-id> <user-id>
+its wrike tickets assign <task-id> <user-id> --json
 ```
 
 ### `its wrike tickets update-title <taskId> <title>`
@@ -91,8 +91,8 @@ its wrike tickets update-importance <task-id> High --json
 ### `its wrike tickets update-status <taskId> <status>`
 Change ticket status. Move the task to a different workflow stage.
 ```bash
-its wrike tickets update-status <task-id> --status "Completed"
-its wrike tickets update-status <task-id> --status "Completed" --json
+its wrike tickets update-status <task-id> "Completed"
+its wrike tickets update-status <task-id> "Completed" --json
 ```
 
 ### `its wrike tickets update-description <taskId> [text]`
@@ -107,16 +107,16 @@ its wrike tickets update-description <task-id> --markdown "**Repro:** open Outlo
 Add a comment to a ticket. Prefer --markdown (bold/italic/links/bullets + plain @Name auto-resolves to mentions). Plain text also works (\n → <br>, @Name auto-resolved). Use --html only when you need raw anchor-based mentions; the mention markup guard rejects mismatched modes unless --skip-mention-check is set. Wrike only renders <br>, <a>, <b>, <i>, and mention anchors.
 Flags: `--file` Read comment body from a file path · `--stdin` Read comment body from stdin · `--html` Send body as raw HTML. Wrike only renders <br>, <a>, <b>, <i>, and mention anchors — other tags are ignored. Use --markdown for richer formatting. · `--markdown` Convert Markdown to Wrike-safe HTML. Supported: **bold**, _italic_, `code` (rendered italic), # headings (rendered bold), [text](url), - bullets (flattened to •). In this mode, mention users with plain @Name (auto-resolves). Mutually exclusive with --html. Recommended over --html. · `--skip-mention-check` Bypass the @mention markup guard Use only when posting a literal string that happens to contain mention-like markup.
 ```bash
-its wrike tickets add-comment <task-id> --text "Replicated, escalating"
-its wrike tickets add-comment <task-id> --text "Replicated, escalating" --json
+its wrike tickets add-comment <task-id> "Replicated, escalating"
+its wrike tickets add-comment <task-id> "Replicated, escalating" --json
 ```
 
 ### `its wrike tickets update-comment <commentId> [text]`
 Replace the body of an existing comment. Same formatting rules as add-comment (--markdown / --html / plain text). Use the commentId returned by add-comment, or read it from `tickets get`.
 Flags: `--file` Read comment body from a file path · `--stdin` Read comment body from stdin · `--html` Send body as raw HTML. Wrike only renders <br>, <a>, <b>, <i>, and mention anchors — other tags are ignored. Use --markdown for richer formatting. · `--markdown` Convert Markdown to Wrike-safe HTML. Supported: **bold**, _italic_, `code` (rendered italic), # headings (rendered bold), [text](url), - bullets (flattened to •). In this mode, mention users with plain @Name (auto-resolves). Mutually exclusive with --html. Recommended over --html. · `--skip-mention-check` Bypass the @mention markup guard Use only when posting a literal string that happens to contain mention-like markup.
 ```bash
-its wrike tickets update-comment <comment-id> --text "fixed typo"
-its wrike tickets update-comment <comment-id> --text "fixed typo" --json
+its wrike tickets update-comment <comment-id> "fixed typo"
+its wrike tickets update-comment <comment-id> "fixed typo" --json
 ```
 
 ### `its wrike tickets delete-comment <commentId>`
@@ -146,15 +146,15 @@ its wrike tickets attachments <task-id> --json
 Download an attachment from a ticket. Stream the resource to a local file.
 Flags: `--output` Output file path (defaults to original filename in cwd)
 ```bash
-its wrike tickets download <task-id> <attachment-id> --out ./screenshot.png
-its wrike tickets download <task-id> <attachment-id> --out ./screenshot.png --json
+its wrike tickets download <task-id> <attachment-id> --output ./screenshot.png
+its wrike tickets download <task-id> <attachment-id> --output ./screenshot.png --json
 ```
 
 ### `its wrike tickets attach <taskId> <filePath>`
 Attach a file to a ticket. Upload a local file as an attachment.
 ```bash
-its wrike tickets attach <task-id> --file ./screenshot.png
-its wrike tickets attach <task-id> --file ./screenshot.png --json
+its wrike tickets attach <task-id> ./screenshot.png
+its wrike tickets attach <task-id> ./screenshot.png --json
 ```
 
 ## tasks

@@ -32,8 +32,8 @@ its exo groups members "All Staff" --json
 Create a new distribution group. Idempotent on duplicate names — use update/edit to mutate an existing record.
 Flags: `--alias` Email alias (before @domain) · `--managed-by` Owner email address · `--type` Group type
 ```bash
-its exo groups create "Marketing Team" --type Distribution --primary-smtp marketing@example.com
-its exo groups create "Marketing Team" --type Distribution --primary-smtp marketing@example.com --json
+its exo groups create "Marketing Team" --type distribution --alias marketing
+its exo groups create "Marketing Team" --type distribution --alias marketing --json
 ```
 
 ### `its exo groups delete <group>`
@@ -47,8 +47,8 @@ its exo groups delete "Old DL" --confirm
 ### `its exo groups add-member <group> <member>`
 Add a member to a distribution group. Idempotent — already-a-member is a no-op.
 ```bash
-its exo groups add-member "All Staff" --user jane.smith@example.com
-its exo groups add-member "All Staff" --user jane.smith@example.com --json
+its exo groups add-member "All Staff" jane.smith@example.com
+its exo groups add-member "All Staff" jane.smith@example.com --json
 ```
 
 ### `its exo groups remove-member <group> <member>`
@@ -88,8 +88,8 @@ its exo mailboxes stats jane.smith@example.com --json
 ### `its exo mailboxes create <name> <alias>`
 Create a shared mailbox. Idempotent on duplicate names — use update/edit to mutate an existing record.
 ```bash
-its exo mailboxes create --shared --upn support@example.com --name "Support"
-its exo mailboxes create --shared --upn support@example.com --name "Support" --json
+its exo mailboxes create "Support" support
+its exo mailboxes create "Support" support --json
 ```
 
 ### `its exo mailboxes permissions <mailbox>`
@@ -103,8 +103,8 @@ its exo mailboxes permissions shared@example.com --json
 Grant mailbox access to a user. Grant a new permission. Idempotent.
 Flags: `--rights` Access rights to grant
 ```bash
-its exo mailboxes add-permission shared@example.com --user jane.smith@example.com --rights FullAccess
-its exo mailboxes add-permission shared@example.com --user jane.smith@example.com --rights FullAccess --json
+its exo mailboxes add-permission shared@example.com jane.smith@example.com --rights FullAccess
+its exo mailboxes add-permission shared@example.com jane.smith@example.com --rights FullAccess --json
 ```
 
 ### `its exo mailboxes remove-permission <mailbox> <user>`
@@ -135,8 +135,8 @@ Configure mailbox forwarding. Set a mailbox forward. --confirm required.
 Flags: `--keep-copy` Also deliver to the original mailbox · `--confirm` Required to set forwarding (mail-exfiltration risk)
 ```bash
 its exo mailboxes set-forwarding jo@example.com manager@example.com --confirm
-its exo mailboxes set-forwarding jane.smith@example.com --to "external@vendor.com" --keep
-its exo mailboxes set-forwarding jane.smith@example.com --to "external@vendor.com" --keep --json
+its exo mailboxes set-forwarding jane.smith@example.com external@vendor.com --confirm --keep-copy
+its exo mailboxes set-forwarding jane.smith@example.com external@vendor.com --confirm --keep-copy --json
 ```
 
 ### `its exo mailboxes set-type <mailbox> <type>`
@@ -233,9 +233,9 @@ its exo dkim disable example.com --confirm
 Search message trace (last N days). Surfaces the most common fields; pass --json for raw shape.
 Flags: `--sender` Sender email address · `--recipient` Recipient email address · `--subject` Subject contains (case-insensitive) · `--days` Number of days to search back
 ```bash
-its exo trace --sender jane.smith@example.com --since 24h
-its exo trace --recipient external@vendor.com --since 7d
-its exo trace --sender jane.smith@example.com --since 24h --watch
+its exo trace --sender jane.smith@example.com --days 1
+its exo trace --recipient external@vendor.com --days 7
+its exo trace --sender jane.smith@example.com --days 1 --watch
 ```
 
 ### `its exo trace detail <trace-id> <recipient>`

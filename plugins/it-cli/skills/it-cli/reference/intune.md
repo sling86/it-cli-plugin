@@ -204,8 +204,8 @@ its intune autopilot devices --json
 Set group tag on an Autopilot device. Set or clear a tag value.
 Flags: `--clear` Remove the group tag
 ```bash
-its intune autopilot tag <serial> --tag "Office-Standard"
-its intune autopilot tag <serial> --tag "Office-Standard" --json
+its intune autopilot tag <serial> "Office-Standard"
+its intune autopilot tag <serial> "Office-Standard" --json
 ```
 
 ## group
@@ -369,5 +369,5 @@ its intune graph put "/deviceManagement/managedDevices/<id>" --body @./body.json
 Raw Graph DELETE — pass any /v1.0 or /beta path (use --beta for beta).
 Flags: `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
-its intune graph delete "/deviceManagement/managedDevices/<id>" --confirm
+its intune graph delete "/deviceManagement/managedDevices/<id>"
 ```

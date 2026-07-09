@@ -27,39 +27,39 @@ its pa environments get <env-id> --json
 List Power Automate cloud flows. Defaults to all environments — use --environment <id> to scope.
 Flags: `--environment` Limit to a single environment (id from `its pa environments`) · `--state` Filter by state
 ```bash
-its pa flows --env <env-id>
-its pa flows --env <env-id> --status error
-its pa flows --env <env-id> --watch
+its pa flows --environment <env-id>
+its pa flows --environment <env-id> --state Suspended
+its pa flows --environment <env-id> --watch
 ```
 
 ### `its pa flows get <flow_id>`
 Show flow details (definition, triggers, actions). Pass the id (or any natural identifier) as the positional arg.
 Flags: `--environment` Environment id (required)
 ```bash
-its pa flows get <flow-id> --env <env-id>
-its pa flows get <flow-id> --env <env-id> --json
+its pa flows get <flow-id> --environment <env-id>
+its pa flows get <flow-id> --environment <env-id> --json
 ```
 
 ### `its pa flows stop <flow_id>`
 Turn a flow off (admin). Stop the resource. Use --confirm if the action is destructive.
 Flags: `--environment` Environment id (required)
 ```bash
-its pa flows stop <flow-id> --env <env-id>
+its pa flows stop <flow-id> --environment <env-id>
 ```
 
 ### `its pa flows start <flow_id>`
 Turn a flow on (admin). Start the resource. Idempotent.
 Flags: `--environment` Environment id (required)
 ```bash
-its pa flows start <flow-id> --env <env-id>
-its pa flows start <flow-id> --env <env-id> --json
+its pa flows start <flow-id> --environment <env-id>
+its pa flows start <flow-id> --environment <env-id> --json
 ```
 
 ### `its pa flows delete <flow_id>`
 Delete a flow (admin). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record.
 Flags: `--environment` Environment id (required) · `--confirm` Confirm deletion
 ```bash
-its pa flows delete <flow-id> --env <env-id> --confirm
+its pa flows delete <flow-id> --environment <env-id> --confirm
 ```
 
 ### `its pa flows set-owner <flow_id>`
@@ -70,8 +70,8 @@ Flags: `--environment` Environment id (required) · `--owner` Principal to grant
 List recent runs for a flow. Returns historical run records.
 Flags: `--environment` Environment id (required) · `--top` Max runs to fetch (default 50)
 ```bash
-its pa flows runs <flow-id> --env <env-id>
-its pa flows runs <flow-id> --env <env-id> --json
+its pa flows runs <flow-id> --environment <env-id>
+its pa flows runs <flow-id> --environment <env-id> --json
 ```
 
 ## apps
@@ -80,9 +80,9 @@ its pa flows runs <flow-id> --env <env-id> --json
 List Power Apps canvas apps. Defaults to all envs — scope with --environment <id>.
 Flags: `--environment` Limit to a single environment
 ```bash
-its pa apps --env <env-id>
-its pa apps --env <env-id> --json
-its pa apps --env <env-id> --watch
+its pa apps --environment <env-id>
+its pa apps --environment <env-id> --json
+its pa apps --environment <env-id> --watch
 ```
 
 ## connections
@@ -91,7 +91,7 @@ its pa apps --env <env-id> --watch
 List connections in an environment. Surfaces the most common fields; pass --json for raw shape.
 Flags: `--environment` Environment id (required)
 ```bash
-its pa connections --env <env-id>
-its pa connections --env <env-id> --json
-its pa connections --env <env-id> --watch
+its pa connections --environment <env-id>
+its pa connections --environment <env-id> --json
+its pa connections --environment <env-id> --watch
 ```

@@ -40,8 +40,8 @@ Flags: `--env` BC environment name (default: BC_ENVIRONMENT) · `--api` Custom A
 Query any BC entity — OData passthrough with filter/top/select.
 Flags: `--company` Company name/id (default: first company) · `--filter` OData $filter expression · `--top` Max records (default 50) · `--select` $select fields (comma-separated) · `--orderby` $orderby expression · `--all` Fetch all pages (up to 10000 records; overrides --top) · `--env` BC environment name (default: BC_ENVIRONMENT) · `--api` Custom API route <publisher>/<group>/<version> (default: standard v2.0 API)
 ```bash
-its bc query get --company <company-id> --entity items
-its bc query get --company <company-id> --entity items --json
+its bc query get items --company <company-id>
+its bc query get items --company <company-id> --json
 ```
 
 ## record

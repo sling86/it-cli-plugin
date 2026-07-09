@@ -172,8 +172,8 @@ its unifi clients offline --json
 Authorise a guest WiFi client. Permits a guest network device.
 Flags: `--minutes` Duration in minutes · `--up` Upload speed limit (Kbps) · `--down` Download speed limit (Kbps) · `--megabytes` Data transfer limit (MB) · `--site` Site name override
 ```bash
-its unifi guests authorise <mac> --duration 1440
-its unifi guests authorise <mac> --duration 1440 --json
+its unifi guests authorise <mac> --minutes 1440
+its unifi guests authorise <mac> --minutes 1440 --json
 ```
 
 ### `its unifi guests unauthorise <mac>`
@@ -218,8 +218,8 @@ its unifi wlans toggle <wlan-id> --enable
 Update WiFi password for an SSID. Rotate a PSK / passphrase. Disconnects every client on the SSID — use --confirm.
 Flags: `--passphrase` New WiFi passphrase · `--site` Site name override · `--confirm` Confirm the PSK rotation
 ```bash
-its unifi wlans password <wlan-id> --password "new-password"
-its unifi wlans password <wlan-id> --password "new-password" --json
+its unifi wlans password <wlan-id> --passphrase "new-password" --confirm
+its unifi wlans password <wlan-id> --passphrase "new-password" --confirm --json
 ```
 
 ## firewall
@@ -311,9 +311,9 @@ its unifi ports --watch
 List recent events. Surfaces the most common fields; pass --json for raw shape.
 Flags: `--hours` Look-back period in hours (default 24) · `--limit` Maximum number of events (default 50) · `--site` Site name override
 ```bash
-its unifi events --since 1h
-its unifi events --since 1h --json
-its unifi events --since 1h --watch
+its unifi events --hours 1
+its unifi events --hours 1 --json
+its unifi events --hours 1 --watch
 ```
 
 ## alarms
@@ -369,8 +369,8 @@ its unifi vouchers --watch
 Create guest WiFi vouchers. Idempotent on duplicate names — use update/edit to mutate an existing record.
 Flags: `--minutes` Voucher duration in minutes · `--count` Number of vouchers to create (default 1) · `--quota` Number of uses per voucher (0 = unlimited, default 0) · `--note` Note to attach to the vouchers · `--site` Site name override
 ```bash
-its unifi vouchers create --duration 1440 --count 5
-its unifi vouchers create --duration 1440 --count 5 --json
+its unifi vouchers create --minutes 1440 --count 5
+its unifi vouchers create --minutes 1440 --count 5 --json
 ```
 
 ### `its unifi vouchers revoke <id>`

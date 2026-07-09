@@ -83,7 +83,7 @@ its cf dns update <record-id> --zone example.com --content 5.6.7.8 --json
 Delete a DNS record. Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record.
 Flags: `--zone` Zone domain or id · `--confirm` Confirm deletion
 ```bash
-its cf dns delete --zone example.com --name www --confirm
+its cf dns delete <record-id> --zone example.com --confirm
 ```
 
 ## tunnels
