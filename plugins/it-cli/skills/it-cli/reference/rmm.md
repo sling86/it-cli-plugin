@@ -75,7 +75,7 @@ its rmm agents prune --older-than 6w --confirm
 ```
 
 ### `its rmm agents run <agent>`
-Execute a one-shot shell command on the target agent. Returns stdout + stderr + exit code. Use --shell powershell|cmd|bash; default timeout is 90s.
+Execute a one-shot shell command on the target agent. Returns stdout + stderr + exit code. Use --shell powershell|cmd|bash; default timeout is 30s.
 Flags: `--shell` Shell type · `--cmd` Command to execute (use --file for multi-line scripts) · `--file` Path to a local script file (overrides --cmd). PowerShell multi-line scripts auto-wrapped via base64 + temp file. · `--raw` Disable auto-wrapping for multi-line PowerShell (sends as-is) · `--timeout` Timeout in seconds
 ```bash
 its rmm agents run OFFICE-PC-01 --shell powershell --cmd "Get-Process"
@@ -126,6 +126,10 @@ its rmm agents refresh OFFICE-PC-01
 its rmm agents refresh OFFICE-PC-01 --json
 ```
 
+### `its rmm agents eventlog <agent>`
+Read a Windows event log (Application, System, or Security) from an agent over the last N days.
+Flags: `--type` Log type · `--days` Look-back window in days
+
 ## dashboard
 
 ### `its rmm dashboard`
@@ -133,8 +137,6 @@ Single-screen fleet health view — online/offline/overdue counts, server vs wor
 ```bash
 its rmm dashboard
 its rmm dashboard --json
-its rmm dashboard
-its rmm dashboard --watch
 its rmm dashboard --watch
 ```
 
@@ -280,8 +282,6 @@ its rmm updates install OFFICE-PC --confirm
 its rmm updates install --client "Candle Retail"
 its rmm updates install --client "Candle Retail" --confirm
 its rmm updates install OFFICE-PC-01 --confirm
-its rmm updates install --client "Candle Retail"
-its rmm updates install --client "Candle Retail" --confirm
 ```
 
 ### `its rmm updates approve <agent>`

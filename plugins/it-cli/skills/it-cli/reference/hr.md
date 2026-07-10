@@ -1,6 +1,6 @@
 # PeopleHR (`hr`)
 
-PeopleHR — bulk employee directory, upcoming and recent starters/leavers. tenant key is bulk-read scoped (single-record endpoints return Access Denied), so lookups go through the bulk list + client-side filter..
+PeopleHR — bulk employee directory, upcoming and recent starters/leavers. tenant key is bulk-read scoped (single-record endpoints return Access Denied), so lookups go through the bulk list + client-side filter.
 
 > Auto-generated reference. Configure: `its hr setup`. For a command you can name, prefer live help `its hr <resource> help` (always current) — read this file to discover what exists. [Index](./index.md)
 
@@ -30,7 +30,7 @@ its hr employees search "jane" --json
 ```
 
 ### `its hr employees get <email>`
-Get employee details by email (client-side filter). Pass the id (or any natural identifier) as the positional arg.
+Get employee details by email (client-side filter). Match is exact on email address — not a fuzzy/name lookup.
 ```bash
 its hr employees get <employee-id>
 its hr employees get <employee-id> --json

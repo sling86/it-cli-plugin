@@ -165,7 +165,6 @@ Flags: `--copy` Copy the secret to the OS clipboard instead of printing it. Auto
 its bw password "server-login" --include-secrets
 its bw password "server-login" --copy
 its bw password "server-login"
-its bw password "server-login" --copy
 its bw password "server-login" --watch
 ```
 

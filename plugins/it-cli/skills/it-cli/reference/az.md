@@ -51,7 +51,7 @@ its az resources --watch
 ```
 
 ### `its az resources get <id>`
-Show resource detail by ID. Pass the id (or any natural identifier) as the positional arg.
+Show resource detail by ID. Requires the full Azure resource ID (/subscriptions/.../resourceGroups/.../providers/...) as the positional arg — copy it from `az resources` output.
 ```bash
 its az resources get /subscriptions/<sub>/resourceGroups/<rg>/...
 its az resources get /subscriptions/<sub>/resourceGroups/<rg>/... --json

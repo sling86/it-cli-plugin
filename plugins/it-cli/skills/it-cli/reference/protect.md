@@ -22,11 +22,15 @@ its protect cameras get <camera-id> --json
 ```
 
 ### `its protect cameras offline`
-List disconnected/offline cameras. Returns recently-disconnected clients.
+List disconnected/offline cameras — those whose state is not CONNECTED.
 ```bash
 its protect cameras offline
 its protect cameras offline --json
 ```
+
+### `its protect cameras snapshot <camera_id>`
+Get the full-resolution snapshot URL for a camera (authenticated endpoint). Pass the camera id from `cameras list`.
+Flags: `--width` Snapshot width in px · `--height` Snapshot height in px
 
 ## nvr
 

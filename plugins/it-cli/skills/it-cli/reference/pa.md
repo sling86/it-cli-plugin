@@ -40,6 +40,10 @@ its pa flows get <flow-id> --environment <env-id>
 its pa flows get <flow-id> --environment <env-id> --json
 ```
 
+### `its pa flows permissions <flow_id>`
+List a flow's owners/co-owners (ACL entries). Each entry's `aclId` is the id used to remove it — not the principal's object id.
+Flags: `--environment` Environment id (required)
+
 ### `its pa flows stop <flow_id>`
 Turn a flow off (admin). Stop the resource. Use --confirm if the action is destructive.
 Flags: `--environment` Environment id (required)

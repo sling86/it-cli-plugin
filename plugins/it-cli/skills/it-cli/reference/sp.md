@@ -50,6 +50,9 @@ its sp sites structure <site-id>
 its sp sites structure <site-id> --json
 ```
 
+### `its sp sites storage [siteId]`
+Storage usage per site and drive (used/total). Defaults to all sites (up to 100); pass one or more site ids to scope.
+
 ## drives
 
 ### `its sp drives <siteId>`
@@ -83,6 +86,10 @@ Flags: `--drive` Drive ID · `--item` Item ID
 its sp drives get <site-id> --drive <drive-id> --item <item-id>
 its sp drives get <site-id> --drive <drive-id> --item <item-id> --json
 ```
+
+### `its sp drives recent <siteId>`
+Recently modified items in a drive over the last N days (delta query). Requires --drive.
+Flags: `--drive` Drive ID (from `its sp drives <siteId>`) · `--days` Look-back window in days
 
 ## lists
 
