@@ -209,8 +209,6 @@ List all subscribed SKUs/licences. Available column gets a ⚠ marker when fewer
 its entra licences
 its entra licences --filter available=0
 its entra licences --json
-its entra licences
-its entra licences --json
 its entra licences --watch
 ```
 

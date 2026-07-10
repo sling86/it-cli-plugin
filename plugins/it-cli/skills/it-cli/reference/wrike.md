@@ -24,7 +24,7 @@ its wrike tickets stats --json
 ```
 
 ### `its wrike tickets active`
-List active IT tickets. Returns whichever record the API key currently targets.
+List active IT tickets — those not in a completed/cancelled state.
 ```bash
 its wrike tickets active
 its wrike tickets active --json

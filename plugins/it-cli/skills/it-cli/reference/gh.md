@@ -1,6 +1,6 @@
 # GitHub (`gh`)
 
-GitHub via the local `gh` CLI. Piggybacks on the user's existing `gh auth` — no PAT needed. Today: standard branch-protection (block), per-repo webhook setup, webhook list..
+GitHub via the local `gh` CLI. Piggybacks on the user's existing `gh auth` — no PAT needed. Today: standard branch-protection (block), per-repo webhook setup, webhook list.
 
 > Auto-generated reference. Configure: `its gh setup`. For a command you can name, prefer live help `its gh <resource> help` (always current) — read this file to discover what exists. [Index](./index.md)
 

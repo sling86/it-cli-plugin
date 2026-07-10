@@ -11,8 +11,6 @@ Every project in this Dokploy server, with a per-project tally of applications a
 ```bash
 its dokploy projects
 its dokploy projects --json
-its dokploy projects
-its dokploy projects --json
 its dokploy projects --watch
 ```
 

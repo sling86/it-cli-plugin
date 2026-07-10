@@ -22,8 +22,6 @@ Flags: `--name` Filter by exact domain name
 ```bash
 its cf zones
 its cf zones --name example.com
-its cf zones
-its cf zones --name example.com
 its cf zones --watch
 ```
 
@@ -50,8 +48,6 @@ Flags: `--zone` Zone domain or id (required) Â· `--type` Filter by record type Â
 its cf dns --zone example.com
 its cf dns --zone example.com --type A
 its cf dns --zone example.com --name www
-its cf dns --zone example.com
-its cf dns --zone example.com --type A
 its cf dns --zone example.com --watch
 ```
 

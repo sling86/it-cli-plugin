@@ -156,7 +156,6 @@ Flags: `--hide` Hide from the GAL · `--show` Show in the GAL
 List mail flow (transport) rules. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its exo rules
-its exo rules
 its exo rules --json
 its exo rules --watch
 ```
