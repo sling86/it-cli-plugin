@@ -76,7 +76,7 @@ its rmm agents prune --older-than 6w --confirm
 
 ### `its rmm agents run <agent>`
 Execute a one-shot shell command on the target agent. Returns stdout + stderr + exit code. Use --shell powershell|cmd|bash; default timeout is 30s.
-Flags: `--shell` Shell type · `--cmd` Command to execute (use --file for multi-line scripts) · `--file` Path to a local script file (overrides --cmd). PowerShell multi-line scripts auto-wrapped via base64 + temp file. · `--raw` Disable auto-wrapping for multi-line PowerShell (sends as-is) · `--timeout` Timeout in seconds
+Flags: `--shell` Shell type · `--cmd` Command to execute (use --file for multi-line scripts) · `--file` Path to a local script file (overrides --cmd). PowerShell multi-line scripts auto-wrapped via base64 + temp file. · `--raw` Disable auto-wrapping for multi-line PowerShell (sends as-is) · `--timeout` Timeout in seconds · `--as-user` Run in the active user's session instead of SYSTEM (requires a signed-in desktop user)
 ```bash
 its rmm agents run OFFICE-PC-01 --shell powershell --cmd "Get-Process"
 its rmm agents run OFFICE-PC-01 --shell cmd --cmd "ipconfig /all"
@@ -366,9 +366,10 @@ its rmm scripts get <script-id> --json
 
 ### `its rmm scripts run [agent]`
 Execute a saved RMM script on a target agent, or fan it out across a fleet with --all-online/--client/--site/--policy (online agents only). Streams stdout/stderr back; use --timeout for long-running jobs (default 120s). Fan-out previews the target list and needs --confirm to execute.
-Flags: `--script` Script ID · `--args` Script arguments (comma-separated) · `--timeout` Timeout in seconds · `--raw` Print the script's raw stdout (and stderr) directly, instead of JSON-wrapped output with escaped \r\n (single-agent only) · `--all-online` Fan out to every online agent · `--client` Fan out to online agents in this client (substring) · `--site` Fan out to online agents in this site (substring) · `--policy` Fan out to online agents under this automation policy id · `--confirm` Required to execute a fan-out run (preview without it)
+Flags: `--script` Script ID · `--args` Script arguments (comma-separated) · `--timeout` Timeout in seconds · `--raw` Print the script's raw stdout (and stderr) directly, instead of JSON-wrapped output with escaped \r\n (single-agent only) · `--all-online` Fan out to every online agent · `--client` Fan out to online agents in this client (substring) · `--site` Fan out to online agents in this site (substring) · `--policy` Fan out to online agents under this automation policy id · `--confirm` Required to execute a fan-out run (preview without it) · `--as-user` Run in the logged-on user's session instead of as SYSTEM. Needed to exercise per-user scripts; fails if nobody is signed in.
 ```bash
 its rmm scripts run OFFICE-PC --script 12
+its rmm scripts run OFFICE-PC --script 435 --as-user
 its rmm scripts run --all-online --script 12
 its rmm scripts run --all-online --script 12 --confirm
 its rmm scripts run --client "Candle Retail" --script 12 --confirm
@@ -378,8 +379,8 @@ its rmm scripts run OFFICE-PC-01 --script "Long Audit" --timeout 600
 ```
 
 ### `its rmm scripts upload-local <agent> <path>`
-Upload a local .ps1/.sh/.py script to TRMM, run it on the agent, capture output, and delete the script afterwards. Use for ad-hoc D:/it/it-scripts/... invocations (Fix-DymoPrinter, Invoke-CorruptionCheck, Get-ShutdownDiagnostics). Pass --keep to leave the script registered.
-Flags: `--shell` Script shell (defaults to auto-detect from extension: ps1=powershell, sh=shell, py=python, nu=nushell, ts=deno) · `--args` Script arguments (comma-separated) · `--timeout` Timeout in seconds (default 120) · `--keep` Leave the uploaded script registered in TRMM after execution · `--category` Category for the uploaded script (default 'Ad-hoc')
+Upload a local .ps1/.sh/.py script to TRMM, run it on the agent, capture output, and delete the script afterwards. Use for ad-hoc local maintenance scripts. Pass --keep to leave the script registered.
+Flags: `--shell` Script shell (defaults to auto-detect from extension: ps1=powershell, sh=shell, py=python, nu=nushell, ts=deno) · `--args` Script arguments (comma-separated) · `--timeout` Timeout in seconds (default 120) · `--keep` Leave the uploaded script registered in TRMM after execution · `--category` Category for the uploaded script (default 'Ad-hoc') · `--as-user` Run in the logged-on user's session instead of as SYSTEM. Fails if nobody is signed in.
 ```bash
 its rmm scripts upload-local ./fix-printers.ps1
 its rmm scripts upload-local ./linux-housekeeping.sh --shell bash
@@ -394,8 +395,10 @@ its rmm scripts delete <script-id> --confirm
 
 ### `its rmm scripts upsert <name> <path>`
 Idempotently push a local script to TRMM by name — creates if missing, updates if present (PUT). Works around the TRMM POST /scripts/ quirk where the response is a plain string, not the created object — we re-list to resolve the new ID.
-Flags: `--shell` Shell: powershell, cmd, shell, python, nushell, deno (auto from extension) · `--category` Category (default 'Ad-hoc') · `--description` Script description (overwritten on update) · `--timeout` Default timeout seconds (default 120) · `--args` Default args, comma-separated
+Flags: `--shell` Shell: powershell, cmd, shell, python, nushell, deno (auto from extension) · `--category` Category (default 'Ad-hoc') · `--description` Script description (overwritten on update) · `--timeout` Default timeout seconds (default 120) · `--args` Default args, comma-separated · `--run-as-user` Run in the logged-on user's session instead of as SYSTEM. Needed for anything touching %USERPROFILE%, HKCU or the user PATH — as SYSTEM those hit the SYSTEM profile.
 ```bash
+its rmm scripts upsert 'Check Git Installed' C:/Scripts/Check-Git.ps1 --category 'Compliance Checks' --timeout 30
+its rmm scripts upsert 'Configure User Profile' ./Set-UserProfile.ps1 --run-as-user
 its rmm scripts upsert "Restart Spooler" ./fix-spooler.ps1
 its rmm scripts upsert "Restart Spooler" ./fix-spooler.ps1 --json
 ```
@@ -444,13 +447,14 @@ its rmm checks create OFFICE-PC-01 --script <script-id> --interval 600
 its rmm checks create OFFICE-PC-01 --script <script-id> --interval 600 --json
 ```
 
-### `its rmm checks edit <agent>`
-Retune an existing check without delete+recreate — change interval, severity, fail-count, or thresholds. PUT is partial, so only the flags you pass change.
+### `its rmm checks edit [agent]`
+Retune an existing check without delete+recreate — change interval, severity, fail-count, or thresholds. PUT is partial, so only the flags you pass change. Works on POLICY checks too: they are edited by --check id, so the agent is optional (find policy check ids via `its rmm policies checks <id>`).
 Flags: `--check` Check ID to edit · `--severity` Alert severity · `--fails` Failures before alert · `--interval` Run interval seconds · `--error` Error threshold % (diskspace/cpuload/memory) · `--warning` Warning threshold % (diskspace/cpuload/memory) · `--timeout` Script check: timeout seconds · `--args` Script check: comma-separated script args (replaces existing)
 ```bash
 its rmm checks edit OFFICE-PC --check 7 --warning 60 --error 80
 its rmm checks edit OFFICE-PC --check 7 --severity warning --fails 3
 its rmm checks edit OFFICE-PC --check 7 --timeout 300 --args -Verbose,-Force
+its rmm checks edit --check 41 --severity warning
 ```
 
 ### `its rmm checks delete [agent_id]`
@@ -462,20 +466,34 @@ its rmm checks delete <check-id> --confirm
 
 ## tasks
 
-### `its rmm tasks <agent>`
-Recurring task schedule attached to one agent — script + interval + next-run.
+### `its rmm tasks [agent]`
+Recurring task schedule attached to one agent — script + interval + next-run. Pass --policy <id> instead of an agent to list a policy's tasks, including the check-failure remediations that fire fleet-wide.
+Flags: `--policy` List tasks attached to this automation policy instead of an agent
 ```bash
+its rmm tasks OFFICE-PC
+its rmm tasks list --policy 4
 its rmm tasks OFFICE-PC-01
 its rmm tasks OFFICE-PC-01 --json
 its rmm tasks OFFICE-PC-01 --watch
 ```
 
-### `its rmm tasks create <agent>`
-Create an automated task that runs a script on an agent. Default is a manual task (run on demand); add --daily-time HH:MM for a daily schedule (+ --weekdays to limit days). Resolves the agent by id/hostname/username, including offline agents.
-Flags: `--script` Script ID to run · `--name` Task name (default: derived from the script ID) · `--args` Script arguments (comma-separated, e.g. -Mode,Notify) · `--timeout` Per-run timeout in seconds (default 90) · `--daily-time` Run daily at HH:MM (24h) — turns this into a scheduled task · `--weekdays` With --daily-time: restrict to these days (mon,tue,wed,thu,fri,sat,sun); default every day · `--run-asap` Run as soon as possible if a scheduled run was missed
+### `its rmm tasks create [agent]`
+Create an automated task that runs a script. Target an agent, or --policy <id> to apply across every agent under a policy. Default is a manual task (run on demand); --daily-time HH:MM makes it scheduled (+ --weekdays to limit days); --on-check-failure <checkId> makes it a remediation that fires whenever that check fails.
+Flags: `--script` Script ID to run · `--policy` Attach to this automation policy instead of a single agent — applies to every agent under it · `--on-check-failure` Check ID this task remediates. Makes it a checkfailure task: it runs whenever that check fails, rather than on a schedule. This is the check-then-fix pattern. · `--severity` Alert severity for the task itself (default info) · `--disabled` Create the task switched off. Use when arming a policy-wide remediation would cause a thundering herd — create it disabled, then enable once you've seen what the check actually reports. · `--name` Task name (default: derived from the script ID) · `--args` Script arguments (comma-separated, e.g. -Mode,Notify) · `--timeout` Per-run timeout in seconds (default 90) · `--daily-time` Run daily at HH:MM (24h) — turns this into a scheduled task · `--weekdays` With --daily-time: restrict to these days (mon,tue,wed,thu,fri,sat,sun); default every day · `--run-asap` Run as soon as possible if a scheduled run was missed
 ```bash
+its rmm tasks create --policy 4 --on-check-failure 41 --script 433 --name 'Auto-install dev runtimes' --timeout 1800
+its rmm tasks create --policy 4 --script 252 --daily-time 06:30
+its rmm tasks create OFFICE-PC --script 12 --name 'Clear cache'
 its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --daily-time "03:00" --weekdays sun
 its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --daily-time "03:00" --weekdays sun --json
+```
+
+### `its rmm tasks edit`
+Enable or disable an existing task without delete+recreate. Recreating a policy checkfailure task would lose its assigned_check wiring, so this is the only safe way to arm or disarm a remediation. Also retunes name, severity and run-asap.
+Flags: `--task` Task ID to edit · `--enable` Switch the task on · `--disable` Switch the task off. Use to disarm a policy-wide remediation, or to retire a superseded deployer without deleting it. · `--name` Rename the task · `--severity` Alert severity · `--run-asap` Run as soon as possible after a missed schedule
+```bash
+its rmm tasks edit --task 243 --enable
+its rmm tasks edit --task 15 --disable
 ```
 
 ### `its rmm tasks delete`
