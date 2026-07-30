@@ -8,6 +8,7 @@ UniFi Protect CCTV — cameras, NVR status, storage, motion events, snapshots.
 
 ### `its protect cameras`
 List all Protect cameras with status. Surfaces the most common fields; pass --json for raw shape.
+Flags: `--site` Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables)
 ```bash
 its protect cameras
 its protect cameras --json
@@ -16,6 +17,7 @@ its protect cameras --watch
 
 ### `its protect cameras get <id>`
 Get camera details. Pass the id (or any natural identifier) as the positional arg.
+Flags: `--site` Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables)
 ```bash
 its protect cameras get <camera-id>
 its protect cameras get <camera-id> --json
@@ -23,6 +25,7 @@ its protect cameras get <camera-id> --json
 
 ### `its protect cameras offline`
 List disconnected/offline cameras — those whose state is not CONNECTED.
+Flags: `--site` Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables)
 ```bash
 its protect cameras offline
 its protect cameras offline --json
@@ -30,12 +33,13 @@ its protect cameras offline --json
 
 ### `its protect cameras snapshot <camera_id>`
 Get the full-resolution snapshot URL for a camera (authenticated endpoint). Pass the camera id from `cameras list`.
-Flags: `--width` Snapshot width in px · `--height` Snapshot height in px
+Flags: `--width` Snapshot width in px · `--height` Snapshot height in px · `--site` Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables)
 
 ## nvr
 
 ### `its protect nvr`
 Show NVR status, storage, and capacity. Surfaces the most common fields; pass --json for raw shape.
+Flags: `--site` Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables)
 ```bash
 its protect nvr
 its protect nvr --json
@@ -46,7 +50,7 @@ its protect nvr --watch
 
 ### `its protect events`
 List recent Protect events (motion, smart detections). Surfaces the most common fields; pass --json for raw shape.
-Flags: `--hours` Hours to look back (default 24) · `--limit` Maximum events to return (default 30)
+Flags: `--hours` Hours to look back (default 24) · `--limit` Maximum events to return (default 30) · `--site` Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables)
 ```bash
 its protect events --hours 1
 its protect events --filter camera=<camera-name> --hours 24
@@ -57,6 +61,7 @@ its protect events --hours 1 --watch
 
 ### `its protect dashboard`
 Protect overview — NVR, cameras, storage, recent motion. Surfaces the most common fields; pass --json for raw shape.
+Flags: `--site` Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables)
 ```bash
 its protect dashboard
 its protect dashboard --json
