@@ -2,7 +2,7 @@
 
 > Auto-generated from the live command definitions. Do not edit by hand.
 
-**21 providers** · **201 resources** · **707 commands**. Pick a provider for its full command list.
+**21 providers** · **202 resources** · **709 commands**. Pick a provider for its full command list.
 
 | Provider | Alias | Resources | Commands |
 |----------|-------|-----------|----------|
@@ -16,7 +16,7 @@
 | [Azure CLI](./az.md) | `az` | 11 | 24 |
 | [Exchange Online](./exo.md) | `exo` | 9 | 42 |
 | [Intune](./intune.md) | `intune` | 17 | 42 |
-| [UniFi Protect](./protect.md) | `protect` | 4 | 7 |
+| [UniFi Protect](./protect.md) | `protect` | 5 | 9 |
 | [Power BI](./pbi.md) | `pbi` | 6 | 21 |
 | [Power Platform](./pa.md) | `pa` | 4 | 12 |
 | [Cloudflare](./cf.md) | `cf` | 5 | 16 |
