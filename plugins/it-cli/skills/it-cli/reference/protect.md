@@ -49,13 +49,23 @@ its protect nvr --watch
 ## events
 
 ### `its protect events`
-List recent Protect events (motion, smart detections). Surfaces the most common fields; pass --json for raw shape.
-Flags: `--hours` Hours to look back (default 24) · `--limit` Maximum events to return (default 30) · `--site` Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables)
+List Protect events (motion, smart detections). Surfaces the most common fields; pass --json for raw shape.
+Flags: `--hours` Hours to look back (ignored when --start is given) · `--start` Window start — ISO, local 'YYYY-MM-DD HH:mm', or epoch ms · `--end` Window end (default: now) · `--camera` Camera name or ID — comma-separate for several · `--types` Event types, server-side filter · `--smart` Smart-detection labels, filtered client-side (the NVR ignores the query param) · `--all` Page through the whole window — the fix for silently truncated busy sites · `--limit` Maximum events to return (default 30, ignored with --all) · `--site` Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables)
 ```bash
 its protect events --hours 1
 its protect events --filter camera=<camera-name> --hours 24
 its protect events --hours 1 --watch
 ```
+
+### `its protect events thumbnail <event_id>`
+Download the historical still for an event. Identifiable imagery — --output is required so the write is always deliberate.
+Flags: `--output` File to write the JPEG to · `--width` Thumbnail width in px · `--site` Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables)
+
+## footage
+
+### `its protect footage export <camera>`
+Export MP4 footage for one camera over an exact window. Identifiable footage — --output is required so the write is always deliberate.
+Flags: `--start` Window start — ISO, local 'YYYY-MM-DD HH:mm', or epoch ms · `--end` Window end (default: now) · `--minutes` Window length from --start when --end is omitted · `--output` File to write the MP4 to · `--site` Named Protect profile (uses UNIFI_PROTECT_*_<SITE> environment variables)
 
 ## dashboard
 
