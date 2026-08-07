@@ -23,16 +23,17 @@ its <provider> <resource> [action] [positional_args...] [--flags]
 
 When you intend to parse or reason about the result, **always** pass `--ai` — output becomes minified single-line JSON. Only omit it when the user explicitly wants the human-formatted table.
 
-## Seeing `***REDACTED***`? Add `--include-secrets`
+## Seeing `***REDACTED***`? Keep the secret out of machine output
 
-Secrets are masked by **default** in every output mode — passwords, keys, tokens, TOTP seeds, Bitwarden hidden fields. When that happens you'll get `***REDACTED***` in the data **and** a stderr line like `2 secret fields hidden — re-run with --include-secrets to reveal`. To actually obtain the value (e.g. a server password, a BitLocker recovery key), **re-run the exact same command with `--include-secrets`**:
+Secrets are masked by default — passwords, keys, tokens, TOTP seeds and Bitwarden hidden fields. `--include-secrets` / `--unsafe` is accepted only for interactive human output; JSON/AI modes and redirected stdout reject it. An AI shell therefore cannot retrieve a raw secret through captured command output.
+
+When a human needs a Bitwarden value, ask them to run the clipboard command in their own terminal:
 
 ```bash
-its bw password "server-login"                   # -> ***REDACTED*** (masked)
-its bw password "server-login" --include-secrets # -> the real password
+its bw password "server-login" --copy # clipboard only; auto-clears
 ```
 
-Every `--include-secrets` use is audit-logged. **Never paste the revealed value into chat, a ticket, or any AI transcript.** To hand a secret to a human without printing it, prefer `--copy` (clipboard, auto-clears).
+For providers without a secure destination command, the human may use `--include-secrets` in an interactive terminal. Every use is audit-logged. Never paste the revealed value into chat, a ticket, or an AI transcript.
 
 ## Global commands (cross-provider)
 
@@ -61,7 +62,9 @@ its export [--data]             # Export config (+ optionally live data)
 | Flag                | Purpose                                                                 |
 | ------------------- | ---------------------------------------------------------------------- |
 | `--ai`              | Minified JSON output (use this when parsing)                            |
+| `--ai-flat`         | Minified JSON without the columnar envelope                            |
 | `--json`            | Pretty-printed JSON                                                     |
+| `--jsonl`           | NDJSON — one compact JSON record per line                              |
 | `--csv` / `--tsv`   | Delimited output                                                        |
 | `--sort <column>`   | Sort by column (case-insensitive, partial names OK)                     |
 | `--order asc\|desc` | Sort direction (default asc)                                            |
@@ -70,11 +73,14 @@ its export [--data]             # Export config (+ optionally live data)
 | `--limit N`         | Cap output to N rows (server-side where supported)                      |
 | `--count`           | Return only the row count                                              |
 | `--no-cache`        | Bypass cache (force fresh data)                                         |
-| `--stdin`           | Fan a command out over a piped JSON array (one call per row)            |
+| `--stdin`           | Fan out over JSON, NDJSON, scalar, or columnar `--ai` input            |
+| `--map arg=.path`   | Explicitly bind an input field to a positional argument; repeatable    |
+| `--on-error <mode>` | `stop` (default) or `continue` after a per-record failure              |
+| `--max-input N`     | Bound fan-out; required explicitly for irreversible commands           |
 | `--dry-run`         | Preview mutations — print method + URL + body, skip send               |
-| `--include-secrets` | Disable global secret redaction (audit-logged — see Safety)            |
-| `--auth <mode>`     | OAuth mode — `auto` (default; delegated→app), `delegated`, `app`, `az` (broker tokens from the operator's Azure CLI session — for privileged one-shot ops) |
-| `--profile <name>`  | Force a delegated identity for one call, overriding the provider→profile map (see Auth profiles) |
+| `--include-secrets` | Human TTY plaintext only; rejected in machine/captured output          |
+| `--auth <mode>`     | OAuth mode — `auto`, `delegated`, `app`, or `az`                       |
+| `--profile <name>`  | Force a delegated identity for one call                                |
 
 ### How `--filter` works
 
@@ -139,17 +145,19 @@ its exo groups --fields displayName,primarySmtpAddress --ai
 
 ## Cross-command pipelines (`--stdin`)
 
-Fan a command out over a piped JSON array. The downstream command reads stdin, extracts the first usable identifier per row (id, agent_id, upn, hostname, mac, email, name) and runs once per row.
+The downstream command accepts a JSON array, one JSON object, NDJSON, a scalar, or the columnar envelope emitted by `--ai`. Each input record must bind at least one positional argument. Command-owned `pipeFrom` metadata is preferred; use repeatable `--map arg=.path` when the input shape differs. The temporary legacy identifier fallback warns when used.
 
 ```bash
-# Ping every overdue agent
-its rmm agents --filter status=overdue --ai | its rmm agents ping --stdin
+# Command metadata maps agent_id to the required agent argument
+its rmm agents --filter status=overdue --jsonl \
+  | its rmm agents ping --stdin --jsonl
 
-# Full details for every user in a department
-its entra users --filter dept=IT --ai | its entra users get --stdin --ai
+# Explicit mapping overrides command metadata when needed
+its rmm agents --jsonl \
+  | its rmm agents get --stdin --map agent=.agent_id --jsonl
 ```
 
-stdout of the runner is a summary + per-row results + per-row failures; exit code is non-zero if any row failed.
+Commands with no positional arguments reject record fan-out. Mutations validate every binding before the first write and run sequentially. Fan-out defaults to 100 records; irreversible commands require an explicit `--max-input`. Per-record failures go to stderr, successful records go to stdout, and any failure produces a non-zero exit code.
 
 ## Prefer `its` over the bare vendor CLIs
 
@@ -170,5 +178,5 @@ If `its` exposes a command for what you want, use it. Only reach for the bare CL
 
 - **Destructive actions** (delete, remove, disable, block, reboot, purge) — confirm with the user before executing. Most accept `--confirm`; preview mutations with `--dry-run` first.
 - **Secret redaction is on by default.** Any key that looks like a credential (`password`, `clientSecret`, `privateKey`, `refresh_token`, `apiKey`, `token`, `secret`, …) and any value shaped like a PEM key or JWT is replaced with `***REDACTED***` in output. Bitwarden **hidden custom fields** are also masked in every mode, and **live TOTP codes** are masked whenever output isn't an interactive terminal (piped / `--ai` / captured) — so nothing secret lands in an AI transcript by default. `its secrets` only reports `SET`/`NOT SET`, never values.
-- Opt out with `--include-secrets` only when you genuinely need the raw value (e.g. a BitLocker recovery key for a handover). **Every use is audit-logged** to `~/.its/audit.log`. Never paste `--include-secrets` output into chat, tickets, or AI tools. To hand a secret to a human without printing it, prefer `--copy` (clipboard, auto-clears).
+- `--include-secrets` / `--unsafe` reveals plaintext only in interactive human output and is audit-logged to `~/.its/audit.log`; machine formats and redirected stdout reject it. Never paste revealed output into chat, tickets, or AI tools. Bitwarden `--copy` is the secure human hand-off, but it also requires an interactive terminal.
 - Use `its <provider> setup --check` if unsure whether a provider is configured.

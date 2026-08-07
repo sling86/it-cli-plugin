@@ -8,7 +8,7 @@ Bitwarden vault — search items, get passwords, browse folders.
 
 ### `its bw items`
 List all vault items. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--type` Filter by type (login/note/card/identity) · `--folder` Filter by folder name · `--favourite` Show only favourites · `--vault` Named vault profile (omit for default)
+Flags: `--type` Filter by type (login/note/card/identity) · `--folder` Filter by folder name · `--favourite` Show only favourites · `--organisation` Organisation name or ID · `--collection` Collection name or ID · `--personal-only` Show only personal items · `--vault` Named vault profile (omit for default)
 ```bash
 its bw items
 its bw items --folder "Servers"
@@ -17,7 +17,7 @@ its bw items --watch
 
 ### `its bw items search <query>`
 Search vault items by name, username, URL, or notes. Substring match across the most relevant fields; case-insensitive.
-Flags: `--vault` Named vault profile (omit for default)
+Flags: `--organisation` Organisation name or ID · `--collection` Collection name or ID · `--personal-only` Show only personal items · `--vault` Named vault profile (omit for default)
 ```bash
 its bw items search "github"
 its bw items search "github" --json
@@ -65,7 +65,7 @@ its bw items favourites --json
 
 ### `its bw items create <name>`
 Create a new vault item (login, note, card, or identity). Idempotent on duplicate names — use update/edit to mutate an existing record.
-Flags: `--type` Item type: login (default), note, card, identity · `--username` Login username · `--password` Login password · `--password-file` Read the password from a UTF-8 file (keeps the secret out of shell history and the command line) · `--uri` Login URL · `--totp` TOTP secret or otpauth URI · `--notes` Notes · `--notes-file` Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) · `--folder` Folder name (created if it does not exist) · `--field` Custom text field(s) — comma-separated name=value (e.g. --field lan_ip=10.0.0.1,rack=A3). On update, upserts by name. · `--field-hidden` Custom hidden field(s) — comma-separated name=value. Stored as a secret (masked in the UI like a password). · `--vault` Named vault profile (omit for default)
+Flags: `--type` Item type: login (default), note, card, identity · `--username` Login username · `--password` Login password · `--password-file` Read the password from a UTF-8 file (keeps the secret out of shell history and the command line) · `--uri` Login URL · `--totp` TOTP secret or otpauth URI · `--notes` Notes · `--notes-file` Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) · `--folder` Folder name (created if it does not exist) · `--field` Custom text field(s) — comma-separated name=value (e.g. --field lan_ip=10.0.0.1,rack=A3). On update, upserts by name. · `--field-hidden` Custom hidden field(s) — comma-separated name=value. Stored as a secret (masked in the UI like a password). · `--organisation` Organisation name or ID · `--collection` Collection name or ID · `--vault` Named vault profile (omit for default)
 ```bash
 its bw items create "Router" --username admin --password "s3cret"
 its bw items create "Router" --field lan_ip=10.0.0.1 --field-hidden api_token=abc123
@@ -82,6 +82,10 @@ its bw items update <id> --field-remove lan_ip --confirm
 its bw items update <item-id> --password "NewP@ss" --confirm
 its bw items update <item-id> --password "NewP@ss" --confirm --json
 ```
+
+### `its bw items share <id>`
+Irreversibly transfer a personal item to an organisation collection. There is no automatic rollback.
+Flags: `--organisation` Organisation name or ID · `--collection` Collection name or ID · `--confirm` Confirm the irreversible ownership transfer · `--vault` Named vault profile (omit for default)
 
 ### `its bw items move <id>`
 Move vault items to a folder. Move an item between folders. --confirm required.
@@ -155,6 +159,18 @@ Flags: `--confirm` Confirm folder deletion · `--vault` Named vault profile (omi
 ```bash
 its bw folders delete "Old stuff" --confirm
 ```
+
+## organisations
+
+### `its bw organisations`
+List organisations available to the selected vault account.
+Flags: `--vault` Named vault profile (omit for default)
+
+## collections
+
+### `its bw collections`
+List collections, optionally scoped by organisation name or ID.
+Flags: `--organisation` Organisation name or ID · `--vault` Named vault profile (omit for default)
 
 ## password
 
