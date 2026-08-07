@@ -171,7 +171,7 @@ its sp files upload <site-id> --drive <drive-id> --path "Shared Documents" --nam
 ```
 
 ### `its sp files folder <siteId>`
-Create a folder. Returns the contents of a folder by path.
+Create a folder under a parent item.
 Flags: `--drive` Drive ID · `--parent` Parent item ID · `--name` Folder name
 ```bash
 its sp files folder <site-id> --drive <drive-id> --parent <parent-id> --name "New Folder"
