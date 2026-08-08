@@ -10,7 +10,6 @@ Dokploy self-hosted PaaS management — projects, apps, databases, deployments, 
 Every project in this Dokploy server, with a per-project tally of applications and databases. The starting point for navigating most other dokploy commands.
 ```bash
 its dokploy projects
-its dokploy projects --json
 its dokploy projects --watch
 ```
 
@@ -18,7 +17,6 @@ its dokploy projects --watch
 Full project detail — owner, env, plus the contained apps/databases/composes. Use the project ID from `dokploy projects`.
 ```bash
 its dokploy projects get <project-id>
-its dokploy projects get <project-id> --json
 ```
 
 ### `its dokploy projects create`
@@ -26,7 +24,6 @@ Create an empty Dokploy project. Apps and databases are added afterwards via `do
 Flags: `--name` Project name · `--description` Project description
 ```bash
 its dokploy projects create --name "my-app"
-its dokploy projects create --name "my-app" --json
 ```
 
 ### `its dokploy projects delete <projectId>`
@@ -51,7 +48,6 @@ its dokploy apps --ai | its dokploy apps health --stdin
 Get full detail for an application — source config, mounts, env keys, replicas, last deploy, and live container image.
 ```bash
 its dokploy apps get <app-id>
-its dokploy apps get <app-id> --json
 ```
 
 ### `its dokploy apps create`
@@ -59,7 +55,6 @@ Scaffold an empty application inside a project. Wire it to a source (git, docker
 Flags: `--project` Project ID · `--name` Application display name · `--appName` Docker app name (auto-slugified from name if omitted) · `--description` Application description
 ```bash
 its dokploy apps create --project <project-id> --name "my-api"
-its dokploy apps create --project <project-id> --name "my-api" --json
 ```
 
 ### `its dokploy apps delete <applicationId>`
@@ -87,27 +82,24 @@ its dokploy apps stop <app-id>
 Start a previously stopped container. Idempotent — no-op if already running.
 ```bash
 its dokploy apps start <app-id>
-its dokploy apps start <app-id> --json
 ```
 
 ### `its dokploy apps restart <applicationId>`
 Stop + start in one call. Doesn't rebuild — use `dokploy apps deploy` if the image needs to change.
 ```bash
 its dokploy apps restart <app-id>
-its dokploy apps restart <app-id> --json
 ```
 
 ### `its dokploy apps set-source <app>`
 Wire an application to a source provider. --type github links a GitHub App repo; --type docker pins to a registry image.
-Flags: `--type` Source type · `--github-id` Dokploy GitHub provider ID (its dokploy git list) · `--owner` GitHub owner / org · `--repo` GitHub repository name · `--branch` Branch (default main) · `--build-path` Path inside the repo to use as build context (default /) · `--watch-paths` Comma-separated glob list to limit auto-deploy triggers (default ** = any change) · `--image` Docker image reference (for --type docker) · `--username` Registry username (optional, for private registries) · `--password` Registry password / token (optional) · `--registry-url` Registry URL — e.g. ghcr.io or docker.io. Leave blank for Docker Hub. · `--dry-run` Print the planned request without sending
+Flags: `--type <github|docker>` Source type · `--github-id` Dokploy GitHub provider ID (its dokploy git list) · `--owner` GitHub owner / org · `--repo` GitHub repository name · `--branch` Branch (default main) · `--build-path` Path inside the repo to use as build context (default /) · `--watch-paths` Comma-separated glob list to limit auto-deploy triggers (default ** = any change) · `--image` Docker image reference (for --type docker) · `--username` Registry username (optional, for private registries) · `--password` Registry password / token (optional) · `--registry-url` Registry URL — e.g. ghcr.io or docker.io. Leave blank for Docker Hub. · `--dry-run` Print the planned request without sending
 ```bash
 its dokploy apps set-source <app-id> --type github --repo owner/repo --branch main
-its dokploy apps set-source <app-id> --type github --repo owner/repo --branch main --json
 ```
 
 ### `its dokploy apps set-build <app>`
 Set build type for an application (dockerfile, nixpacks, heroku_buildpacks, paketo_buildpacks, static, railpack). Dockerfile path/context configurable.
-Flags: `--type` Build type · `--dockerfile` Path to the Dockerfile (default Dockerfile) · `--context` Docker build context (default .) · `--stage` Multi-stage build target stage · `--publish-dir` Static SPA publish directory (type=static only) · `--dry-run` Print the planned request without sending
+Flags: `--type <dockerfile|nixpacks|heroku_buildpacks|paketo_buildpacks|static|railpack>` Build type · `--dockerfile` Path to the Dockerfile (default Dockerfile) · `--context` Docker build context (default .) · `--stage` Multi-stage build target stage · `--publish-dir` Static SPA publish directory (type=static only) · `--dry-run` Print the planned request without sending
 ```bash
 its dokploy apps set-build <app-id> --type nixpacks
 its dokploy apps set-build <app-id> --type dockerfile --dockerfile "./Dockerfile"
@@ -117,7 +109,6 @@ its dokploy apps set-build <app-id> --type dockerfile --dockerfile "./Dockerfile
 Force a fresh build from source (clones, builds image, deploys). Distinct from `redeploy` (re-uses last image) and `deploy` which is the alias for this. Internally maps to application.deploy — `application.rebuild` returns 404.
 ```bash
 its dokploy apps rebuild <app-id>
-its dokploy apps rebuild <app-id> --json
 ```
 
 ### `its dokploy apps wait-deploy <app>`
@@ -125,14 +116,12 @@ Poll an application's deployments until the latest (or --since <id>) transitions
 Flags: `--timeout` Timeout in seconds (default 600) · `--interval` Poll interval in seconds (default 5) · `--since` Wait for this specific deployment ID. Avoids the race where two deploys fire close together and the latest snapshot changes mid-poll.
 ```bash
 its dokploy apps wait-deploy <app-id> --timeout 600
-its dokploy apps wait-deploy <app-id> --timeout 600 --json
 ```
 
 ### `its dokploy apps redeploy <applicationId>`
 Redeploy an application without rebuilding. Redeploys the existing container; doesn't rebuild from source.
 ```bash
 its dokploy apps redeploy <app-id>
-its dokploy apps redeploy <app-id> --json
 ```
 
 ### `its dokploy apps logs <app>`
@@ -148,21 +137,18 @@ Resource-usage snapshot for a running app — CPU%, memory MB, disk, network rx/
 Flags: `--samples` Latest N samples to show (default 5)
 ```bash
 its dokploy apps monitoring <app-id>
-its dokploy apps monitoring <app-id> --json
 ```
 
 ### `its dokploy apps traefik <app>`
 Show the Traefik routing config (router + service + middlewares) Dokploy generated for the application. Useful for debugging 404/SSL/redirect issues at the proxy layer.
 ```bash
 its dokploy apps traefik <app-id>
-its dokploy apps traefik <app-id> --json
 ```
 
 ### `its dokploy apps status <app>`
 Show container state, uptime, restart count, image, and domain.
 ```bash
 its dokploy apps status <app-id>
-its dokploy apps status <app-id> --json
 its dokploy apps status <app-id> --watch
 ```
 
@@ -171,7 +157,6 @@ Clone an application — copies Docker settings, env vars, and creates a domain.
 Flags: `--domain` Domain hostname for the new app · `--image` Override the Docker image · `--env-override` Override env var (KEY=VALUE, repeatable via comma-separated)
 ```bash
 its dokploy apps clone <source-id> "my-api-staging"
-its dokploy apps clone <source-id> "my-api-staging" --json
 ```
 
 ### `its dokploy apps shell <app> [cmd]`
@@ -179,7 +164,6 @@ Open an interactive shell in the running container via SSH + docker exec. Pass [
 Flags: `--shell` Shell to use when no [cmd] is given (default sh)
 ```bash
 its dokploy apps shell <app-id>
-its dokploy apps shell <app-id> --json
 ```
 
 ### `its dokploy apps migrate <app>`
@@ -203,7 +187,6 @@ Lightweight health sweep across ALL apps — replicas / last deploy / domain rea
 Flags: `--project` Filter by project name · `--fail-only` Show only apps with non-OK verdict
 ```bash
 its dokploy apps health <app-id>
-its dokploy apps health <app-id> --json
 its dokploy apps health <app-id> --watch
 ```
 
@@ -221,12 +204,11 @@ Run a battery of parallel checks (env, mounts, webhook, replicas, image, healthc
 Flags: `--no-ssh` Skip checks that need SSH (host-path verify, build/service log scan)
 ```bash
 its dokploy apps doctor <app-id>
-its dokploy apps doctor <app-id> --json
 ```
 
 ### `its dokploy apps bootstrap <name>`
 Bootstrap a new Dokploy app end-to-end: resolves or creates the project, creates the application, wires the GitHub source, sets the build type, pushes env vars, creates the domain, and triggers the first deploy. Idempotent — re-running with the same --name skips already-completed steps. Use --dry-run first.
-Flags: `--repo` GitHub source as <owner/repo> · `--branch` Git branch (default main) · `--domain` Domain to assign (e.g. app.example.com) · `--port` Container port the app listens on (default 3000) · `--env-file` Path to .env file to push · `--project` Project name or id (default: same as --name; created if missing) · `--github-id` Dokploy GitHub provider id (default: first provider from `github providers`) · `--dockerfile` Dockerfile path inside the repo (default Dockerfile) · `--context` Docker build context (default .) · `--build-type` Build type (default dockerfile) · `--no-deploy` Skip the final rebuild/deploy step · `--dry-run` Print the plan without sending any mutations
+Flags: `--repo` GitHub source as <owner/repo> · `--branch` Git branch (default main) · `--domain` Domain to assign (e.g. app.example.com) · `--port` Container port the app listens on (default 3000) · `--env-file` Path to .env file to push · `--project` Project name or id (default: same as --name; created if missing) · `--github-id` Dokploy GitHub provider id (default: first provider from `github providers`) · `--dockerfile` Dockerfile path inside the repo (default Dockerfile) · `--context` Docker build context (default .) · `--build-type <dockerfile|nixpacks|heroku_buildpacks|paketo_buildpacks|static|railpack>` Build type (default dockerfile) · `--no-deploy` Skip the final rebuild/deploy step · `--dry-run` Print the plan without sending any mutations
 
 ### `its dokploy apps cert-status <app>`
 Read Traefik acme.json for the app's domains — surfaces certificate state, expiry, last LE error. SSH-backed (reads from the dokploy-traefik container).
@@ -237,7 +219,6 @@ Read Traefik acme.json for the app's domains — surfaces certificate state, exp
 List all databases across projects. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its dokploy databases
-its dokploy databases --json
 its dokploy databases --watch
 ```
 
@@ -246,7 +227,6 @@ Compose a connection URL for a database — uses the docker-network appName by d
 Flags: `--type` Database type: postgres, mysql, mariadb, mongo, redis · `--external` Compose using the externally-mapped port instead of the docker-network appName (requires the DB to have an external port configured) · `--host` Override hostname (default: appName for internal, dok host for external)
 ```bash
 its dokploy databases url <db-id>
-its dokploy databases url <db-id> --json
 ```
 
 ### `its dokploy databases get`
@@ -254,7 +234,6 @@ Get full details for a database (appName, credentials, port).
 Flags: `--type` Database type: postgres, mysql, mariadb, mongo, redis
 ```bash
 its dokploy databases get <db-id>
-its dokploy databases get <db-id> --json
 ```
 
 ### `its dokploy databases create`
@@ -262,7 +241,6 @@ Create a database (postgres, mysql, mariadb, mongo, or redis).
 Flags: `--project` Project ID · `--type` Database type: postgres, mysql, mariadb, mongo, redis · `--name` Database display name · `--dbName` Internal database name · `--dbUser` Database user (default varies by type) · `--dbPassword` Database password · `--image` Docker image (default varies by type) · `--description` Description
 ```bash
 its dokploy databases create --type postgres --name "app-db" --project <project-id>
-its dokploy databases create --type postgres --name "app-db" --project <project-id> --json
 ```
 
 ### `its dokploy databases deploy <databaseId>`
@@ -270,7 +248,6 @@ Deploy a database instance. Trigger a fresh deploy from the wired source.
 Flags: `--type` Database type: postgres, mysql, mariadb, mongo, redis
 ```bash
 its dokploy databases deploy <db-id>
-its dokploy databases deploy <db-id> --json
 ```
 
 ### `its dokploy databases stop <databaseId>`
@@ -293,7 +270,6 @@ its dokploy databases delete <db-id> --confirm
 List deployments for an application. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its dokploy deployments <app-id>
-its dokploy deployments <app-id> --json
 its dokploy deployments <app-id> --watch
 ```
 
@@ -301,7 +277,6 @@ its dokploy deployments <app-id> --watch
 Show pending/active deployments across the whole Dokploy server (not scoped to one app). Useful when a deploy seems stuck — empty queue means the worker is idle.
 ```bash
 its dokploy deployments queue
-its dokploy deployments queue --json
 ```
 
 ### `its dokploy deployments kill <deploymentId>`
@@ -316,7 +291,6 @@ its dokploy deployments kill <deployment-id>
 List domains for an application. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its dokploy domains <app-id>
-its dokploy domains <app-id> --json
 its dokploy domains <app-id> --watch
 ```
 
@@ -325,7 +299,6 @@ Add a domain to an application. Idempotent on duplicate names — use update/edi
 Flags: `--host` Domain hostname (e.g. app.example.com) · `--port` Container port (default: 3000) · `--https` Enable HTTPS (default: true) · `--cert` Certificate type (default: letsencrypt)
 ```bash
 its dokploy domains create <app-id> --host "app.example.com" --port 3000
-its dokploy domains create <app-id> --host "app.example.com" --port 3000 --json
 ```
 
 ### `its dokploy domains check [host]`
@@ -333,7 +306,6 @@ Inspect the live TLS certificate for a domain — issuer, validity window, days-
 Flags: `--warn-days` Days remaining below which to flag warn (default 30)
 ```bash
 its dokploy domains check "app.example.com"
-its dokploy domains check "app.example.com" --json
 ```
 
 ### `its dokploy domains delete <domainId>`
@@ -350,7 +322,6 @@ Show environment variables for an application. Keys are visible by default; valu
 Flags: `--show-values` Show actual values (otherwise redacted as ***)
 ```bash
 its dokploy env <app-id>
-its dokploy env <app-id> --json
 its dokploy env <app-id> --watch
 ```
 
@@ -359,7 +330,6 @@ Push an env file to an application. Upload local state to the upstream. Pass --d
 Flags: `--file` Path to env file · `--force` Allow pushing an empty file (wipes ALL env on the app). Required because Dokploy keeps no env history — an accidental empty push is unrecoverable. · `--force-mask` Override the redaction-mask guard and write values like `***REDACTED***` verbatim. Almost never what you want — the guard exists to stop a masked round-trip clobbering real secrets
 ```bash
 its dokploy env push <app-id> --file .env.production
-its dokploy env push <app-id> --file .env.production --json
 ```
 
 ### `its dokploy env set <applicationId> <pairs>`
@@ -367,7 +337,6 @@ Set one or more env vars (KEY=value) without affecting others. NB: a plain set u
 Flags: `--deploy` After saving, recreate the swarm service (stop + deploy) and verify the new vars reached the container. Causes a brief outage. Without this, the change only lands in the record. · `--force-mask` Override the redaction-mask guard and write values like `***REDACTED***` verbatim. Almost never what you want — the guard exists to stop a masked round-trip clobbering real secrets
 ```bash
 its dokploy env set <app-id> DEBUG=true
-its dokploy env set <app-id> DEBUG=true --json
 ```
 
 ### `its dokploy env unset <applicationId> <keys>`
@@ -379,7 +348,6 @@ Pull env vars from an application to a local file. Download upstream state to lo
 Flags: `--file` Output file path
 ```bash
 its dokploy env pull <app-id> --file .env.local
-its dokploy env pull <app-id> --file .env.local --json
 ```
 
 ### `its dokploy env copy <srcApp> <dstApp>`
@@ -416,7 +384,6 @@ Set one or more SHARED env vars (KEY=value) on an environment without affecting 
 List configured container registries. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its dokploy registries
-its dokploy registries --json
 its dokploy registries --watch
 ```
 
@@ -426,7 +393,6 @@ its dokploy registries --watch
 List configured backup destinations (S3/Wasabi). Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its dokploy destinations
-its dokploy destinations --json
 its dokploy destinations --watch
 ```
 
@@ -436,7 +402,6 @@ its dokploy destinations --watch
 List configured notification channels. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its dokploy notifications
-its dokploy notifications --json
 its dokploy notifications --watch
 ```
 
@@ -446,7 +411,6 @@ its dokploy notifications --watch
 Overview of all projects, applications, and databases. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its dokploy dashboard
-its dokploy dashboard --json
 its dokploy dashboard --watch
 ```
 
@@ -456,16 +420,14 @@ its dokploy dashboard --watch
 List mounts (bind/volume/file) for an application. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its dokploy mounts <app-id>
-its dokploy mounts <app-id> --json
 its dokploy mounts <app-id> --watch
 ```
 
 ### `its dokploy mounts add <app>`
 Add a mount to an application (--type bind|volume|file). Use --ensure-host-path with bind to create the host directory.
-Flags: `--type` Mount type · `--src` Source: host path (bind), volume name (volume), or initial content path (file) · `--dst` Mount path inside the container · `--content` Inline file content (--type file) · `--content-file` Read --content from a local UTF-8 file (use for content > ~15KB — Windows command-line cap) · `--ensure-host-path` For --type bind: create the host directory on the swarm node and chown to uid 1000 (avoids 'bind source path does not exist' deploy failures). Requires SSH.
+Flags: `--type <bind|volume|file>` Mount type · `--src` Source: host path (bind), volume name (volume), or initial content path (file) · `--dst` Mount path inside the container · `--content` Inline file content (--type file) · `--content-file` Read --content from a local UTF-8 file (use for content > ~15KB — Windows command-line cap) · `--ensure-host-path` For --type bind: create the host directory on the swarm node and chown to uid 1000 (avoids 'bind source path does not exist' deploy failures). Requires SSH.
 ```bash
 its dokploy mounts add <app-id> --type bind --src /data --dst /app/data
-its dokploy mounts add <app-id> --type bind --src /data --dst /app/data --json
 ```
 
 ### `its dokploy mounts update <mountId>`
@@ -473,7 +435,6 @@ Update an existing mount. PATCH semantics — only the supplied fields change.
 Flags: `--src` New source (host path / volume name / file path) · `--dst` New mount path inside the container · `--content` New inline file content (file mounts) · `--content-file` Read --content from a local UTF-8 file (use for content > ~15KB — Windows command-line cap)
 ```bash
 its dokploy mounts update <mount-id> --src "/data" --dst "/app/data"
-its dokploy mounts update <mount-id> --src "/data" --dst "/app/data" --json
 ```
 
 ### `its dokploy mounts remove <mountId>`
@@ -489,7 +450,6 @@ its dokploy mounts remove <mount-id> --confirm
 Diff the Dokploy expected webhook against the GitHub repo's actual hooks. Catches the autoDeploy:true-but-no-webhook drift. Detects GitHub App installations (no per-repo hook needed).
 ```bash
 its dokploy webhook check <app-id>
-its dokploy webhook check <app-id> --json
 ```
 
 ### `its dokploy webhook setup <app>`
@@ -497,14 +457,12 @@ Create the GitHub webhook on the repo wired to the Dokploy auto-deploy endpoint.
 Flags: `--secret` Webhook secret (defaults to a stable string per applicationId)
 ```bash
 its dokploy webhook setup <app-id>
-its dokploy webhook setup <app-id> --json
 ```
 
 ### `its dokploy webhook <app>`
 List GitHub webhooks on the repo backing this application. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its dokploy webhook list <app-id>
-its dokploy webhook list <app-id> --json
 its dokploy webhook list <app-id> --watch
 ```
 
@@ -514,7 +472,6 @@ its dokploy webhook list <app-id> --watch
 List Docker Swarm nodes (host, availability, role, engine version).
 ```bash
 its dokploy nodes
-its dokploy nodes --json
 its dokploy nodes --watch
 ```
 
@@ -522,28 +479,25 @@ its dokploy nodes --watch
 Detailed info for a single swarm node (CPU, memory, labels, status).
 ```bash
 its dokploy nodes info <node-id>
-its dokploy nodes info <node-id> --json
 ```
 
 ### `its dokploy nodes apps`
 List swarm services (replicated apps) running across nodes.
 ```bash
 its dokploy nodes apps
-its dokploy nodes apps --json
 ```
 
 ### `its dokploy nodes stats`
 Live container resource stats across all swarm containers (CPU%, MemUsage, BlockIO, NetIO).
 ```bash
 its dokploy nodes stats
-its dokploy nodes stats --json
 ```
 
 ## cluster
 
 ### `its dokploy cluster join-token`
 Get the `docker swarm join` command for adding a manager or worker node. Pass --role manager|worker (default worker).
-Flags: `--role` Node role: manager or worker
+Flags: `--role <manager|worker>` Node role: manager or worker
 ```bash
 its dokploy cluster join-token --role worker
 its dokploy cluster join-token --role manager
@@ -555,7 +509,6 @@ its dokploy cluster join-token --role manager
 List ALL containers on the Dokploy host (not scoped to app). Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its dokploy containers
-its dokploy containers --json
 its dokploy containers --watch
 ```
 
@@ -563,14 +516,12 @@ its dokploy containers --watch
 Get full Docker config for a container (env, mounts, network, labels).
 ```bash
 its dokploy containers config <container-id>
-its dokploy containers config <container-id> --json
 ```
 
 ### `its dokploy containers start <containerId>`
 Start a container by ID (not app name). Lower-level than `apps start` — operates on a single container without re-deploying.
 ```bash
 its dokploy containers start <container-id>
-its dokploy containers start <container-id> --json
 ```
 
 ### `its dokploy containers stop <containerId>`
@@ -583,7 +534,6 @@ its dokploy containers stop <container-id>
 Restart a container by ID (not app name). Lower-level than `apps restart` — operates on a single container without re-deploying.
 ```bash
 its dokploy containers restart <container-id>
-its dokploy containers restart <container-id> --json
 ```
 
 ### `its dokploy containers kill <containerId>`
@@ -606,26 +556,23 @@ its dokploy containers remove <container-id> --confirm
 Docker disk usage on the Dokploy host (Images / Containers / Volumes / Build Cache) including reclaimable space.
 ```bash
 its dokploy maintenance disk
-its dokploy maintenance disk --json
 ```
 
 ### `its dokploy maintenance web`
 Dokploy web-server settings (server IP, HTTPS, certificate type, host).
 ```bash
 its dokploy maintenance web
-its dokploy maintenance web --json
 ```
 
 ### `its dokploy maintenance traefik`
 Global Traefik dynamic config (Dokploy-wide, not per-app). Use `apps traefik` for a single app's routing.
 ```bash
 its dokploy maintenance traefik
-its dokploy maintenance traefik --json
 ```
 
 ### `its dokploy maintenance clean`
 Reclaim disk on the Dokploy host. --target images|volumes|containers|builder|monitoring|all (destructive — requires --confirm). Default target is `images` (safest).
-Flags: `--target` What to clean · `--confirm` Confirm the cleanup
+Flags: `--target <images|volumes|containers|builder|monitoring|all>` What to clean · `--confirm` Confirm the cleanup
 ```bash
 its dokploy maintenance clean --target builder --confirm
 its dokploy maintenance clean --target images --confirm
@@ -635,7 +582,6 @@ its dokploy maintenance clean --target images --confirm
 Server time + timezone (sanity check for cron drift / TLS errors).
 ```bash
 its dokploy maintenance time
-its dokploy maintenance time --json
 ```
 
 ## traefik
@@ -653,14 +599,12 @@ Read the Traefik acme.json from the dokploy-traefik container — surfaces every
 List GitHub App installations configured in Dokploy.
 ```bash
 its dokploy github providers
-its dokploy github providers --json
 ```
 
 ### `its dokploy github repos <githubId>`
 Repos visible to a GitHub App installation. Pass the `githubId` from `github providers` (NOT the inner `gitProviderId` — different IDs). Accepts either and auto-resolves.
 ```bash
 its dokploy github repos <github-id>
-its dokploy github repos <github-id> --json
 ```
 
 ### `its dokploy github branches <owner> <repo>`
@@ -668,7 +612,6 @@ Branches in a GitHub repo (uses the GitHub App, no PAT needed).
 Flags: `--githubId` Specific Dokploy GitHub provider ID (optional; default first match)
 ```bash
 its dokploy github branches owner repo
-its dokploy github branches owner repo --json
 ```
 
 ## users
@@ -677,7 +620,6 @@ its dokploy github branches owner repo --json
 List users + roles in the active Dokploy organization. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its dokploy users
-its dokploy users --json
 its dokploy users --watch
 ```
 
@@ -685,15 +627,13 @@ its dokploy users --watch
 Current user (the API token's owner) + org context + role.
 ```bash
 its dokploy users me
-its dokploy users me --json
 ```
 
 ### `its dokploy users invite`
 Invite a user to the active Dokploy organization by email (user.invitation).
-Flags: `--email` Invitee email address (required) · `--role` Initial role
+Flags: `--email` Invitee email address (required) · `--role <admin|user>` Initial role
 ```bash
 its dokploy users invite --email jane.smith@example.com
-its dokploy users invite --email jane.smith@example.com --json
 ```
 
 ### `its dokploy users remove <userId>`
@@ -709,7 +649,6 @@ its dokploy users remove <user-id> --confirm
 Organizations the API key has access to. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its dokploy orgs
-its dokploy orgs --json
 its dokploy orgs --watch
 ```
 
@@ -717,7 +656,6 @@ its dokploy orgs --watch
 The currently active organization for the API key. Returns whichever record the API key currently targets.
 ```bash
 its dokploy orgs active
-its dokploy orgs active --json
 ```
 
 ## compose
@@ -726,28 +664,24 @@ its dokploy orgs active --json
 Get a docker-compose stack by composeId. Pass the id (or any natural identifier) as the positional arg.
 ```bash
 its dokploy compose get <compose-id>
-its dokploy compose get <compose-id> --json
 ```
 
 ### `its dokploy compose services <composeId>`
 List services declared inside a compose stack (compose.loadServices).
 ```bash
 its dokploy compose services <compose-id>
-its dokploy compose services <compose-id> --json
 ```
 
 ### `its dokploy compose config <composeId>`
 Show the resolved docker-compose YAML Dokploy will deploy (after env substitution).
 ```bash
 its dokploy compose config <compose-id>
-its dokploy compose config <compose-id> --json
 ```
 
 ### `its dokploy compose deploy <composeId>`
 Trigger a deploy on a compose stack. Trigger a fresh deploy from the wired source.
 ```bash
 its dokploy compose deploy <compose-id>
-its dokploy compose deploy <compose-id> --json
 ```
 
 ### `its dokploy compose stop <composeId>`
@@ -760,7 +694,6 @@ its dokploy compose stop <compose-id>
 Redeploy a compose stack (rebuild + deploy). Redeploys the existing container; doesn't rebuild from source.
 ```bash
 its dokploy compose redeploy <compose-id>
-its dokploy compose redeploy <compose-id> --json
 ```
 
 ### `its dokploy compose delete <composeId>`
@@ -774,32 +707,29 @@ its dokploy compose delete <compose-id> --confirm
 
 ### `its dokploy backup create`
 Create a scheduled backup config. Postgres example: its dokploy backup create --db-type postgres --db-id <postgresId> --schedule '0 2,14 * * *' --prefix prod-postgres/ --destination <destinationId> --database ccd --keep 60.
-Flags: `--db-type` postgres | mariadb | mysql | mongo | libsql | web-server (default: postgres) · `--db-id` Parent resource id (postgresId/mysqlId/...). Omit for web-server. · `--schedule` Cron expression, e.g. '0 2,14 * * *' · `--prefix` Destination path prefix, e.g. prod-postgres/ · `--destination` Destination id (its dokploy destinations list) · `--database` Database name to dump (default: web-server uses dokploy) · `--keep` keepLatestCount — how many backups to retain · `--disabled` Create the config disabled (default: enabled)
+Flags: `--db-type <postgres|mariadb|mysql|mongo|libsql|web-server>` Database engine (default: postgres) · `--db-id` Parent resource id (postgresId/mysqlId/...). Omit for web-server. · `--schedule` Cron expression, e.g. '0 2,14 * * *' · `--prefix` Destination path prefix, e.g. prod-postgres/ · `--destination` Destination id (its dokploy destinations list) · `--database` Database name to dump (default: web-server uses dokploy) · `--keep` keepLatestCount — how many backups to retain · `--disabled` Create the config disabled (default: enabled)
 
 ### `its dokploy backup get <backupId>`
 Get a backup config by id (schedule, destination, prefix). Pass the id (or any natural identifier) as the positional arg.
 ```bash
 its dokploy backup get <backup-id>
-its dokploy backup get <backup-id> --json
 ```
 
 ### `its dokploy backup update <backupId>`
 Update a backup config (schedule, prefix, keep count, enabled). Only provided flags change. e.g. its dokploy backup update <id> --schedule '0 1 * * *' --keep 7.
-Flags: `--schedule` Cron expression · `--prefix` Destination path prefix · `--keep` keepLatestCount · `--enabled` Set enabled true|false
+Flags: `--schedule` Cron expression · `--prefix` Destination path prefix · `--keep` keepLatestCount · `--enabled <true|false>` Set enabled
 
 ### `its dokploy backup files <destinationId>`
 List backup files present in a remote destination (S3/MinIO bucket etc.).
 Flags: `--search` Path/prefix to list under (e.g. ccd-prod-postgres-tydlay). Empty lists the root.
 ```bash
 its dokploy backup files <destination-id>
-its dokploy backup files <destination-id> --json
 ```
 
 ### `its dokploy backup run <backupId>`
 Trigger a manual backup run for a given backup config (backup.manualBackup).
 ```bash
 its dokploy backup run <backup-id>
-its dokploy backup run <backup-id> --json
 ```
 
 ### `its dokploy backup delete <backupId>`
@@ -813,10 +743,9 @@ its dokploy backup delete <backup-id> --confirm
 
 ### `its dokploy schedule <id>`
 List cron schedules attached to an application, compose stack, or the server.
-Flags: `--type` Schedule type
+Flags: `--type <application|compose|server>` Schedule type
 ```bash
 its dokploy schedule <id>
-its dokploy schedule <id> --json
 its dokploy schedule <id> --watch
 ```
 
@@ -824,14 +753,12 @@ its dokploy schedule <id> --watch
 Get a schedule by id. Pass the id (or any natural identifier) as the positional arg.
 ```bash
 its dokploy schedule get <schedule-id>
-its dokploy schedule get <schedule-id> --json
 ```
 
 ### `its dokploy schedule run <scheduleId>`
 Trigger a schedule manually (schedule.runManually). Execute the named job/script.
 ```bash
 its dokploy schedule run <schedule-id>
-its dokploy schedule run <schedule-id> --json
 ```
 
 ### `its dokploy schedule delete <scheduleId>`
@@ -847,13 +774,12 @@ its dokploy schedule delete <schedule-id> --confirm
 List all configured git providers across GitHub Apps, GitLab OAuth apps, and Bitbucket workspaces.
 ```bash
 its dokploy git
-its dokploy git --json
 its dokploy git --watch
 ```
 
 ### `its dokploy git setup`
 Set up a new git provider. GitHub is UI-only (prints dashboard URL); GitLab/Bitbucket use credentials passed via flags.
-Flags: `--type` Git provider type · `--name` Display name (any string — shows in Dokploy UI) · `--url` GitLab instance URL (default https://gitlab.com) · `--application-id` GitLab OAuth Application ID · `--secret` GitLab OAuth Application Secret · `--redirect-uri` GitLab OAuth redirect URI (must match the app config). Defaults to <DOKPLOY_URL>/api/providers/gitlab/callback. · `--group` GitLab group name (optional, scopes to a group) · `--username` Bitbucket username (for type=bitbucket) · `--app-password` Bitbucket app password — generate at https://bitbucket.org/account/settings/app-passwords/ · `--workspace` Bitbucket workspace slug (optional, scopes repo discovery) · `--dry-run` Print the planned request without sending
+Flags: `--type <github|gitlab|bitbucket>` Git provider type · `--name` Display name (any string — shows in Dokploy UI) · `--url` GitLab instance URL (default https://gitlab.com) · `--application-id` GitLab OAuth Application ID · `--secret` GitLab OAuth Application Secret · `--redirect-uri` GitLab OAuth redirect URI (must match the app config). Defaults to <DOKPLOY_URL>/api/providers/gitlab/callback. · `--group` GitLab group name (optional, scopes to a group) · `--username` Bitbucket username (for type=bitbucket) · `--app-password` Bitbucket app password — generate at https://bitbucket.org/account/settings/app-passwords/ · `--workspace` Bitbucket workspace slug (optional, scopes repo discovery) · `--dry-run` Print the planned request without sending
 ```bash
 its dokploy git setup --type gitlab
 its dokploy git setup --type bitbucket
@@ -861,7 +787,7 @@ its dokploy git setup --type bitbucket
 
 ### `its dokploy git delete <id>`
 Remove a git provider. Pass --type so the right delete endpoint is used.
-Flags: `--type` Git provider type · `--confirm` Confirm the delete
+Flags: `--type <gitlab|bitbucket|git>` Git provider type · `--confirm` Confirm the delete
 ```bash
 its dokploy git delete <id> --type gitlab --confirm
 ```

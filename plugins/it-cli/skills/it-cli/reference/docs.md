@@ -18,7 +18,7 @@ its docs build --force
 
 ### `its docs serve`
 Launch the interactive help UI on 127.0.0.1 and open a browser.
-Flags: `--port` Bind port (0 = random) · `--no-open` Don't auto-open the browser · `--theme` Theme
+Flags: `--port` Bind port (0 = random) · `--no-open` Don't auto-open the browser · `--theme <auto|dark|light>` Theme
 ```bash
 its docs serve
 its docs serve --port 4242
@@ -29,7 +29,7 @@ its docs serve --no-open
 
 ### `its docs open <topic>`
 Launch the help UI and open the browser to a specific command page.
-Flags: `--port` Bind port (0 = random) · `--theme` Theme
+Flags: `--port` Bind port (0 = random) · `--theme <auto|dark|light>` Theme
 ```bash
 its docs open rmm agents list
 its docs open entra users

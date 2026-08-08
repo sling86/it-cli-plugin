@@ -11,7 +11,6 @@ List all Protect cameras with status. Surfaces the most common fields; pass --js
 Flags: `--site` Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site
 ```bash
 its protect cameras
-its protect cameras --json
 its protect cameras --watch
 ```
 
@@ -20,7 +19,6 @@ Get camera details. Pass the id (or any natural identifier) as the positional ar
 Flags: `--site` Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site
 ```bash
 its protect cameras get <camera-id>
-its protect cameras get <camera-id> --json
 ```
 
 ### `its protect cameras offline`
@@ -28,7 +26,6 @@ List disconnected/offline cameras — those whose state is not CONNECTED.
 Flags: `--site` Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site
 ```bash
 its protect cameras offline
-its protect cameras offline --json
 ```
 
 ### `its protect cameras snapshot <camera_id>`
@@ -42,7 +39,6 @@ Show NVR status, storage, and capacity. Surfaces the most common fields; pass --
 Flags: `--site` Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site
 ```bash
 its protect nvr
-its protect nvr --json
 its protect nvr --watch
 ```
 
@@ -50,7 +46,7 @@ its protect nvr --watch
 
 ### `its protect events`
 List Protect events (motion, smart detections). Surfaces the most common fields; pass --json for raw shape.
-Flags: `--hours` Hours to look back (ignored when --start is given) · `--start` Window start — ISO, local 'YYYY-MM-DD HH:mm', or epoch ms · `--end` Window end (default: now) · `--camera` Camera name or ID — comma-separate for several · `--types` Event types, server-side filter · `--smart` Smart-detection labels, filtered client-side (the NVR ignores the query param) · `--all` Page through the whole window — the fix for silently truncated busy sites · `--limit` Maximum events to return (default 30, ignored with --all) · `--site` Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site
+Flags: `--hours` Hours to look back (ignored when --start is given) · `--start` Window start — ISO, local 'YYYY-MM-DD HH:mm', or epoch ms · `--end` Window end (default: now) · `--camera` Camera name or ID — comma-separate for several · `--types <motion|smartDetectZone|ring|sensorMotion>` Event types, server-side filter · `--smart <person|vehicle|animal|package>` Smart-detection labels, filtered client-side (the NVR ignores the query param) · `--all` Page through the whole window — the fix for silently truncated busy sites · `--limit` Maximum events to return (default 30, ignored with --all) · `--site` Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site
 ```bash
 its protect events --hours 1
 its protect events --filter camera=<camera-name> --hours 24
@@ -74,6 +70,5 @@ Protect overview — NVR, cameras, storage, recent motion. Surfaces the most com
 Flags: `--site` Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site
 ```bash
 its protect dashboard
-its protect dashboard --json
 its protect dashboard --watch
 ```

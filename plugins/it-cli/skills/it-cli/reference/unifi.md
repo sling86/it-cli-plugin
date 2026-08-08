@@ -11,7 +11,6 @@ List all UniFi sites. Surfaces the most common fields; pass --json for raw shape
 Flags: `--site` Site name override
 ```bash
 its unifi sites
-its unifi sites --json
 its unifi sites --watch
 ```
 
@@ -20,7 +19,6 @@ Site health — WAN/WLAN/LAN subsystem status. Live health check across the reso
 Flags: `--site` Site name override
 ```bash
 its unifi sites health
-its unifi sites health --json
 its unifi sites health --watch
 ```
 
@@ -29,14 +27,13 @@ Controller version, uptime, and IP addresses. Returns the controller version + u
 Flags: `--site` Site name override
 ```bash
 its unifi sites sysinfo
-its unifi sites sysinfo --json
 ```
 
 ## devices
 
 ### `its unifi devices`
 List all UniFi devices with name, MAC, IP, type, state, uptime, clients.
-Flags: `--type` Filter by type (ap|switch|gateway|all) · `--site` Site name override
+Flags: `--type <ap|switch|gateway|all>` Filter by type · `--site` Site name override
 ```bash
 its unifi devices
 its unifi devices --site "Office"
@@ -48,7 +45,6 @@ Get device detail by MAC address. Pass the id (or any natural identifier) as the
 Flags: `--site` Site name override
 ```bash
 its unifi devices get <mac>
-its unifi devices get <mac> --json
 ```
 
 ### `its unifi devices restart <mac>`
@@ -56,7 +52,6 @@ Restart a device by MAC address. Stop + start in one call.
 Flags: `--confirm` Confirm the restart · `--site` Site name override
 ```bash
 its unifi devices restart <mac> --confirm
-its unifi devices restart <mac> --confirm --json
 ```
 
 ### `its unifi devices locate <mac>`
@@ -64,7 +59,6 @@ Toggle locate LED on a device. Flash the device's locate LED.
 Flags: `--enable` Enable locate LED (default true, pass --no-enable to disable) · `--site` Site name override
 ```bash
 its unifi devices locate <mac>
-its unifi devices locate <mac> --json
 ```
 
 ### `its unifi devices upgrade <mac>`
@@ -72,7 +66,6 @@ Trigger firmware upgrade on a device. Trigger a firmware upgrade.
 Flags: `--confirm` Confirm the upgrade · `--site` Site name override
 ```bash
 its unifi devices upgrade <mac> --confirm
-its unifi devices upgrade <mac> --confirm --json
 ```
 
 ### `its unifi devices provision <mac>`
@@ -80,7 +73,6 @@ Force re-provision a device. Force the device to re-pull its provisioning.
 Flags: `--site` Site name override
 ```bash
 its unifi devices provision <mac>
-its unifi devices provision <mac> --json
 ```
 
 ### `its unifi devices power-cycle`
@@ -88,7 +80,6 @@ PoE power cycle a switch port. Cycle PoE on a port. --confirm required.
 Flags: `--mac` Switch MAC address · `--port` Port index to power cycle · `--confirm` Confirm the power cycle · `--site` Site name override
 ```bash
 its unifi devices power-cycle --mac <mac> --port 5
-its unifi devices power-cycle --mac <mac> --port 5 --json
 ```
 
 ### `its unifi devices leds`
@@ -96,7 +87,6 @@ Toggle all site LEDs on or off. Toggle the controller's status LEDs.
 Flags: `--enable` Enable LEDs (true/false) · `--site` Site name override
 ```bash
 its unifi devices leds off
-its unifi devices leds off --json
 ```
 
 ### `its unifi devices poe`
@@ -104,14 +94,13 @@ PoE power summary for all switches. Returns the PoE budget + per-port consumptio
 Flags: `--site` Site name override
 ```bash
 its unifi devices poe
-its unifi devices poe --json
 ```
 
 ## clients
 
 ### `its unifi clients`
 List online clients. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--filter` Filter by connection type (wired|wireless|all) · `--site` Site name override
+Flags: `--filter <wired|wireless|all>` Filter by connection type · `--site` Site name override
 ```bash
 its unifi clients
 its unifi clients --filter wireless
@@ -123,7 +112,6 @@ Get client detail by MAC address. Pass the id (or any natural identifier) as the
 Flags: `--site` Site name override
 ```bash
 its unifi clients get <mac>
-its unifi clients get <mac> --json
 ```
 
 ### `its unifi clients search <query>`
@@ -131,7 +119,6 @@ Search all known clients by name, hostname, IP, or MAC. Substring match across t
 Flags: `--site` Site name override
 ```bash
 its unifi clients search "jane"
-its unifi clients search "jane" --json
 ```
 
 ### `its unifi clients block <mac>`
@@ -139,7 +126,6 @@ Block a client by MAC address. Blocks a client. Reversible via `unblock`.
 Flags: `--confirm` Confirm the block · `--site` Site name override
 ```bash
 its unifi clients block <mac>
-its unifi clients block <mac> --json
 ```
 
 ### `its unifi clients unblock <mac>`
@@ -147,7 +133,6 @@ Unblock a client by MAC address. Re-allows a previously blocked client.
 Flags: `--site` Site name override
 ```bash
 its unifi clients unblock <mac>
-its unifi clients unblock <mac> --json
 ```
 
 ### `its unifi clients reconnect <mac>`
@@ -155,7 +140,6 @@ Force reconnect a client. Force a client to disassociate + re-auth.
 Flags: `--site` Site name override
 ```bash
 its unifi clients reconnect <mac>
-its unifi clients reconnect <mac> --json
 ```
 
 ### `its unifi clients offline`
@@ -163,7 +147,6 @@ List recently disconnected clients. Returns recently-disconnected clients.
 Flags: `--hours` Look-back period in hours (default 24) · `--site` Site name override
 ```bash
 its unifi clients offline
-its unifi clients offline --json
 ```
 
 ## guests
@@ -173,7 +156,6 @@ Authorise a guest WiFi client. Permits a guest network device.
 Flags: `--minutes` Duration in minutes · `--up` Upload speed limit (Kbps) · `--down` Download speed limit (Kbps) · `--megabytes` Data transfer limit (MB) · `--site` Site name override
 ```bash
 its unifi guests authorise <mac> --minutes 1440
-its unifi guests authorise <mac> --minutes 1440 --json
 ```
 
 ### `its unifi guests unauthorise <mac>`
@@ -181,7 +163,6 @@ Revoke guest WiFi authorisation. Revokes a guest authorisation.
 Flags: `--site` Site name override
 ```bash
 its unifi guests unauthorise <mac>
-its unifi guests unauthorise <mac> --json
 ```
 
 ## networks
@@ -191,7 +172,6 @@ List networks and VLANs. Surfaces the most common fields; pass --json for raw sh
 Flags: `--site` Site name override
 ```bash
 its unifi networks
-its unifi networks --json
 its unifi networks --watch
 ```
 
@@ -202,7 +182,6 @@ List WiFi SSIDs. Surfaces the most common fields; pass --json for raw shape.
 Flags: `--site` Site name override
 ```bash
 its unifi wlans
-its unifi wlans --json
 its unifi wlans --watch
 ```
 
@@ -219,7 +198,6 @@ Update WiFi password for an SSID. Rotate a PSK / passphrase. Disconnects every c
 Flags: `--passphrase` New WiFi passphrase · `--site` Site name override · `--confirm` Confirm the PSK rotation
 ```bash
 its unifi wlans password <wlan-id> --passphrase "new-password" --confirm
-its unifi wlans password <wlan-id> --passphrase "new-password" --confirm --json
 ```
 
 ## firewall
@@ -229,7 +207,6 @@ List firewall rules. Surfaces the most common fields; pass --json for raw shape.
 Flags: `--site` Site name override
 ```bash
 its unifi firewall
-its unifi firewall --json
 its unifi firewall --watch
 ```
 
@@ -238,7 +215,6 @@ List firewall groups. List groups for a resource.
 Flags: `--site` Site name override
 ```bash
 its unifi firewall groups
-its unifi firewall groups --json
 ```
 
 ## routes
@@ -248,7 +224,6 @@ List static routes. Surfaces the most common fields; pass --json for raw shape.
 Flags: `--site` Site name override
 ```bash
 its unifi routes
-its unifi routes --json
 its unifi routes --watch
 ```
 
@@ -261,7 +236,6 @@ Flags: `--site` Site name override
 its unifi portforwards
 its unifi port-forwards
 its unifi portforwards --site t7kq3dcp
-its unifi portforwards --json
 ```
 
 ### `its unifi portforwards toggle <id>`
@@ -280,7 +254,6 @@ Flags: `--site` Site name override
 its unifi portforwards
 its unifi port-forwards
 its unifi portforwards --site t7kq3dcp
-its unifi portforwards --json
 ```
 
 ### `its unifi port-forwards toggle <id>`
@@ -299,9 +272,7 @@ Flags: `--site` Site name override
 its unifi portforwards
 its unifi port-forwards
 its unifi portforwards --site t7kq3dcp
-its unifi portforwards --json
 its unifi ports
-its unifi ports --json
 its unifi ports --watch
 ```
 
@@ -312,7 +283,6 @@ List recent events. Surfaces the most common fields; pass --json for raw shape.
 Flags: `--hours` Look-back period in hours (default 24) · `--limit` Maximum number of events (default 50) · `--site` Site name override
 ```bash
 its unifi events --hours 1
-its unifi events --hours 1 --json
 its unifi events --hours 1 --watch
 ```
 
@@ -323,7 +293,6 @@ List alarms with archived status. Surfaces the most common fields; pass --json f
 Flags: `--site` Site name override
 ```bash
 its unifi alarms
-its unifi alarms --json
 its unifi alarms --watch
 ```
 
@@ -332,7 +301,6 @@ Count active (non-archived) alarms. Returns a single number — cheap for thresh
 Flags: `--site` Site name override
 ```bash
 its unifi alarms count
-its unifi alarms count --json
 ```
 
 ### `its unifi alarms archive`
@@ -340,7 +308,6 @@ Archive all alarms. Archive (soft-delete) the record. Reversible.
 Flags: `--confirm` Confirm archiving all alarms · `--site` Site name override
 ```bash
 its unifi alarms archive --confirm
-its unifi alarms archive --confirm --json
 ```
 
 ## rogue
@@ -350,7 +317,6 @@ List detected rogue access points. Surfaces the most common fields; pass --json 
 Flags: `--hours` Look-back period in hours (default 24) · `--site` Site name override
 ```bash
 its unifi rogue
-its unifi rogue --json
 its unifi rogue --watch
 ```
 
@@ -361,7 +327,6 @@ List guest WiFi vouchers. Surfaces the most common fields; pass --json for raw s
 Flags: `--site` Site name override
 ```bash
 its unifi vouchers
-its unifi vouchers --json
 its unifi vouchers --watch
 ```
 
@@ -370,7 +335,6 @@ Create guest WiFi vouchers. Idempotent on duplicate names — use update/edit to
 Flags: `--minutes` Voucher duration in minutes · `--count` Number of vouchers to create (default 1) · `--quota` Number of uses per voucher (0 = unlimited, default 0) · `--note` Note to attach to the vouchers · `--site` Site name override
 ```bash
 its unifi vouchers create --minutes 1440 --count 5
-its unifi vouchers create --minutes 1440 --count 5 --json
 ```
 
 ### `its unifi vouchers revoke <id>`
@@ -378,7 +342,6 @@ Revoke/delete a guest voucher. Reverse an assignment. --confirm where required.
 Flags: `--confirm` Confirm the revocation · `--site` Site name override
 ```bash
 its unifi vouchers revoke <voucher-id> --confirm
-its unifi vouchers revoke <voucher-id> --confirm --json
 ```
 
 ## dashboard
@@ -388,7 +351,6 @@ Comprehensive site overview — health, devices, clients, alarms.
 Flags: `--site` Site name override
 ```bash
 its unifi dashboard
-its unifi dashboard --json
 its unifi dashboard --watch
 ```
 

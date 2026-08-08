@@ -10,7 +10,6 @@ Exchange Online — distribution groups, shared mailboxes, permissions, mail flo
 List all distribution groups. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its exo groups
-its exo groups --json
 its exo groups --watch
 ```
 
@@ -18,22 +17,19 @@ its exo groups --watch
 Get distribution group details. Pass the id (or any natural identifier) as the positional arg.
 ```bash
 its exo groups get "All Staff"
-its exo groups get "All Staff" --json
 ```
 
 ### `its exo groups members <group>`
 List members of a distribution group. Returns direct members; nested groups aren't expanded.
 ```bash
 its exo groups members "All Staff"
-its exo groups members "All Staff" --json
 ```
 
 ### `its exo groups create <name>`
 Create a new distribution group. Idempotent on duplicate names — use update/edit to mutate an existing record.
-Flags: `--alias` Email alias (before @domain) · `--managed-by` Owner email address · `--type` Group type
+Flags: `--alias` Email alias (before @domain) · `--managed-by` Owner email address · `--type <distribution|security>` Group type
 ```bash
 its exo groups create "Marketing Team" --type distribution --alias marketing
-its exo groups create "Marketing Team" --type distribution --alias marketing --json
 ```
 
 ### `its exo groups delete <group>`
@@ -48,7 +44,6 @@ its exo groups delete "Old DL" --confirm
 Add a member to a distribution group. Idempotent — already-a-member is a no-op.
 ```bash
 its exo groups add-member "All Staff" jane.smith@example.com
-its exo groups add-member "All Staff" jane.smith@example.com --json
 ```
 
 ### `its exo groups remove-member <group> <member>`
@@ -57,14 +52,13 @@ Flags: `--confirm` Required to remove the member
 ```bash
 its exo groups remove-member sales@example.com jo@example.com --confirm
 its exo groups remove-member "All Staff" jane.smith@example.com
-its exo groups remove-member "All Staff" jane.smith@example.com --json
 ```
 
 ## mailboxes
 
 ### `its exo mailboxes`
 List mailboxes (optionally filtered by type). Surfaces the most common fields; pass --json for raw shape.
-Flags: `--type` Mailbox type filter
+Flags: `--type <UserMailbox|SharedMailbox|RoomMailbox|EquipmentMailbox>` Mailbox type filter
 ```bash
 its exo mailboxes
 its exo mailboxes --type SharedMailbox
@@ -75,59 +69,51 @@ its exo mailboxes --type RoomMailbox
 Get mailbox details (accepts partial name, alias, or email).
 ```bash
 its exo mailboxes get jane.smith@example.com
-its exo mailboxes get jane.smith@example.com --json
 ```
 
 ### `its exo mailboxes stats <mailbox>`
 Get mailbox size and item statistics. Aggregated statistics — counts, totals, percentiles.
 ```bash
 its exo mailboxes stats jane.smith@example.com
-its exo mailboxes stats jane.smith@example.com --json
 ```
 
 ### `its exo mailboxes create <name> <alias>`
 Create a shared mailbox. Idempotent on duplicate names — use update/edit to mutate an existing record.
 ```bash
 its exo mailboxes create "Support" support
-its exo mailboxes create "Support" support --json
 ```
 
 ### `its exo mailboxes permissions <mailbox>`
 List non-inherited permissions on a mailbox. Returns access grants on the resource.
 ```bash
 its exo mailboxes permissions shared@example.com
-its exo mailboxes permissions shared@example.com --json
 ```
 
 ### `its exo mailboxes add-permission <mailbox> <user>`
 Grant mailbox access to a user. Grant a new permission. Idempotent.
-Flags: `--rights` Access rights to grant
+Flags: `--rights <FullAccess|ReadPermission|SendAs>` Access rights to grant
 ```bash
 its exo mailboxes add-permission shared@example.com jane.smith@example.com --rights FullAccess
-its exo mailboxes add-permission shared@example.com jane.smith@example.com --rights FullAccess --json
 ```
 
 ### `its exo mailboxes remove-permission <mailbox> <user>`
 Remove mailbox access from a user. Revoke a permission. --confirm required.
-Flags: `--rights` Access rights to revoke · `--confirm` Required to revoke the permission
+Flags: `--rights <FullAccess|ReadPermission|SendAs>` Access rights to revoke · `--confirm` Required to revoke the permission
 ```bash
 its exo mailboxes remove-permission shared@example.com jo@example.com --confirm
 its exo mailboxes remove-permission shared@example.com jane.smith@example.com
-its exo mailboxes remove-permission shared@example.com jane.smith@example.com --json
 ```
 
 ### `its exo mailboxes forwarding <mailbox>`
 Show forwarding configuration for a mailbox. Audit pass — find mailboxes with forwarding configured.
 ```bash
 its exo mailboxes forwarding jane.smith@example.com
-its exo mailboxes forwarding jane.smith@example.com --json
 ```
 
 ### `its exo mailboxes user-access <user>`
 List all shared mailboxes a user has FullAccess to (scans all 400+ shared mailboxes, may take up to 5 minutes).
 ```bash
 its exo mailboxes user-access jane.smith@example.com
-its exo mailboxes user-access jane.smith@example.com --json
 ```
 
 ### `its exo mailboxes set-forwarding <mailbox> <target>`
@@ -136,7 +122,6 @@ Flags: `--keep-copy` Also deliver to the original mailbox · `--confirm` Require
 ```bash
 its exo mailboxes set-forwarding jo@example.com manager@example.com --confirm
 its exo mailboxes set-forwarding jane.smith@example.com external@vendor.com --confirm --keep-copy
-its exo mailboxes set-forwarding jane.smith@example.com external@vendor.com --confirm --keep-copy --json
 ```
 
 ### `its exo mailboxes set-type <mailbox> <type>`
@@ -156,7 +141,6 @@ Flags: `--hide` Hide from the GAL · `--show` Show in the GAL
 List mail flow (transport) rules. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its exo rules
-its exo rules --json
 its exo rules --watch
 ```
 
@@ -170,7 +154,6 @@ its exo rules get "External forward block"
 Audit every transport rule for mail-exfiltration verbs (RedirectMessageTo, BlindCopyTo, AddToRecipients, CopyTo). A silent redirect/blind-copy to an external address is a classic data-exfiltration tripwire — review every flagged rule.
 ```bash
 its exo rules audit
-its exo rules audit --json
 ```
 
 ### `its exo rules disable <name>`
@@ -193,7 +176,6 @@ its exo rules enable "Block external forward" --confirm
 List accepted email domains. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its exo domains
-its exo domains --json
 its exo domains --watch
 ```
 
@@ -207,7 +189,7 @@ Get DKIM signing config for a domain (Enabled, Status, selector key sizes, Rotat
 
 ### `its exo dkim rotate <domain>`
 Rotate the DKIM signing key for a domain (Rotate-DkimSigningConfig). Mutation — requires --confirm.
-Flags: `--confirm` Required to perform the key rotation · `--key-size` Key size in bits
+Flags: `--confirm` Required to perform the key rotation · `--key-size <1024|2048>` Key size in bits
 ```bash
 its exo dkim rotate example.com --confirm
 ```
@@ -242,7 +224,6 @@ Get hop-by-hop detail for a traced message (Get-MessageTraceDetailV2). Surfaces 
 Flags: `--days` Days back to search (max 10 per query)
 ```bash
 its exo trace detail <msg-id>
-its exo trace detail <msg-id> --json
 ```
 
 ### `its exo trace historical`
@@ -258,7 +239,6 @@ Poll a historical search job (Get-HistoricalSearch). FileUrl is populated once S
 Check out-of-office / auto-reply status for a mailbox. Pass the id (or any natural identifier) as the positional arg.
 ```bash
 its exo autoreply get jane.smith@example.com
-its exo autoreply get jane.smith@example.com --json
 ```
 
 ### `its exo autoreply enable <mailbox>`
@@ -266,14 +246,12 @@ Enable out-of-office auto-reply. Switch to active state. Idempotent.
 Flags: `--internal` Internal message (HTML or plain text) · `--external` External message (HTML or plain text) · `--start` Start time for scheduled OOF (e.g. 2026-03-20T09:00) · `--end` End time for scheduled OOF (e.g. 2026-03-25T17:00)
 ```bash
 its exo autoreply enable jane.smith@example.com --internal "Out of office until Monday" --external "On leave — contact support@example.com"
-its exo autoreply enable jane.smith@example.com --internal "Out of office until Monday" --external "On leave — contact support@example.com" --json
 ```
 
 ### `its exo autoreply disable <mailbox>`
 Disable out-of-office auto-reply. Switch to inactive state. Idempotent.
 ```bash
 its exo autoreply disable jane.smith@example.com
-its exo autoreply disable jane.smith@example.com --json
 ```
 
 ## recipients
@@ -282,21 +260,18 @@ its exo autoreply disable jane.smith@example.com --json
 Search all recipient types (users, groups, contacts, shared mailboxes).
 ```bash
 its exo recipients search "jane"
-its exo recipients search "jane" --json
 ```
 
 ### `its exo recipients send-as <identity>`
 List Send-As permissions on a mailbox or group. Returns SendAs delegates for a mailbox.
 ```bash
 its exo recipients send-as shared@example.com
-its exo recipients send-as shared@example.com --json
 ```
 
 ### `its exo recipients add-send-as <identity> <trustee>`
 Grant Send-As permission. Idempotent — already-granted delegates are skipped.
 ```bash
 its exo recipients add-send-as shared@example.com jane.smith@example.com
-its exo recipients add-send-as shared@example.com jane.smith@example.com --json
 ```
 
 ### `its exo recipients remove-send-as <identity> <trustee>`
@@ -305,7 +280,6 @@ Flags: `--confirm` Required to revoke the Send-As permission
 ```bash
 its exo recipients remove-send-as shared@example.com jo@example.com --confirm
 its exo recipients remove-send-as shared@example.com jane.smith@example.com
-its exo recipients remove-send-as shared@example.com jane.smith@example.com --json
 ```
 
 ## forwarding
@@ -314,5 +288,4 @@ its exo recipients remove-send-as shared@example.com jane.smith@example.com --js
 Audit auto-forwarding posture — transport rules + outbound spam policies (+ optional mailbox).
 ```bash
 its exo forwarding check
-its exo forwarding check --json
 ```
