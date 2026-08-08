@@ -10,7 +10,6 @@ Azure CLI — subscriptions, VMs, storage, Key Vault, networking, web apps, cost
 List all Azure subscriptions. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its az account
-its az account --json
 its az account --watch
 ```
 
@@ -18,7 +17,6 @@ its az account --watch
 Show current active subscription. Pass the id (or any natural identifier) as the positional arg.
 ```bash
 its az account get
-its az account get --json
 ```
 
 ### `its az account set <subscription>`
@@ -35,7 +33,6 @@ List resource groups. Surfaces the most common fields; pass --json for raw shape
 Flags: `--subscription` Subscription name or ID
 ```bash
 its az groups
-its az groups --json
 its az groups --watch
 ```
 
@@ -54,7 +51,6 @@ its az resources --watch
 Show resource detail by ID. Requires the full Azure resource ID (/subscriptions/.../resourceGroups/.../providers/...) as the positional arg — copy it from `az resources` output.
 ```bash
 its az resources get /subscriptions/<sub>/resourceGroups/<rg>/...
-its az resources get /subscriptions/<sub>/resourceGroups/<rg>/... --json
 ```
 
 ## vm
@@ -73,7 +69,6 @@ Show VM detail. Pass the id (or any natural identifier) as the positional arg.
 Flags: `--rg` Resource group (required)
 ```bash
 its az vm get my-vm
-its az vm get my-vm --json
 ```
 
 ### `its az vm start <name>`
@@ -96,7 +91,6 @@ Restart a VM. Stop + start in one call.
 Flags: `--rg` Resource group (required) · `--confirm` Confirm the operation
 ```bash
 its az vm restart my-vm --rg my-rg
-its az vm restart my-vm --rg my-rg --json
 ```
 
 ### `its az vm deallocate <name>`
@@ -104,7 +98,6 @@ Deallocate a VM (stops billing). Stop + release compute resources. Billing pause
 Flags: `--rg` Resource group (required) · `--confirm` Confirm the operation
 ```bash
 its az vm deallocate my-vm --rg my-rg
-its az vm deallocate my-vm --rg my-rg --json
 ```
 
 ## storage
@@ -114,7 +107,6 @@ List storage accounts. Surfaces the most common fields; pass --json for raw shap
 Flags: `--rg` Filter by resource group · `--subscription` Subscription
 ```bash
 its az storage
-its az storage --json
 its az storage --watch
 ```
 
@@ -125,7 +117,6 @@ List Key Vaults. Surfaces the most common fields; pass --json for raw shape.
 Flags: `--rg` Filter by resource group · `--subscription` Subscription
 ```bash
 its az keyvault
-its az keyvault --json
 its az keyvault --watch
 ```
 
@@ -133,7 +124,6 @@ its az keyvault --watch
 List secret names in a Key Vault. List vault secret names (values aren't returned by default).
 ```bash
 its az keyvault secrets my-kv
-its az keyvault secrets my-kv --json
 ```
 
 ## nsg
@@ -143,7 +133,6 @@ List network security groups. Surfaces the most common fields; pass --json for r
 Flags: `--rg` Filter by resource group · `--subscription` Subscription
 ```bash
 its az nsg
-its az nsg --json
 its az nsg --watch
 ```
 
@@ -152,7 +141,6 @@ Show NSG detail with security rules. Pass the id (or any natural identifier) as 
 Flags: `--rg` Resource group (required)
 ```bash
 its az nsg get my-nsg --rg my-rg
-its az nsg get my-nsg --rg my-rg --json
 ```
 
 ## vnet
@@ -162,7 +150,6 @@ List virtual networks. Surfaces the most common fields; pass --json for raw shap
 Flags: `--rg` Filter by resource group · `--subscription` Subscription
 ```bash
 its az vnet
-its az vnet --json
 its az vnet --watch
 ```
 
@@ -171,7 +158,6 @@ Show VNet detail with subnets. Pass the id (or any natural identifier) as the po
 Flags: `--rg` Resource group (required)
 ```bash
 its az vnet get my-vnet --rg my-rg
-its az vnet get my-vnet --rg my-rg --json
 ```
 
 ## webapp
@@ -181,7 +167,6 @@ List web apps. Surfaces the most common fields; pass --json for raw shape.
 Flags: `--rg` Filter by resource group · `--subscription` Subscription
 ```bash
 its az webapp
-its az webapp --json
 its az webapp --watch
 ```
 
@@ -190,7 +175,6 @@ Show web app detail. Pass the id (or any natural identifier) as the positional a
 Flags: `--rg` Resource group (required)
 ```bash
 its az webapp get my-app --rg my-rg
-its az webapp get my-app --rg my-rg --json
 ```
 
 ### `its az webapp restart <name>`
@@ -198,7 +182,6 @@ Restart a web app. Stop + start in one call.
 Flags: `--rg` Resource group (required) · `--confirm` Confirm the operation
 ```bash
 its az webapp restart my-app --rg my-rg
-its az webapp restart my-app --rg my-rg --json
 ```
 
 ## cost
@@ -208,7 +191,6 @@ Cost summary for current billing period by resource group. Quick one-screen view
 Flags: `--period` Time period (MonthToDate, BillingMonthToDate, TheLastMonth) · `--subscription` Subscription
 ```bash
 its az cost summary
-its az cost summary --json
 its az cost summary --watch
 ```
 
@@ -216,7 +198,7 @@ its az cost summary --watch
 
 ### `its az advisor`
 List Azure Advisor recommendations — surfaces cost, security, reliability and performance waste. Pass --json for raw shape.
-Flags: `--category` Filter by recommendation category · `--subscription` Subscription name or ID
+Flags: `--category <Cost|Security|HighAvailability|Performance>` Filter by recommendation category · `--subscription` Subscription name or ID
 ```bash
 its az advisor list
 its az advisor list --category Cost

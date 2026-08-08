@@ -20,7 +20,6 @@ Search vault items by name, username, URL, or notes. Substring match across the 
 Flags: `--organisation` Organisation name or ID · `--collection` Collection name or ID · `--personal-only` Show only personal items · `--vault` Named vault profile (omit for default)
 ```bash
 its bw items search "github"
-its bw items search "github" --json
 ```
 
 ### `its bw items get <id>`
@@ -28,7 +27,6 @@ Get a vault item by ID (includes password and fields). Pass the id (or any natur
 Flags: `--copy` Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. · `--clear-after` Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. · `--vault` Named vault profile (omit for default)
 ```bash
 its bw items get "Server admin"
-its bw items get "Server admin" --json
 ```
 
 ### `its bw items totp <query>`
@@ -36,7 +34,6 @@ Generate current TOTP code for an item. Returns the current TOTP code — refres
 Flags: `--copy` Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. · `--clear-after` Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. · `--vault` Named vault profile (omit for default)
 ```bash
 its bw items totp "Server admin"
-its bw items totp "Server admin" --json
 ```
 
 ### `its bw items trash`
@@ -44,7 +41,6 @@ List trashed vault items. Returns soft-deleted items in the trash bin.
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
 its bw items trash
-its bw items trash --json
 ```
 
 ### `its bw items recent`
@@ -52,7 +48,6 @@ List recently modified vault items. Returns the N most recently modified items.
 Flags: `--days` Look-back period in days · `--vault` Named vault profile (omit for default)
 ```bash
 its bw items recent
-its bw items recent --json
 ```
 
 ### `its bw items favourites`
@@ -60,7 +55,6 @@ List favourite vault items. Items the user has starred.
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
 its bw items favourites
-its bw items favourites --json
 ```
 
 ### `its bw items create <name>`
@@ -80,7 +74,6 @@ Flags: `--name` New name · `--username` Login username · `--password` Login pa
 its bw items update <id> --field lan_ip=10.0.0.2 --confirm
 its bw items update <id> --field-remove lan_ip --confirm
 its bw items update <item-id> --password "NewP@ss" --confirm
-its bw items update <item-id> --password "NewP@ss" --confirm --json
 ```
 
 ### `its bw items share <id>`
@@ -92,7 +85,6 @@ Move vault items to a folder. Move an item between folders. --confirm required.
 Flags: `--folder` Destination folder name (created if needed) · `--confirm` Confirm the move · `--vault` Named vault profile (omit for default)
 ```bash
 its bw items move <item-id> --folder "Servers" --confirm
-its bw items move <item-id> --folder "Servers" --confirm --json
 ```
 
 ### `its bw items delete <id>`
@@ -107,7 +99,6 @@ Restore a vault item from the trash. Restore a soft-deleted item from trash.
 Flags: `--confirm` Confirm the restore · `--vault` Named vault profile (omit for default)
 ```bash
 its bw items restore <item-id> --confirm
-its bw items restore <item-id> --confirm --json
 ```
 
 ### `its bw items purge <id>`
@@ -124,7 +115,6 @@ List all vault folders. Surfaces the most common fields; pass --json for raw sha
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
 its bw folders
-its bw folders --json
 its bw folders --watch
 ```
 
@@ -133,7 +123,6 @@ List items in a folder by name. Pass the id (or any natural identifier) as the p
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
 its bw folders get "Servers"
-its bw folders get "Servers" --json
 ```
 
 ### `its bw folders summary`
@@ -141,7 +130,6 @@ List folders with item counts. Quick one-screen view — designed for dashboards
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
 its bw folders summary
-its bw folders summary --json
 its bw folders summary --watch
 ```
 
@@ -150,7 +138,6 @@ Create a new folder. Idempotent on duplicate names — use update/edit to mutate
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
 its bw folders create "Servers"
-its bw folders create "Servers" --json
 ```
 
 ### `its bw folders delete <name>`
@@ -191,7 +178,6 @@ Show vault profile information. Surfaces the most common fields; pass --json for
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
 its bw profile
-its bw profile --json
 its bw profile --watch
 ```
 
@@ -202,7 +188,6 @@ Vault summary statistics. Surfaces the most common fields; pass --json for raw s
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
 its bw dashboard
-its bw dashboard --json
 its bw dashboard --watch
 ```
 
@@ -213,7 +198,6 @@ Change the PIN used to encrypt the master password. Drop the resource's state �
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
 its bw pin reset
-its bw pin reset --json
 ```
 
 ## session
@@ -223,7 +207,6 @@ Unlock vault — skip PIN prompt for subsequent commands. Begin an interactive s
 Flags: `--ttl` Session duration in minutes (default 480 = 8 hours) · `--vault` Named vault profile (omit for default)
 ```bash
 its bw session unlock
-its bw session unlock --json
 ```
 
 ### `its bw session lock`
@@ -231,7 +214,6 @@ Lock vault and destroy the active session. End the current session.
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
 its bw session lock
-its bw session lock --json
 ```
 
 ### `its bw session`
@@ -239,7 +221,6 @@ Check if a vault session is active. Surfaces the most common fields; pass --json
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
 its bw session list
-its bw session list --json
 its bw session list --watch
 ```
 
@@ -249,7 +230,6 @@ its bw session list --watch
 List configured vault profiles. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its bw vaults
-its bw vaults --json
 its bw vaults --watch
 ```
 
@@ -258,7 +238,6 @@ Save a named vault profile — its own host, account and master password (use fo
 Flags: `--url` Server URL (defaults to current BW_URL) · `--email` Email (defaults to current BW_EMAIL) · `--client-id` API client ID (for API key auth) · `--client-secret` API client secret (for API key auth)
 ```bash
 its bw vaults create "personal"
-its bw vaults create "personal" --json
 ```
 
 ### `its bw vaults delete <name>`
@@ -275,7 +254,6 @@ Full vault health audit (weak passwords, reuse, duplicates, cleanup issues).
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
 its bw audit
-its bw audit --json
 its bw audit --watch
 ```
 
@@ -284,7 +262,6 @@ Find logins with weak passwords. Identifies weak passwords; pair with `bw audit 
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
 its bw audit weak
-its bw audit weak --json
 ```
 
 ### `its bw audit reused`
@@ -292,7 +269,6 @@ Find passwords reused across multiple logins. Identifies passwords shared across
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
 its bw audit reused
-its bw audit reused --json
 ```
 
 ### `its bw audit exposed`
@@ -300,7 +276,6 @@ Check passwords against Have I Been Pwned breaches (k-anonymity safe).
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
 its bw audit exposed
-its bw audit exposed --json
 ```
 
 ### `its bw audit duplicates`
@@ -308,7 +283,6 @@ Detect duplicate logins (domain+username, name+username matching).
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
 its bw audit duplicates
-its bw audit duplicates --json
 ```
 
 ### `its bw audit unfiled`
@@ -316,7 +290,6 @@ Vault items with no folder assigned (hygiene issue). Items with no folder assign
 Flags: `--type` Filter by type: login, note, card, identity · `--vault` Named vault profile (omit for default)
 ```bash
 its bw audit unfiled
-its bw audit unfiled --json
 ```
 
 ### `its bw audit cleanup`
@@ -324,7 +297,6 @@ Detect vault hygiene issues (skeleton logins, missing fields, empty items).
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
 its bw audit cleanup
-its bw audit cleanup --json
 ```
 
 ### `its bw audit vault-report`
@@ -332,7 +304,6 @@ One-shot vault hygiene snapshot — counts, unfiled breakdown, weak/reused/dupli
 Flags: `--min-items` Only show folders with this many items or more (default 1) · `--vault` Named vault profile (omit for default)
 ```bash
 its bw audit vault-report
-its bw audit vault-report --json
 ```
 
 ## doctor
@@ -341,6 +312,5 @@ its bw audit vault-report --json
 Local health check — vault profiles, active sessions, 2FA-remember token age, master-password store presence. No network calls.
 ```bash
 its bw doctor
-its bw doctor --json
 its bw doctor --watch
 ```

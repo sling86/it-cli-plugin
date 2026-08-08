@@ -56,7 +56,7 @@ Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_U
 
 ### `its outlook mail flag <message_id>`
 Set follow-up flag status on a message.
-Flags: `--status` Flag status · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+Flags: `--status <flagged|complete|notFlagged>` Flag status · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
 
 ### `its outlook mail categorise <message_id> <categories>`
 Set the category list on a message (replaces existing categories).
@@ -72,7 +72,7 @@ its outlook mail --filter "from/emailAddress/address eq 'spammer@x'" --json | it
 
 ### `its outlook mail send`
 Send a new email directly (no draft step). Saves a copy in Sent Items.
-Flags: `--to` Comma-separated recipients (Name <addr> or addr) · `--cc` Comma-separated CC recipients · `--bcc` Comma-separated BCC recipients · `--subject` Subject line · `--body` Body content · `--body-file` Read body from a UTF-8 file (use for bodies > ~15KB — Windows command-line cap) · `--html` Treat --body / --body-file as HTML (default text) · `--importance` low|normal|high · `--attach` File to attach. Comma-separated for multiple. `path:cid:<id>` syntax marks an attachment inline with that cid (pair with `<img src="cid:<id>">` in body). · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
+Flags: `--to` Comma-separated recipients (Name <addr> or addr) · `--cc` Comma-separated CC recipients · `--bcc` Comma-separated BCC recipients · `--subject` Subject line · `--body` Body content · `--body-file` Read body from a UTF-8 file (use for bodies > ~15KB — Windows command-line cap) · `--html` Treat --body / --body-file as HTML (default text) · `--importance <low|normal|high>` low|normal|high · `--attach` File to attach. Comma-separated for multiple. `path:cid:<id>` syntax marks an attachment inline with that cid (pair with `<img src="cid:<id>">` in body). · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
 ```bash
 its outlook mail send --to user@example.com --subject "Hi" --body "Quick note"
 its outlook mail send --to user@example.com --subject "Report" --html --body-file report.html
@@ -83,7 +83,7 @@ its outlook mail send --to user@example.com --subject "Welcome" --html --body-fi
 
 ### `its outlook drafts create`
 Create a draft email (does not send).
-Flags: `--to` Comma-separated recipients · `--cc` CC recipients · `--bcc` BCC recipients · `--subject` Subject line · `--body` Body content · `--body-file` Read body from a UTF-8 file (use this for bodies > ~15KB — Windows command-line cap) · `--html` Treat --body / --body-file as HTML (default text) · `--importance` low|normal|high · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
+Flags: `--to` Comma-separated recipients · `--cc` CC recipients · `--bcc` BCC recipients · `--subject` Subject line · `--body` Body content · `--body-file` Read body from a UTF-8 file (use this for bodies > ~15KB — Windows command-line cap) · `--html` Treat --body / --body-file as HTML (default text) · `--importance <low|normal|high>` low|normal|high · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
 
 ### `its outlook drafts reply <message_id>`
 Create a reply draft. By default replies to the sender only; use --all to Reply-All. Does not send — use `drafts send <id>` after edits.
@@ -95,7 +95,7 @@ Flags: `--to` Comma-separated recipients · `--comment` Inline comment prepended
 
 ### `its outlook drafts update <draft_id>`
 Patch an existing draft. Any of subject/body/to/cc/bcc/importance/categories.
-Flags: `--subject` Replace subject · `--body` Replace body · `--body-file` Read replacement body from a UTF-8 file (use for bodies > ~15KB — Windows command-line cap) · `--html` Treat --body / --body-file as HTML · `--to` Replace To recipients (comma-separated) · `--cc` Replace CC recipients · `--bcc` Replace BCC recipients · `--importance` low|normal|high · `--categories` Replace categories (comma-separated) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
+Flags: `--subject` Replace subject · `--body` Replace body · `--body-file` Read replacement body from a UTF-8 file (use for bodies > ~15KB — Windows command-line cap) · `--html` Treat --body / --body-file as HTML · `--to` Replace To recipients (comma-separated) · `--cc` Replace CC recipients · `--bcc` Replace BCC recipients · `--importance <low|normal|high>` low|normal|high · `--categories` Replace categories (comma-separated) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
 
 ### `its outlook drafts send <draft_id>`
 Send an existing draft.
@@ -199,7 +199,7 @@ Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_U
 
 ### `its outlook autoreply set`
 Configure automatic reply. Use --status to toggle disabled/alwaysEnabled/scheduled. For scheduled, pass --start and --end.
-Flags: `--status` disabled | alwaysEnabled | scheduled · `--audience` External audience: none | contactsOnly | all · `--internal` Internal reply message · `--external` External reply message · `--start` Scheduled start (ISO datetime) · `--end` Scheduled end (ISO datetime) · `--tz` Time zone for --start/--end (default UTC) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+Flags: `--status <disabled|alwaysEnabled|scheduled>` disabled | alwaysEnabled | scheduled · `--audience <none|contactsOnly|all>` External audience: none | contactsOnly | all · `--internal` Internal reply message · `--external` External reply message · `--start` Scheduled start (ISO datetime) · `--end` Scheduled end (ISO datetime) · `--tz` Time zone for --start/--end (default UTC) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
 ```bash
 its outlook autoreply set --status disabled
 its outlook autoreply set --status scheduled --start 2026-05-25T09:00:00 --end 2026-05-30T17:00:00 --tz "GMT Standard Time" --internal "Out of office, back Mon." --external "Out of office."

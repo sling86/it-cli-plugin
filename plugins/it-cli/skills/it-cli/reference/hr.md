@@ -17,7 +17,6 @@ List all employees. Surfaces the most common fields; pass --json for raw shape.
 Flags: `--leavers` Include employees who have left
 ```bash
 its hr employees
-its hr employees --json
 its hr employees --watch
 ```
 
@@ -26,14 +25,12 @@ Search employees by name/email/role/department/location. Substring match across 
 Flags: `--leavers` Include employees who have left
 ```bash
 its hr employees search "jane"
-its hr employees search "jane" --json
 ```
 
 ### `its hr employees get <email>`
 Get employee details by email (client-side filter). Match is exact on email address — not a fuzzy/name lookup.
 ```bash
 its hr employees get <employee-id>
-its hr employees get <employee-id> --json
 ```
 
 ## starters
@@ -43,7 +40,6 @@ Upcoming starters — employees with StartDate in the future. Surfaces the most 
 Flags: `--days` Window in days (default 30)
 ```bash
 its hr starters
-its hr starters --json
 its hr starters --watch
 ```
 
@@ -52,7 +48,6 @@ Recent starters — employees with StartDate in the past window.
 Flags: `--days` Window in days (default 30)
 ```bash
 its hr starters recent --days 30
-its hr starters recent --days 30 --json
 ```
 
 ## leavers
@@ -62,7 +57,6 @@ Upcoming leavers — employees with LeavingDate in the future.
 Flags: `--days` Window in days (default 30)
 ```bash
 its hr leavers
-its hr leavers --json
 its hr leavers --watch
 ```
 
@@ -71,5 +65,4 @@ Recent leavers — employees with LeavingDate in the past window.
 Flags: `--days` Window in days (default 30)
 ```bash
 its hr leavers recent --days 30
-its hr leavers recent --days 30 --json
 ```

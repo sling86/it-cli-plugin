@@ -8,14 +8,13 @@ Tactical RMM endpoint management — agents, alerts, software, services, updates
 
 ### `its rmm agents`
 List all RMM agents with status, hostname, OS, site. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--status` Filter by status · `--type` Filter by type · `--client` Filter by client name · `--site` Filter by site name · `--rebooted-since` Only agents whose last boot is more recent than this — ISO timestamp or relative span (7d, 24h, 30m)
+Flags: `--status <online|offline|overdue>` Filter by status · `--type <server|workstation>` Filter by type · `--client` Filter by client name · `--site` Filter by site name · `--rebooted-since` Only agents whose last boot is more recent than this — ISO timestamp or relative span (7d, 24h, 30m)
 ```bash
 its rmm agents
 its rmm agents --status offline
 its rmm agents --site "head-office"
 its rmm agents --rebooted-since 24h
 its rmm agents --rebooted-since 2026-06-14
-its rmm agents --json
 its rmm agents --ai | ai "which agents are overdue?"
 ```
 
@@ -25,7 +24,6 @@ Flags: `--days` Minimum days since last seen (default 7)
 ```bash
 its rmm agents stale
 its rmm agents stale --days 30
-its rmm agents stale --json
 ```
 
 ### `its rmm agents search <query>`
@@ -76,7 +74,7 @@ its rmm agents prune --older-than 6w --confirm
 
 ### `its rmm agents run <agent>`
 Execute a one-shot shell command on the target agent. Returns stdout + stderr + exit code. Use --shell powershell|cmd|bash; default timeout is 30s.
-Flags: `--shell` Shell type · `--cmd` Command to execute (use --file for multi-line scripts) · `--file` Path to a local script file (overrides --cmd). PowerShell multi-line scripts auto-wrapped via base64 + temp file. · `--raw` Disable auto-wrapping for multi-line PowerShell (sends as-is) · `--timeout` Timeout in seconds · `--as-user` Run in the active user's session instead of SYSTEM (requires a signed-in desktop user)
+Flags: `--shell <powershell|cmd|bash>` Shell type · `--cmd` Command to execute (use --file for multi-line scripts) · `--file` Path to a local script file (overrides --cmd). PowerShell multi-line scripts auto-wrapped via base64 + temp file. · `--raw` Disable auto-wrapping for multi-line PowerShell (sends as-is) · `--timeout` Timeout in seconds · `--as-user` Run in the active user's session instead of SYSTEM (requires a signed-in desktop user)
 ```bash
 its rmm agents run OFFICE-PC-01 --shell powershell --cmd "Get-Process"
 its rmm agents run OFFICE-PC-01 --shell cmd --cmd "ipconfig /all"
@@ -87,21 +85,18 @@ its rmm agents run LINUX-WEB-01 --shell bash --cmd "uname -a && uptime"
 Command + script execution history for one agent. Shows time, type, exit status, who ran it, and the truncated payload.
 ```bash
 its rmm agents history OFFICE-PC-01
-its rmm agents history OFFICE-PC-01 --json
 ```
 
 ### `its rmm agents notes <agent>`
 Free-form notes attached to the agent — common workflow is documenting incident actions or device peculiarities.
 ```bash
 its rmm agents notes OFFICE-PC-01
-its rmm agents notes OFFICE-PC-01 --json
 ```
 
 ### `its rmm agents pending <agent>`
 Queued reboots, script runs, and update installs that the agent hasn't picked up yet. Useful when a command seems to have stalled.
 ```bash
 its rmm agents pending OFFICE-PC-01
-its rmm agents pending OFFICE-PC-01 --json
 ```
 
 ### `its rmm agents wake <agent>`
@@ -123,12 +118,11 @@ its rmm agents edit OFFICE-PC-01 --description "Marketing — Jane's desk"
 Trigger a WMI/sysinfo refresh on an agent — repopulates hardware fields (serial, model, etc.).
 ```bash
 its rmm agents refresh OFFICE-PC-01
-its rmm agents refresh OFFICE-PC-01 --json
 ```
 
 ### `its rmm agents eventlog <agent>`
 Read a Windows event log (Application, System, or Security) from an agent over the last N days.
-Flags: `--type` Log type · `--days` Look-back window in days
+Flags: `--type <Application|System|Security>` Log type · `--days` Look-back window in days
 
 ## dashboard
 
@@ -136,7 +130,6 @@ Flags: `--type` Log type · `--days` Look-back window in days
 Single-screen fleet health view — online/offline/overdue counts, server vs workstation, maintenance mode, reboot-pending, failing checks. Cheap to call; suitable for --watch.
 ```bash
 its rmm dashboard
-its rmm dashboard --json
 its rmm dashboard --watch
 ```
 
@@ -146,7 +139,6 @@ its rmm dashboard --watch
 Top-level RMM client list with each client's sites flattened into one row. Use IDs from here as --client filter values elsewhere.
 ```bash
 its rmm clients
-its rmm clients --json
 its rmm clients --watch
 ```
 
@@ -191,7 +183,6 @@ Top processes by CPU usage (live snapshot via PowerShell).
 Flags: `--count` Number of processes to show
 ```bash
 its rmm processes top OFFICE-PC-01
-its rmm processes top OFFICE-PC-01 --json
 ```
 
 ### `its rmm processes kill <agent>`
@@ -217,12 +208,11 @@ Service detail — startup type, dependencies, current state, last exit code.
 Flags: `--name` Service name
 ```bash
 its rmm services get OFFICE-PC-01 --name spooler
-its rmm services get OFFICE-PC-01 --name spooler --json
 ```
 
 ### `its rmm services control <agent>`
 Control a service (start/stop/restart). Stop requires --confirm.
-Flags: `--name` Service name · `--action` Action to perform · `--confirm` Required for stop action
+Flags: `--name` Service name · `--action <start|stop|restart>` Action to perform · `--confirm` Required for stop action
 ```bash
 its rmm services control OFFICE-PC-01 --name spooler --action restart
 its rmm services control OFFICE-PC-01 --name spooler --action start
@@ -233,7 +223,6 @@ Set startup type to Automatic and start the service if stopped. Idempotent.
 Flags: `--name` Service name
 ```bash
 its rmm services enable OFFICE-PC-01 --name spooler
-its rmm services enable OFFICE-PC-01 --name spooler --json
 ```
 
 ### `its rmm services disable <agent>`
@@ -241,7 +230,6 @@ Set a service startup type to Disabled (requires --confirm).
 Flags: `--name` Service name · `--confirm` Confirm the disable
 ```bash
 its rmm services disable OFFICE-PC-01 --name spooler --confirm
-its rmm services disable OFFICE-PC-01 --name spooler --confirm --json
 ```
 
 ## updates
@@ -259,7 +247,6 @@ its rmm updates report --all
 Windows Update queue — pending, installed, failed. Shows KB, severity, install state, and the per-KB approval action (approve/ignore/nothing) — only `approve` updates get installed.
 ```bash
 its rmm updates OFFICE-PC-01
-its rmm updates OFFICE-PC-01 --json
 its rmm updates OFFICE-PC-01 --watch
 ```
 
@@ -271,7 +258,6 @@ its rmm updates scan OFFICE-PC
 its rmm updates scan --client "Candle Retail"
 its rmm updates scan --client "Candle Retail" --confirm
 its rmm updates scan OFFICE-PC-01
-its rmm updates scan OFFICE-PC-01 --json
 ```
 
 ### `its rmm updates install [agent]`
@@ -306,7 +292,6 @@ its rmm updates defer OFFICE-PC --all-pending --confirm
 Full installed-software inventory for one agent. Includes publisher, version, install date. Useful for compliance reports.
 ```bash
 its rmm software OFFICE-PC-01
-its rmm software OFFICE-PC-01 --json
 its rmm software OFFICE-PC-01 --watch
 ```
 
@@ -332,7 +317,6 @@ its rmm alerts --severity error
 Alert detail — full message, source check, snooze state, agent it fired on.
 ```bash
 its rmm alerts get <alert-id>
-its rmm alerts get <alert-id> --json
 ```
 
 ### `its rmm alerts resolve <alert_id>`
@@ -353,7 +337,6 @@ Flags: `--confirm` Confirm the unsnooze
 All saved automation scripts in the RMM script library. Returns name, shell, category, default timeout.
 ```bash
 its rmm scripts
-its rmm scripts --json
 its rmm scripts --watch
 ```
 
@@ -361,7 +344,6 @@ its rmm scripts --watch
 Script detail — body, default args, category, hash, last edited timestamp.
 ```bash
 its rmm scripts get <script-id>
-its rmm scripts get <script-id> --json
 ```
 
 ### `its rmm scripts run [agent]`
@@ -380,7 +362,7 @@ its rmm scripts run OFFICE-PC-01 --script "Long Audit" --timeout 600
 
 ### `its rmm scripts upload-local <agent> <path>`
 Upload a local .ps1/.sh/.py script to TRMM, run it on the agent, capture output, and delete the script afterwards. Use for ad-hoc local maintenance scripts. Pass --keep to leave the script registered.
-Flags: `--shell` Script shell (defaults to auto-detect from extension: ps1=powershell, sh=shell, py=python, nu=nushell, ts=deno) · `--args` Script arguments (comma-separated) · `--timeout` Timeout in seconds (default 120) · `--keep` Leave the uploaded script registered in TRMM after execution · `--category` Category for the uploaded script (default 'Ad-hoc') · `--as-user` Run in the logged-on user's session instead of as SYSTEM. Fails if nobody is signed in.
+Flags: `--shell <powershell|cmd|shell|python|nushell|deno>` Script shell (defaults to auto-detect from extension: ps1=powershell, sh=shell, py=python, nu=nushell, ts=deno) · `--args` Script arguments (comma-separated) · `--timeout` Timeout in seconds (default 120) · `--keep` Leave the uploaded script registered in TRMM after execution · `--category` Category for the uploaded script (default 'Ad-hoc') · `--as-user` Run in the logged-on user's session instead of as SYSTEM. Fails if nobody is signed in.
 ```bash
 its rmm scripts upload-local ./fix-printers.ps1
 its rmm scripts upload-local ./linux-housekeeping.sh --shell bash
@@ -400,7 +382,6 @@ Flags: `--shell` Shell: powershell, cmd, shell, python, nushell, deno (auto from
 its rmm scripts upsert 'Check Git Installed' C:/Scripts/Check-Git.ps1 --category 'Compliance Checks' --timeout 30
 its rmm scripts upsert 'Configure User Profile' ./Set-UserProfile.ps1 --run-as-user
 its rmm scripts upsert "Restart Spooler" ./fix-spooler.ps1
-its rmm scripts upsert "Restart Spooler" ./fix-spooler.ps1 --json
 ```
 
 ## checks
@@ -409,7 +390,6 @@ its rmm scripts upsert "Restart Spooler" ./fix-spooler.ps1 --json
 Scheduled health checks attached to one agent. Includes last-run result + cadence.
 ```bash
 its rmm checks OFFICE-PC-01
-its rmm checks OFFICE-PC-01 --json
 its rmm checks OFFICE-PC-01 --watch
 ```
 
@@ -436,7 +416,7 @@ its rmm checks run OFFICE-PC
 
 ### `its rmm checks create <agent>`
 Attach a check to an agent. Use --type to pick: diskspace/cpuload/memory/ping/winsvc/script (defaults to script when --script is given). Tune alerting with --severity, --fails, --interval.
-Flags: `--type` Check type · `--severity` Alert severity (default error) · `--fails` Failures before alert (default 1) · `--interval` Run interval seconds, 0 = inherit (default 0) · `--disk` diskspace: drive (e.g. C:) · `--error` diskspace/cpuload/memory: error threshold % · `--warning` diskspace/cpuload/memory: warning threshold % · `--ip` ping: host/IP to ping · `--service` winsvc: Windows service name · `--restart-if-stopped` winsvc: restart the service if found stopped · `--pass-if-pending` winsvc: pass when start is pending · `--pass-if-missing` winsvc: pass when the service doesn't exist · `--script` script: script ID · `--timeout` script: timeout seconds (default 120) · `--args` script: arguments (comma-separated)
+Flags: `--type <diskspace|cpuload|memory|ping|winsvc|script>` Check type · `--severity <error|warning|info>` Alert severity (default error) · `--fails` Failures before alert (default 1) · `--interval` Run interval seconds, 0 = inherit (default 0) · `--disk` diskspace: drive (e.g. C:) · `--error` diskspace/cpuload/memory: error threshold % · `--warning` diskspace/cpuload/memory: warning threshold % · `--ip` ping: host/IP to ping · `--service` winsvc: Windows service name · `--restart-if-stopped` winsvc: restart the service if found stopped · `--pass-if-pending` winsvc: pass when start is pending · `--pass-if-missing` winsvc: pass when the service doesn't exist · `--script` script: script ID · `--timeout` script: timeout seconds (default 120) · `--args` script: arguments (comma-separated)
 ```bash
 its rmm checks create OFFICE-PC --type diskspace --disk C: --error 10 --warning 25
 its rmm checks create OFFICE-PC --type cpuload --error 90 --warning 75
@@ -444,12 +424,11 @@ its rmm checks create SRV-01 --type winsvc --service Spooler --restart-if-stoppe
 its rmm checks create SRV-01 --type ping --ip 10.10.0.1
 its rmm checks create OFFICE-PC --script 42 --timeout 300
 its rmm checks create OFFICE-PC-01 --script <script-id> --interval 600
-its rmm checks create OFFICE-PC-01 --script <script-id> --interval 600 --json
 ```
 
 ### `its rmm checks edit [agent]`
 Retune an existing check without delete+recreate — change interval, severity, fail-count, or thresholds. PUT is partial, so only the flags you pass change. Works on POLICY checks too: they are edited by --check id, so the agent is optional (find policy check ids via `its rmm policies checks <id>`).
-Flags: `--check` Check ID to edit · `--severity` Alert severity · `--fails` Failures before alert · `--interval` Run interval seconds · `--error` Error threshold % (diskspace/cpuload/memory) · `--warning` Warning threshold % (diskspace/cpuload/memory) · `--timeout` Script check: timeout seconds · `--args` Script check: comma-separated script args (replaces existing)
+Flags: `--check` Check ID to edit · `--severity <error|warning|info>` Alert severity · `--fails` Failures before alert · `--interval` Run interval seconds · `--error` Error threshold % (diskspace/cpuload/memory) · `--warning` Warning threshold % (diskspace/cpuload/memory) · `--timeout` Script check: timeout seconds · `--args` Script check: comma-separated script args (replaces existing)
 ```bash
 its rmm checks edit OFFICE-PC --check 7 --warning 60 --error 80
 its rmm checks edit OFFICE-PC --check 7 --severity warning --fails 3
@@ -473,24 +452,22 @@ Flags: `--policy` List tasks attached to this automation policy instead of an ag
 its rmm tasks OFFICE-PC
 its rmm tasks list --policy 4
 its rmm tasks OFFICE-PC-01
-its rmm tasks OFFICE-PC-01 --json
 its rmm tasks OFFICE-PC-01 --watch
 ```
 
 ### `its rmm tasks create [agent]`
 Create an automated task that runs a script. Target an agent, or --policy <id> to apply across every agent under a policy. Default is a manual task (run on demand); --daily-time HH:MM makes it scheduled (+ --weekdays to limit days); --on-check-failure <checkId> makes it a remediation that fires whenever that check fails.
-Flags: `--script` Script ID to run · `--policy` Attach to this automation policy instead of a single agent — applies to every agent under it · `--on-check-failure` Check ID this task remediates. Makes it a checkfailure task: it runs whenever that check fails, rather than on a schedule. This is the check-then-fix pattern. · `--severity` Alert severity for the task itself (default info) · `--disabled` Create the task switched off. Use when arming a policy-wide remediation would cause a thundering herd — create it disabled, then enable once you've seen what the check actually reports. · `--name` Task name (default: derived from the script ID) · `--args` Script arguments (comma-separated, e.g. -Mode,Notify) · `--timeout` Per-run timeout in seconds (default 90) · `--daily-time` Run daily at HH:MM (24h) — turns this into a scheduled task · `--weekdays` With --daily-time: restrict to these days (mon,tue,wed,thu,fri,sat,sun); default every day · `--run-asap` Run as soon as possible if a scheduled run was missed
+Flags: `--script` Script ID to run · `--policy` Attach to this automation policy instead of a single agent — applies to every agent under it · `--on-check-failure` Check ID this task remediates. Makes it a checkfailure task: it runs whenever that check fails, rather than on a schedule. This is the check-then-fix pattern. · `--severity <error|warning|info>` Alert severity for the task itself (default info) · `--disabled` Create the task switched off. Use when arming a policy-wide remediation would cause a thundering herd — create it disabled, then enable once you've seen what the check actually reports. · `--name` Task name (default: derived from the script ID) · `--args` Script arguments (comma-separated, e.g. -Mode,Notify) · `--timeout` Per-run timeout in seconds (default 90) · `--daily-time` Run daily at HH:MM (24h) — turns this into a scheduled task · `--weekdays` With --daily-time: restrict to these days (mon,tue,wed,thu,fri,sat,sun); default every day · `--run-asap` Run as soon as possible if a scheduled run was missed
 ```bash
 its rmm tasks create --policy 4 --on-check-failure 41 --script 433 --name 'Auto-install dev runtimes' --timeout 1800
 its rmm tasks create --policy 4 --script 252 --daily-time 06:30
 its rmm tasks create OFFICE-PC --script 12 --name 'Clear cache'
 its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --daily-time "03:00" --weekdays sun
-its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --daily-time "03:00" --weekdays sun --json
 ```
 
 ### `its rmm tasks edit`
 Enable or disable an existing task without delete+recreate. Recreating a policy checkfailure task would lose its assigned_check wiring, so this is the only safe way to arm or disarm a remediation. Also retunes name, severity and run-asap.
-Flags: `--task` Task ID to edit · `--enable` Switch the task on · `--disable` Switch the task off. Use to disarm a policy-wide remediation, or to retire a superseded deployer without deleting it. · `--name` Rename the task · `--severity` Alert severity · `--run-asap` Run as soon as possible after a missed schedule
+Flags: `--task` Task ID to edit · `--enable` Switch the task on · `--disable` Switch the task off. Use to disarm a policy-wide remediation, or to retire a superseded deployer without deleting it. · `--name` Rename the task · `--severity <error|warning|info>` Alert severity · `--run-asap` Run as soon as possible after a missed schedule
 ```bash
 its rmm tasks edit --task 243 --enable
 its rmm tasks edit --task 15 --disable
@@ -509,7 +486,6 @@ its rmm tasks delete --task <task-id> --confirm
 RMM automation policies — packages of checks + scheduled tasks applied across clients/sites.
 ```bash
 its rmm policies
-its rmm policies --json
 its rmm policies --watch
 ```
 
@@ -517,30 +493,27 @@ its rmm policies --watch
 Policy detail — included checks, tasks, target agents/sites.
 ```bash
 its rmm policies get <policy-id>
-its rmm policies get <policy-id> --json
 ```
 
 ### `its rmm policies checks <policy_id>`
 List checks attached to a policy (uses the asymmetric `/automation/policies/<id>/checks/` GET route
 ```bash
 its rmm policies checks <policy-id>
-its rmm policies checks <policy-id> --json
 ```
 
 ### `its rmm policies add-check <policy_id>`
 Add a check to a policy (applies to every agent under it). --type: diskspace/cpuload/memory/ping/winsvc/script (defaults to script when --script is given). Uses POST /checks/ with `policy` set and `agent` OMITTED — including agent:null returns 404 because the route resolver hits the agent path first
-Flags: `--type` Check type · `--severity` Alert severity (default error; script branch defaults warning) · `--fails` Failures before alert (default 1) · `--interval` Run interval seconds (script defaults 86400 daily, others 0=inherit) · `--disk` diskspace: drive (e.g. C:) · `--error` diskspace/cpuload/memory: error threshold % · `--warning` diskspace/cpuload/memory: warning threshold % · `--ip` ping: host/IP · `--service` winsvc: Windows service name · `--restart-if-stopped` winsvc: restart if stopped · `--pass-if-pending` winsvc: pass when start pending · `--pass-if-missing` winsvc: pass when service absent · `--script` script: Script ID · `--timeout` script: timeout seconds (default 90)
+Flags: `--type <diskspace|cpuload|memory|ping|winsvc|script>` Check type · `--severity <info|warning|error>` Alert severity (default error; script branch defaults warning) · `--fails` Failures before alert (default 1) · `--interval` Run interval seconds (script defaults 86400 daily, others 0=inherit) · `--disk` diskspace: drive (e.g. C:) · `--error` diskspace/cpuload/memory: error threshold % · `--warning` diskspace/cpuload/memory: warning threshold % · `--ip` ping: host/IP · `--service` winsvc: Windows service name · `--restart-if-stopped` winsvc: restart if stopped · `--pass-if-pending` winsvc: pass when start pending · `--pass-if-missing` winsvc: pass when service absent · `--script` script: Script ID · `--timeout` script: timeout seconds (default 90)
 ```bash
 its rmm policies add-check 4 --type diskspace --disk C: --error 10 --warning 25
 its rmm policies add-check 4 --type winsvc --service Spooler --restart-if-stopped
 its rmm policies add-check 4 --script 42
 its rmm policies add-check <policy-id> --script <script-id>
-its rmm policies add-check <policy-id> --script <script-id> --json
 ```
 
 ### `its rmm policies patch-policy <policy_id>`
 Edit a policy's Windows Update schedule + per-severity approvals (WinUpdatePolicy). Partial update — only the flags you pass change. --confirm required: applies to EVERY agent under the policy.
-Flags: `--run-time-hour` Install hour 0–23 (hour-only — no minutes) · `--frequency` Schedule frequency (daily = daily/weekly + --days) · `--days` Weekdays for daily/weekly schedule, e.g. mon,wed,fri (run_time_days) · `--day-of-month` Day of month 1–31 for monthly schedule (run_time_day) · `--reboot` Reboot after install · `--critical` Critical updates · `--important` Important updates · `--moderate` Moderate updates · `--low` Low updates · `--other` Other updates · `--confirm` Apply — affects every agent under the policy
+Flags: `--run-time-hour` Install hour 0–23 (hour-only — no minutes) · `--frequency <daily|monthly|inherit>` Schedule frequency (daily = daily/weekly + --days) · `--days` Weekdays for daily/weekly schedule, e.g. mon,wed,fri (run_time_days) · `--day-of-month` Day of month 1–31 for monthly schedule (run_time_day) · `--reboot <never|required|always|inherit>` Reboot after install · `--critical <approve|manual|ignore|inherit>` Critical updates · `--important <approve|manual|ignore|inherit>` Important updates · `--moderate <approve|manual|ignore|inherit>` Moderate updates · `--low <approve|manual|ignore|inherit>` Low updates · `--other <approve|manual|ignore|inherit>` Other updates · `--confirm` Apply — affects every agent under the policy
 
 ## diagnostics
 
@@ -548,7 +521,6 @@ Flags: `--run-time-hour` Install hour 0–23 (hour-only — no minutes) · `--fr
 System health snapshot — CPU, RAM, disk, power plan, uptime, top processes.
 ```bash
 its rmm diagnostics OFFICE-PC-01
-its rmm diagnostics OFFICE-PC-01 --json
 its rmm diagnostics OFFICE-PC-01 --watch
 ```
 
@@ -558,7 +530,6 @@ its rmm diagnostics OFFICE-PC-01 --watch
 Tactical RMM health snapshot — agent status, failing checks, active alerts, sites with no online agents.
 ```bash
 its rmm doctor
-its rmm doctor --json
 its rmm doctor --watch
 ```
 
@@ -566,7 +537,7 @@ its rmm doctor --watch
 
 ### `its rmm custom-fields`
 List TRMM custom field definitions across all models (agent / client / site).
-Flags: `--model` Filter by model
+Flags: `--model <agent|client|site>` Filter by model
 
 ### `its rmm custom-fields set <agent> <field> <value>`
 Set a custom field value on an agent. Accepts the field by numeric id OR by exact name (looked up against /core/customfields/). Writes both `value` and the typed column TRMM actually reads.

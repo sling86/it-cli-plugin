@@ -10,7 +10,6 @@ Cloudflare API v4 — zones (domains), DNS records, Cloudflare Tunnels (cloudfla
 List Cloudflare accounts the token can see. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its cf accounts
-its cf accounts --json
 its cf accounts --watch
 ```
 
@@ -29,7 +28,6 @@ its cf zones --watch
 Show zone details (accepts domain name or zone id). Pass the id (or any natural identifier) as the positional arg.
 ```bash
 its cf zones get example.com
-its cf zones get example.com --json
 ```
 
 ### `its cf zones purge <zone>`
@@ -43,7 +41,7 @@ its cf zones purge example.com --confirm
 
 ### `its cf dns`
 List DNS records for a zone. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--zone` Zone domain or id (required) · `--type` Filter by record type · `--name` Filter by record name (e.g. www.example.com)
+Flags: `--zone` Zone domain or id (required) · `--type <A|AAAA|CNAME|TXT|MX|NS|SRV|CAA>` Filter by record type · `--name` Filter by record name (e.g. www.example.com)
 ```bash
 its cf dns --zone example.com
 its cf dns --zone example.com --type A
@@ -56,12 +54,11 @@ Show a single DNS record. Pass the id (or any natural identifier) as the positio
 Flags: `--zone` Zone domain or id (required)
 ```bash
 its cf dns get <record-id> --zone example.com
-its cf dns get <record-id> --zone example.com --json
 ```
 
 ### `its cf dns create`
 Create a DNS record. Idempotent on duplicate names — use update/edit to mutate an existing record.
-Flags: `--zone` Zone domain or id · `--type` Record type · `--name` Record name (e.g. www or www.example.com) · `--content` Record content/value · `--ttl` TTL in seconds (1=auto, default 1) · `--proxied` Proxy through Cloudflare · `--priority` Priority (MX records) · `--comment` Record comment
+Flags: `--zone` Zone domain or id · `--type <A|AAAA|CNAME|TXT|MX|NS|SRV|CAA>` Record type · `--name` Record name (e.g. www or www.example.com) · `--content` Record content/value · `--ttl` TTL in seconds (1=auto, default 1) · `--proxied` Proxy through Cloudflare · `--priority` Priority (MX records) · `--comment` Record comment
 ```bash
 its cf dns create --zone example.com --type A --name www --content 1.2.3.4
 its cf dns create --zone example.com --type CNAME --name app --content app.example.dokploy.com --proxied false
@@ -72,7 +69,6 @@ Patch fields on an existing DNS record. PATCH semantics — only the supplied fi
 Flags: `--zone` Zone domain or id · `--type` New type · `--name` New name · `--content` New content · `--ttl` New TTL (1=auto) · `--proxied` Proxy through Cloudflare · `--priority` New priority · `--comment` New comment
 ```bash
 its cf dns update <record-id> --zone example.com --content 5.6.7.8
-its cf dns update <record-id> --zone example.com --content 5.6.7.8 --json
 ```
 
 ### `its cf dns delete <record_id>`
@@ -89,7 +85,6 @@ List Cloudflare tunnels (cloudflared) for the account. Surfaces the most common 
 Flags: `--account` Account id (defaults to CLOUDFLARE_ACCOUNT_ID)
 ```bash
 its cf tunnels
-its cf tunnels --json
 its cf tunnels --watch
 ```
 
@@ -98,7 +93,6 @@ Show tunnel details (accepts name or id). Pass the id (or any natural identifier
 Flags: `--account` Account id
 ```bash
 its cf tunnels get <tunnel-id>
-its cf tunnels get <tunnel-id> --json
 ```
 
 ### `its cf tunnels connections <tunnel>`
@@ -106,7 +100,6 @@ List active cloudflared connections for a tunnel. Returns API connections for th
 Flags: `--account` Account id
 ```bash
 its cf tunnels connections <tunnel-id>
-its cf tunnels connections <tunnel-id> --json
 ```
 
 ### `its cf tunnels delete <tunnel>`
@@ -121,7 +114,6 @@ List public hostname ingress rules for a tunnel. Routes defined in the configura
 Flags: `--account` Account id
 ```bash
 its cf tunnels routes <tunnel-id>
-its cf tunnels routes <tunnel-id> --json
 ```
 
 ## token
@@ -131,7 +123,6 @@ Print a Cloudflare dashboard URL pre-filled with the scopes the `cf` provider ne
 Flags: `--name` Token name shown on the Cloudflare dashboard
 ```bash
 its cf token url
-its cf token url --json
 ```
 
 ### `its cf token request`

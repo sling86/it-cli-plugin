@@ -39,14 +39,12 @@ Full user profile — display fields, manager, sign-in state, employee metadata,
 ```bash
 its entra users get jane.smith@example.com
 its entra users get 8d3b9c8f-...-aaa
-its entra users get jane.smith@example.com --json
 ```
 
 ### `its entra users groups <id>`
 All groups the user is a direct member of — security, M365, distribution, mail-enabled. Doesn't expand transitive (parent-of-parent) membership; use `users transitive-groups` for that.
 ```bash
 its entra users groups jane.smith@example.com
-its entra users groups jane.smith@example.com --json
 ```
 
 ### `its entra users chain <id>`
@@ -54,14 +52,12 @@ Follow manager pointers up the org tree and render the chain. Useful for access-
 Flags: `--depth` Maximum manager depth to follow (default 10)
 ```bash
 its entra users chain jane.smith@example.com
-its entra users chain jane.smith@example.com --json
 ```
 
 ### `its entra users licences <id>`
 Per-SKU licence assignments with service-plan level detail — which SKUs the user has, plus which features are enabled or disabled inside each.
 ```bash
 its entra users licences jane.smith@example.com
-its entra users licences jane.smith@example.com --json
 ```
 
 ### `its entra users invite`
@@ -77,14 +73,12 @@ Create a new user. Idempotent on duplicate names — use update/edit to mutate a
 Flags: `--displayName` Display name · `--upn` User principal name · `--password` Initial password · `--jobTitle` Job title · `--department` Department · `--company` Company name · `--office` Office location · `--usage` Usage location (e.g. GB)
 ```bash
 its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!"
-its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!" --json
 ```
 
 ### `its entra users enable <id>`
 Enable a user account. Switch to active state. Idempotent.
 ```bash
 its entra users enable jane.smith@example.com
-its entra users enable jane.smith@example.com --json
 ```
 
 ### `its entra users bootstrap-admin <id>`
@@ -92,7 +86,6 @@ Macro: create a TAP for the user, then optionally exclude them from CA policies 
 Flags: `--ttl` TAP lifetime (e.g. 1h, 4h, 1d). Default 1h · `--one-time` TAP usable only once · `--no-tap` Skip TAP creation (only run policy exclusions) · `--exclude-policies` Comma-separated CA policy IDs or displayNames to exclude the user from. Default empty — pass the Microsoft-managed phishing-resistant admin policy ID if you need it. · `--dry-run` Print actions without applying
 ```bash
 its entra users bootstrap-admin newadmin@example.com
-its entra users bootstrap-admin newadmin@example.com --json
 ```
 
 ### `its entra users stale`
@@ -151,14 +144,12 @@ its entra groups --top 200 --watch
 Search groups by name. Substring match across the most relevant fields; case-insensitive.
 ```bash
 its entra groups search "all staff"
-its entra groups search "all staff" --json
 ```
 
 ### `its entra groups get <group_id>`
 Get group details. Pass the id (or any natural identifier) as the positional arg.
 ```bash
 its entra groups get <group-id>
-its entra groups get <group-id> --json
 ```
 
 ### `its entra groups members <group_id>`
@@ -174,7 +165,6 @@ Create a new security group. Idempotent on duplicate names — use update/edit t
 Flags: `--displayName` Group display name · `--description` Group description · `--mail` Mail-enabled
 ```bash
 its entra groups create --displayName "Marketing"
-its entra groups create --displayName "Marketing" --json
 ```
 
 ### `its entra groups add-member <group_id>`
@@ -182,7 +172,6 @@ Add a user to a group. Refuses dynamic-membership groups — Graph accepts the c
 Flags: `--user` User ID to add · `--force` Override the dynamic-group guard AND the leaver / disabled / namesake guard · `--skip-leaver-check` Skip just the leaver/disabled/namesake guard (still enforces the dynamic-group guard)
 ```bash
 its entra groups add-member <group-id> --user jane.smith@example.com
-its entra groups add-member <group-id> --user jane.smith@example.com --json
 ```
 
 ### `its entra groups remove-member <group_id>`
@@ -190,7 +179,6 @@ Remove a user from a group (requires --confirm). Refuses dynamic-membership grou
 Flags: `--user` User ID to remove · `--confirm` Confirm the removal · `--force` Override the dynamic-group guard
 ```bash
 its entra groups remove-member <group-id> --user jane.smith@example.com --confirm
-its entra groups remove-member <group-id> --user jane.smith@example.com --confirm --json
 ```
 
 ### `its entra groups edit-rule <group_id>`
@@ -208,7 +196,6 @@ List all subscribed SKUs/licences. Available column gets a ⚠ marker when fewer
 ```bash
 its entra licences
 its entra licences --filter available=0
-its entra licences --json
 its entra licences --watch
 ```
 
@@ -234,21 +221,18 @@ its entra onboarding convert-mailbox jane.smith@example.com --confirm
 List users assigned a specific licence SKU. List by resource membership; use --json for the raw shape.
 ```bash
 its entra licences users SPB
-its entra licences users SPB --json
 ```
 
 ### `its entra licences unlicensed`
 Find enabled users with no licence assignments. Read-only — useful for billing audits.
 ```bash
 its entra licences unlicensed
-its entra licences unlicensed --json
 ```
 
 ### `its entra licences audit`
 Licence usage report with availability and over-allocation warnings.
 ```bash
 its entra licences audit
-its entra licences audit --json
 ```
 
 ### `its entra licences waste`
@@ -256,7 +240,6 @@ Find disabled accounts with reclaimable licences. Read-only — useful for findi
 Flags: `--sku` Filter to specific SKU ID
 ```bash
 its entra licences waste
-its entra licences waste --json
 ```
 
 ## roles
@@ -265,7 +248,6 @@ its entra licences waste --json
 List activated directory roles. Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its entra roles
-its entra roles --json
 its entra roles --watch
 ```
 
@@ -273,7 +255,6 @@ its entra roles --watch
 List members of a directory role. Returns direct members; nested groups aren't expanded.
 ```bash
 its entra roles members <role-id>
-its entra roles members <role-id> --json
 ```
 
 ### `its entra roles assign <user_id>`
@@ -281,7 +262,6 @@ Assign a directory role to a user. Idempotent — assigning twice is a no-op.
 Flags: `--role` Role definition ID
 ```bash
 its entra roles assign jane.smith@example.com --role <role-def-id>
-its entra roles assign jane.smith@example.com --role <role-def-id> --json
 ```
 
 ### `its entra roles remove <user_id>`
@@ -295,14 +275,13 @@ its entra roles remove jane.smith@example.com --role <role-def-id> --confirm
 List all role assignments with role names. Returns the assignment record, not the principal — pair with `users get` for the readable name.
 ```bash
 its entra roles assignments
-its entra roles assignments --json
 ```
 
 ## signin
 
 ### `its entra signin`
 List recent sign-in logs. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--filter` OData filter expression · `--top` Number of results · `--all` Fetch all results (overrides --top) · `--user` Filter by user ID or UPN (auto-detected) · `--app` Filter by app display name · `--failed` Only failed sign-ins (errorCode ne 0) · `--status` Filter by sign-in status (alias for --failed=true when 'failure', --failed=false when 'success') · `--since` Look-back window (e.g. 1h, 6h, 1d, 7d)
+Flags: `--filter` OData filter expression · `--top` Number of results · `--all` Fetch all results (overrides --top) · `--user` Filter by user ID or UPN (auto-detected) · `--app` Filter by app display name · `--failed` Only failed sign-ins (errorCode ne 0) · `--status <success|failure>` Filter by sign-in status (alias for --failed=true when 'failure', --failed=false when 'success') · `--since` Look-back window (e.g. 1h, 6h, 1d, 7d)
 ```bash
 its entra signin --since 1h
 its entra signin --failed --since 24h
@@ -314,7 +293,6 @@ its entra signin --app "Microsoft Teams" --since 1d
 Sign-in summary for a user (last sign-in timestamps). Quick one-screen view — designed for dashboards / `--watch`.
 ```bash
 its entra signin summary jane.smith@example.com
-its entra signin summary jane.smith@example.com --json
 its entra signin summary jane.smith@example.com --watch
 ```
 
@@ -322,7 +300,6 @@ its entra signin summary jane.smith@example.com --watch
 Decode a single sign-in event: error code, failureReason, and the CA policies that fired (appliedConditionalAccessPolicies). Pass the sign-in ID from `signin list`.
 ```bash
 its entra signin explain <signin-id>
-its entra signin explain <signin-id> --json
 ```
 
 ### `its entra signin suspicious`
@@ -330,7 +307,6 @@ List sign-ins with risk indicators. Bounded by --since; defaults to last 24h.
 Flags: `--days` Look-back period in days
 ```bash
 its entra signin suspicious --days 7
-its entra signin suspicious --days 7 --json
 ```
 
 ## tap
@@ -347,7 +323,6 @@ its entra tap create jane.smith@example.com --ttl 8h
 List active Temporary Access Passes for a user (codes redacted).
 ```bash
 its entra tap
-its entra tap --json
 its entra tap --watch
 ```
 
@@ -356,17 +331,15 @@ Revoke a Temporary Access Pass. Reverse an assignment. --confirm where required.
 Flags: `--confirm` Confirm revocation
 ```bash
 its entra tap revoke jane.smith@example.com <method-id>
-its entra tap revoke jane.smith@example.com <method-id> --json
 ```
 
 ## ca
 
 ### `its entra ca`
 List all Conditional Access policies. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--state` Filter by state
+Flags: `--state <enabled|disabled|reportOnly>` Filter by state
 ```bash
 its entra ca
-its entra ca --json
 its entra ca --watch
 ```
 
@@ -374,19 +347,17 @@ its entra ca --watch
 List only enabled CA policies. Filters by `state eq 'enabled'`.
 ```bash
 its entra ca enabled
-its entra ca enabled --json
 ```
 
 ### `its entra ca get <id_or_name>`
 Show full CA policy JSON by id or displayName. Pass the id (or any natural identifier) as the positional arg.
 ```bash
 its entra ca get <policy-id>
-its entra ca get <policy-id> --json
 ```
 
 ### `its entra ca patch <id_or_name>`
 Patch a CA policy (state or full JSON body). PATCH semantics — only the supplied fields change.
-Flags: `--state` New state · `--body` Raw JSON body to PATCH (overrides --state) — inline or @path/to/file.json · `--dry-run` Print the PATCH request without sending
+Flags: `--state <enabled|disabled|reportOnly>` New state · `--body` Raw JSON body to PATCH (overrides --state) — inline or @path/to/file.json · `--dry-run` Print the PATCH request without sending
 ```bash
 its entra ca patch <policy-id> --state enabled
 its entra ca patch <policy-id> --state enabledForReportingButNotEnforced
@@ -397,7 +368,6 @@ Add 'All guest and external users' to excludeGuestsOrExternalUsers on a policy.
 Flags: `--dry-run` Print the PATCH request without sending
 ```bash
 its entra ca exclude-guests <policy-id>
-its entra ca exclude-guests <policy-id> --json
 ```
 
 ### `its entra ca create`
@@ -405,7 +375,6 @@ Create a Conditional Access policy from a JSON body or file (@path).
 Flags: `--body` Inline JSON or @path/to/policy.json — the POST body for the new policy · `--dry-run` Print the POST request without sending
 ```bash
 its entra ca create @./policy.json
-its entra ca create @./policy.json --json
 ```
 
 ### `its entra ca delete <id_or_name>`
@@ -428,7 +397,6 @@ Remove a user from a CA policy's excludeUsers list. Reverse of `exclude-user`. I
 Flags: `--dry-run` Print the PATCH request without sending
 ```bash
 its entra ca unexclude-user <policy-id> jane.smith@example.com
-its entra ca unexclude-user <policy-id> jane.smith@example.com --json
 ```
 
 ### `its entra ca why-blocked <user>`
@@ -436,14 +404,12 @@ Show which enabled CA policies target a user, plus the grant controls each requi
 Flags: `--include-disabled` Also evaluate disabled and reportOnly policies
 ```bash
 its entra ca why-blocked jane.smith@example.com
-its entra ca why-blocked jane.smith@example.com --json
 ```
 
 ### `its entra ca named-locations`
 List trusted/named locations referenced by CA policies.
 ```bash
 its entra ca named-locations
-its entra ca named-locations --json
 ```
 
 ## authmethods
@@ -452,14 +418,12 @@ its entra ca named-locations --json
 Fetch the full Authentication Methods Policy — shows which methods (TAP, FIDO2, SMS, etc.) are enabled tenant-wide and any per-method targets.
 ```bash
 its entra authmethods policy
-its entra authmethods policy --json
 ```
 
 ### `its entra authmethods get <method>`
 Get a single authentication method configuration by id (TemporaryAccessPass, Fido2, Sms, MicrosoftAuthenticator, Email, Voice, X509Certificate, etc.).
 ```bash
 its entra authmethods get TemporaryAccessPass
-its entra authmethods get TemporaryAccessPass --json
 ```
 
 ### `its entra authmethods enable <method>`
@@ -467,7 +431,6 @@ Enable a method tenant-wide (sets state=enabled on the method configuration). Pa
 Flags: `--target` Optional include target — group ID or 'all_users'. Adds a default include target if specified. · `--dry-run` Print the PATCH request without sending · `--confirm` Confirm this tenant-wide policy change
 ```bash
 its entra authmethods enable Fido2
-its entra authmethods enable Fido2 --json
 ```
 
 ### `its entra authmethods disable <method>`
@@ -475,7 +438,6 @@ Disable a method tenant-wide (state=disabled). Switch to inactive state. Idempot
 Flags: `--dry-run` Print the PATCH request without sending · `--confirm` Confirm this tenant-wide policy change
 ```bash
 its entra authmethods disable Sms
-its entra authmethods disable Sms --json
 ```
 
 ### `its entra authmethods patch <method>`
@@ -483,7 +445,6 @@ Patch a method configuration with a custom body (inline or @path/to/file.json).
 Flags: `--body` Inline JSON or @path/to/body.json — the PATCH body for the method config · `--dry-run` Print the PATCH request without sending · `--confirm` Confirm this tenant-wide policy change
 ```bash
 its entra authmethods patch TemporaryAccessPass @./tap-policy.json
-its entra authmethods patch TemporaryAccessPass @./tap-policy.json --json
 ```
 
 ## consent
@@ -493,7 +454,6 @@ List delegated OAuth2 permission grants for a client app (existing consent).
 Flags: `--resource-app-id` Filter by resource appId (default: Microsoft Graph). Use '*' for all.
 ```bash
 its entra consent <app-id>
-its entra consent <app-id> --json
 its entra consent <app-id> --watch
 ```
 
@@ -502,7 +462,6 @@ Safely add delegated scope(s) to an app — UNION with existing scope, never rep
 Flags: `--resource-app-id` Resource appId (default: Microsoft Graph) · `--principal-id` Grant on behalf of a specific user (consentType=Principal). Default: AllPrincipals (tenant-wide) · `--dry-run` Print the request without sending
 ```bash
 its entra consent add-scope <app-id> Mail.Read
-its entra consent add-scope <app-id> Mail.Read --json
 ```
 
 ### `its entra consent remove-scope <client_app_id> <scopes>`
@@ -510,14 +469,12 @@ Remove delegated scope(s) from an existing grant — keeps others intact.
 Flags: `--resource-app-id` Resource appId (default: Microsoft Graph) · `--principal-id` Per-user grant — default AllPrincipals (tenant-wide) · `--dry-run` Print the request without sending
 ```bash
 its entra consent remove-scope <app-id> Mail.Read
-its entra consent remove-scope <app-id> Mail.Read --json
 ```
 
 ### `its entra consent app-roles <client_app_id>`
 List application-permission grants (appRoleAssignments) for a client app.
 ```bash
 its entra consent app-roles <app-id>
-its entra consent app-roles <app-id> --json
 ```
 
 ### `its entra consent app-role-grant <client_app_id> <role>`
@@ -525,7 +482,6 @@ Grant an application-permission (app-role) to a client app — equivalent to con
 Flags: `--resource-app-id` Resource appId (default: Microsoft Graph) · `--dry-run` Print the request without sending
 ```bash
 its entra consent app-role-grant <app-id> User.Read.All
-its entra consent app-role-grant <app-id> User.Read.All --json
 ```
 
 ### `its entra consent app-role-revoke <client_app_id> <assignment_id>`
@@ -533,7 +489,6 @@ Revoke an app-role assignment by id. Revokes a previously-granted app-role grant
 Flags: `--resource-app-id` Resource appId (default: Microsoft Graph) · `--confirm` Confirm the revoke
 ```bash
 its entra consent app-role-revoke <app-id> <assignment-id>
-its entra consent app-role-revoke <app-id> <assignment-id> --json
 ```
 
 ## xtenant
@@ -542,7 +497,6 @@ its entra consent app-role-revoke <app-id> <assignment-id> --json
 Show the default cross-tenant access policy. Returns the tenant-default policy / record.
 ```bash
 its entra xtenant default
-its entra xtenant default --json
 ```
 
 ### `its entra xtenant trust-mfa <on_off>`
@@ -550,7 +504,6 @@ Toggle inboundTrust.isMfaAccepted on the default policy.
 Flags: `--dry-run` Print the PATCH without sending
 ```bash
 its entra xtenant trust-mfa on
-its entra xtenant trust-mfa on --json
 ```
 
 ### `its entra xtenant trust-device <on_off>`
@@ -558,36 +511,32 @@ Toggle inboundTrust.isCompliantDeviceAccepted on the default policy.
 Flags: `--dry-run` Print the PATCH without sending
 ```bash
 its entra xtenant trust-device on
-its entra xtenant trust-device on --json
 ```
 
 ### `its entra xtenant partners`
 List per-partner cross-tenant access overrides. Returns per-partner overrides — use `partner-set` to mutate.
 ```bash
 its entra xtenant partners
-its entra xtenant partners --json
 ```
 
 ### `its entra xtenant partner-add <tenant_id>`
 Start a per-partner cross-tenant access config. Bootstraps a fresh per-partner override record.
 ```bash
 its entra xtenant partner-add <partner-tenant-id>
-its entra xtenant partner-add <partner-tenant-id> --json
 ```
 
 ### `its entra xtenant partner-set <tenant_id>`
 Patch a partner cross-tenant access record. Patches an existing partner record.
-Flags: `--trust-mfa` on or off · `--trust-device` on or off · `--trust-haadj` on or off (Hybrid Azure AD Joined) · `--dry-run` Print the PATCH without sending
+Flags: `--trust-mfa <on|off>` on or off · `--trust-device <on|off>` on or off · `--trust-haadj <on|off>` on or off (Hybrid Azure AD Joined) · `--dry-run` Print the PATCH without sending
 ```bash
 its entra xtenant partner-set <partner-tenant-id> --trust-mfa on
-its entra xtenant partner-set <partner-tenant-id> --trust-mfa on --json
 ```
 
 ## audit
 
 ### `its entra audit`
 List directory audit logs. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--filter` OData filter expression · `--top` Number of results · `--all` Fetch all results (overrides --top) · `--category` Filter by category · `--initiated-by` Filter by initiating user ID (GUID) or app ID · `--target` Filter by target resource ID (GUID) · `--activity` Filter by activityDisplayName (exact match, e.g. 'Add member to group') · `--result` Filter by result
+Flags: `--filter` OData filter expression · `--top` Number of results · `--all` Fetch all results (overrides --top) · `--category` Filter by category · `--initiated-by` Filter by initiating user ID (GUID) or app ID · `--target` Filter by target resource ID (GUID) · `--activity` Filter by activityDisplayName (exact match, e.g. 'Add member to group') · `--result <success|failure|timeout>` Filter by result
 ```bash
 its entra audit --filter "activityDateTime ge 2024-01-01T00:00:00Z"
 its entra audit --target <user-id>
@@ -600,21 +549,18 @@ its entra audit --filter "activityDateTime ge 2024-01-01T00:00:00Z" --watch
 List risky users from Identity Protection. Returns users with non-none risk score.
 ```bash
 its entra security risky
-its entra security risky --json
 ```
 
 ### `its entra security mfa <user_id>`
 Check MFA readiness for a user. Returns user's strong-auth methods plus a readiness flag.
 ```bash
 its entra security mfa
-its entra security mfa --json
 ```
 
 ### `its entra security admin-mfa`
 Audit all admin users for MFA readiness. Audit pass — flags any admin without strong MFA.
 ```bash
 its entra security admin-mfa
-its entra security admin-mfa --json
 ```
 
 ## directory
@@ -623,14 +569,12 @@ its entra security admin-mfa --json
 Get tenant organisation details. Returns the tenant organisation profile.
 ```bash
 its entra directory org
-its entra directory org --json
 ```
 
 ### `its entra directory domains`
 List verified domains. Returns verified + provisioning domains.
 ```bash
 its entra directory domains
-its entra directory domains --json
 ```
 
 ### `its entra directory deleted`
@@ -638,7 +582,6 @@ List recently deleted users. Returns soft-deleted users still within the 30-day 
 Flags: `--top` Number of results · `--all` Fetch all results (overrides --top)
 ```bash
 its entra directory deleted
-its entra directory deleted --json
 ```
 
 ### `its entra directory tree <user_id>`
@@ -646,14 +589,12 @@ Build org tree from a root user (recursive). Recursive — pass --depth to bound
 Flags: `--depth` Max depth (1-5, default 3)
 ```bash
 its entra directory tree
-its entra directory tree --json
 ```
 
 ### `its entra directory summary`
 Aggregate users by company, department, location. Quick one-screen view — designed for dashboards / `--watch`.
 ```bash
 its entra directory summary
-its entra directory summary --json
 its entra directory summary --watch
 ```
 
@@ -661,7 +602,6 @@ its entra directory summary --watch
 Licence and app usage summary. Aggregated app + licence usage across the tenant.
 ```bash
 its entra directory app-usage
-its entra directory app-usage --json
 ```
 
 ## onboarding
@@ -670,7 +610,6 @@ its entra directory app-usage --json
 Onboarding snapshot: user profile, licences, groups, manager.
 ```bash
 its entra onboarding summary jane.smith@example.com
-its entra onboarding summary jane.smith@example.com --json
 its entra onboarding summary jane.smith@example.com --watch
 ```
 
@@ -679,7 +618,6 @@ Copy group memberships from one user to another. Idempotent — already-shared g
 Flags: `--source` Source user ID or UPN · `--target` Target user ID or UPN
 ```bash
 its entra onboarding copy-groups --source peer@example.com --target jane.smith@example.com
-its entra onboarding copy-groups --source peer@example.com --target jane.smith@example.com --json
 ```
 
 ### `its entra onboarding convert-mailbox <user_id>`
@@ -687,7 +625,6 @@ Convert user mailbox to shared (disable + remove licences). Requires --confirm.
 Flags: `--confirm` Confirm the conversion
 ```bash
 its entra onboarding convert-mailbox jane.smith@example.com --confirm
-its entra onboarding convert-mailbox jane.smith@example.com --confirm --json
 ```
 
 ## offboarding
@@ -696,7 +633,6 @@ its entra onboarding convert-mailbox jane.smith@example.com --confirm --json
 Offboarding checklist: disable account, list licences and groups to remove.
 ```bash
 its entra offboarding summary jane.smith@example.com
-its entra offboarding summary jane.smith@example.com --json
 its entra offboarding summary jane.smith@example.com --watch
 ```
 
@@ -705,7 +641,6 @@ Execute offboarding: disable account, revoke licences, remove from groups. Requi
 Flags: `--confirm` Confirm the offboarding
 ```bash
 its entra offboarding run jane.smith@example.com --confirm
-its entra offboarding run jane.smith@example.com --confirm --json
 ```
 
 ## break-glass
@@ -715,7 +650,6 @@ Audit your two break-glass accounts (BG01 password + BG02 FIDO2) — GA role, CA
 Flags: `--bg01` Override BG01 UPN (defaults to ENTRA_BG01_UPN env) · `--bg02` Override BG02 UPN (defaults to ENTRA_BG02_UPN env)
 ```bash
 its entra break-glass audit
-its entra break-glass audit --json
 ```
 
 ## whoami
@@ -724,7 +658,6 @@ its entra break-glass audit --json
 Dump the current Entra CLIENT_ID, app display name, Graph app-role assignments (application permissions), delegated scopes, and the live access token's claims. Use before any mutation to check 'will I have permission'
 ```bash
 its entra whoami
-its entra whoami --json
 ```
 
 ## doctor
@@ -734,7 +667,6 @@ Parallel health check on tenant — expiring secrets, admin MFA gaps, risky user
 Flags: `--secret-warn-days` Flag app credentials expiring within this many days (default 60) · `--stale-days` Threshold for stale enabled accounts (default 90)
 ```bash
 its entra doctor
-its entra doctor --json
 its entra doctor --watch
 ```
 
@@ -742,7 +674,7 @@ its entra doctor --watch
 
 ### `its entra apps register <name>`
 Bootstrap a new Entra app registration end-to-end — creates the application, its service principal, and a 12-month client secret. Returns the appId, objectId, SP id, and the plaintext secret (only shown once).
-Flags: `--redirect-uri` Web redirect URI. Repeatable — pass multiple --redirect-uri flags or comma-separate. · `--audience` Sign-in audience · `--secret-name` Display name for the client secret · `--months` Client secret lifetime in months · `--no-secret` Skip generating a client secret
+Flags: `--redirect-uri` Web redirect URI. Repeatable — pass multiple --redirect-uri flags or comma-separate. · `--audience <single|multi|consumer|personal>` Sign-in audience · `--secret-name` Display name for the client secret · `--months` Client secret lifetime in months · `--no-secret` Skip generating a client secret
 
 ### `its entra apps add-password <app>`
 Rotate / add a client secret on an existing app registration. The plaintext secretText is only returned once.
@@ -769,7 +701,7 @@ Reverse-map live app registrations into manifest fragments — declared permissi
 
 ### `its entra apps audit`
 Security-posture audit across all app registrations — god-apps (app-role grant counts near the ~40-role token roles-claim overflow that broke Intune), expired and long-lived secrets, credential-less and secret-only apps, ownerless apps, stale sign-in activity (beta report, degrades gracefully), and apps missing from the manifest (when one is readable). Unused-grants is out of scope — no per-permission usage signal exists without premium logs.
-Flags: `--god-threshold` App-role grant count above which an app is critical · `--stale-days` Days without a sign-in before an app counts as stale · `--max-secret-months` Flag secrets whose lifetime exceeds this many months · `--manifest` Path to the JSONC apps manifest for the not-in-manifest check · `--severity` Only show findings at or above this severity
+Flags: `--god-threshold` App-role grant count above which an app is critical · `--stale-days` Days without a sign-in before an app counts as stale · `--max-secret-months` Flag secrets whose lifetime exceeds this many months · `--manifest` Path to the JSONC apps manifest for the not-in-manifest check · `--severity <info|warn|crit>` Only show findings at or above this severity
 
 ## admin-bootstrap
 
@@ -792,7 +724,6 @@ Raw Graph POST — pass any /v1.0 or /beta path (use --beta for beta).
 Flags: `--body` Request body — inline JSON string or @file.json to read from disk · `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
 its entra graph post "/users/$count" --body @./payload.json
-its entra graph post "/users/$count" --body @./payload.json --json
 ```
 
 ### `its entra graph patch <path>`
@@ -808,7 +739,6 @@ Raw Graph PUT — pass any /v1.0 or /beta path (use --beta for beta).
 Flags: `--body` Request body — inline JSON string or @file.json to read from disk · `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
 its entra graph put "/users/<id>/photo/$value" --body @./photo.jpg
-its entra graph put "/users/<id>/photo/$value" --body @./photo.jpg --json
 ```
 
 ### `its entra graph delete <path>`

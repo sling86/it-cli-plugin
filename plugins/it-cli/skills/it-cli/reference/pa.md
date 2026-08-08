@@ -10,7 +10,6 @@ Power Platform admin API — environments, Power Automate cloud flows, Power App
 List Power Platform environments (admin). Surfaces the most common fields; pass --json for raw shape.
 ```bash
 its pa environments
-its pa environments --json
 its pa environments --watch
 ```
 
@@ -18,14 +17,13 @@ its pa environments --watch
 Show details for one environment. Pass the id (or any natural identifier) as the positional arg.
 ```bash
 its pa environments get <env-id>
-its pa environments get <env-id> --json
 ```
 
 ## flows
 
 ### `its pa flows`
 List Power Automate cloud flows. Defaults to all environments — use --environment <id> to scope.
-Flags: `--environment` Limit to a single environment (id from `its pa environments`) · `--state` Filter by state
+Flags: `--environment` Limit to a single environment (id from `its pa environments`) · `--state <Started|Stopped|Suspended>` Filter by state
 ```bash
 its pa flows --environment <env-id>
 its pa flows --environment <env-id> --state Suspended
@@ -37,7 +35,6 @@ Show flow details (definition, triggers, actions). Pass the id (or any natural i
 Flags: `--environment` Environment id (required)
 ```bash
 its pa flows get <flow-id> --environment <env-id>
-its pa flows get <flow-id> --environment <env-id> --json
 ```
 
 ### `its pa flows permissions <flow_id>`
@@ -56,7 +53,6 @@ Turn a flow on (admin). Start the resource. Idempotent.
 Flags: `--environment` Environment id (required)
 ```bash
 its pa flows start <flow-id> --environment <env-id>
-its pa flows start <flow-id> --environment <env-id> --json
 ```
 
 ### `its pa flows delete <flow_id>`
@@ -68,14 +64,13 @@ its pa flows delete <flow-id> --environment <env-id> --confirm
 
 ### `its pa flows set-owner <flow_id>`
 Change ownership / permissions on a cloud flow (admin). --owner <upn|guid> upserts a principal (default role CanEdit = full co-owner); --remove <upn|guid> revokes one. Idempotent. Used to reclaim flows from disabled accounts during licence reclaim
-Flags: `--environment` Environment id (required) · `--owner` Principal to grant the role to (UPN or AAD object id). Mutually exclusive with --remove. · `--remove` Principal to revoke (UPN or AAD object id). Mutually exclusive with --owner. · `--role` Permission tier when granting · `--confirm` Required to execute the mutation
+Flags: `--environment` Environment id (required) · `--owner` Principal to grant the role to (UPN or AAD object id). Mutually exclusive with --remove. · `--remove` Principal to revoke (UPN or AAD object id). Mutually exclusive with --owner. · `--role <CanEdit|CanViewWithShare|CanView>` Permission tier when granting · `--confirm` Required to execute the mutation
 
 ### `its pa flows runs <flow_id>`
 List recent runs for a flow. Returns historical run records.
 Flags: `--environment` Environment id (required) · `--top` Max runs to fetch (default 50)
 ```bash
 its pa flows runs <flow-id> --environment <env-id>
-its pa flows runs <flow-id> --environment <env-id> --json
 ```
 
 ## apps
@@ -85,7 +80,6 @@ List Power Apps canvas apps. Defaults to all envs — scope with --environment <
 Flags: `--environment` Limit to a single environment
 ```bash
 its pa apps --environment <env-id>
-its pa apps --environment <env-id> --json
 its pa apps --environment <env-id> --watch
 ```
 
@@ -96,6 +90,5 @@ List connections in an environment. Surfaces the most common fields; pass --json
 Flags: `--environment` Environment id (required)
 ```bash
 its pa connections --environment <env-id>
-its pa connections --environment <env-id> --json
 its pa connections --environment <env-id> --watch
 ```

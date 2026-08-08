@@ -11,7 +11,6 @@ List all BC companies visible to the service principal. Surfaces the most common
 Flags: `--env` BC environment name (default: BC_ENVIRONMENT)
 ```bash
 its bc companies
-its bc companies --json
 its bc companies --watch
 ```
 
@@ -20,7 +19,6 @@ Resolve a company by name/id/partial match. Pass the id (or any natural identifi
 Flags: `--env` BC environment name (default: BC_ENVIRONMENT)
 ```bash
 its bc companies get "Head Office"
-its bc companies get "Head Office" --json
 ```
 
 ## environments
@@ -41,7 +39,6 @@ Query any BC entity — OData passthrough with filter/top/select.
 Flags: `--company` Company name/id (default: first company) · `--filter` OData $filter expression · `--top` Max records (default 50) · `--select` $select fields (comma-separated) · `--orderby` $orderby expression · `--all` Fetch all pages (up to 10000 records; overrides --top) · `--env` BC environment name (default: BC_ENVIRONMENT) · `--api` Custom API route <publisher>/<group>/<version> (default: standard v2.0 API)
 ```bash
 its bc query get items --company <company-id>
-its bc query get items --company <company-id> --json
 ```
 
 ## record
@@ -51,7 +48,6 @@ Get a single BC record by entity + ID. Pass the id (or any natural identifier) a
 Flags: `--company` Company name/id (default: first company) · `--env` BC environment name (default: BC_ENVIRONMENT) · `--api` Custom API route <publisher>/<group>/<version> (default: standard v2.0 API)
 ```bash
 its bc record get items <item-id>
-its bc record get items <item-id> --json
 ```
 
 ## health
@@ -61,5 +57,4 @@ Probe BC connectivity by listing companies. Takes no positional argument; use --
 Flags: `--env` BC environment name (default: BC_ENVIRONMENT)
 ```bash
 its bc health
-its bc health --json
 ```
