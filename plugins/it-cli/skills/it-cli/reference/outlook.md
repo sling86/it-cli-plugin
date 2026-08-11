@@ -41,26 +41,45 @@ Flags: `--top` Max messages (max 50) · `--user` Override mailbox UPN (app-only 
 ### `its outlook mail move <message_id> <folder_id>`
 Move a message to another folder.
 Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook mail move AAMkAGI1AAAt0M0AAA= AQMkAGI1Archive --user jane.smith@example.com
+```
 
 ### `its outlook mail copy <message_id> <folder_id>`
 Copy a message to another folder.
 Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook mail copy AAMkAGI1AAAt0M0AAA= AQMkAGI1Archive --user jane.smith@example.com
+```
 
 ### `its outlook mail read <message_id>`
 Mark a message as read.
 Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook mail read AAMkAGI1AAAt0M0AAA= --user jane.smith@example.com
+```
 
 ### `its outlook mail unread <message_id>`
 Mark a message as unread.
 Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook mail unread AAMkAGI1AAAt0M0AAA= --user jane.smith@example.com
+```
 
 ### `its outlook mail flag <message_id>`
 Set follow-up flag status on a message.
 Flags: `--status <flagged|complete|notFlagged>` Flag status · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook mail flag AAMkAGI1AAAt0M0AAA= --status flagged --user jane.smith@example.com
+its outlook mail flag AAMkAGI1AAAt0M0AAA= --status complete --user jane.smith@example.com
+```
 
 ### `its outlook mail categorise <message_id> <categories>`
 Set the category list on a message (replaces existing categories).
 Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook mail categorise AAMkAGI1AAAt0M0AAA= "IT,Follow up" --user jane.smith@example.com
+```
 
 ### `its outlook mail delete [message_id]`
 Delete one or more messages (moves to Deleted Items). Pass a single id positionally, or pipe `mail list --json` to stdin with --stdin for bulk delete.
@@ -84,22 +103,39 @@ its outlook mail send --to user@example.com --subject "Welcome" --html --body-fi
 ### `its outlook drafts create`
 Create a draft email (does not send).
 Flags: `--to` Comma-separated recipients · `--cc` CC recipients · `--bcc` BCC recipients · `--subject` Subject line · `--body` Body content · `--body-file` Read body from a UTF-8 file (use this for bodies > ~15KB — Windows command-line cap) · `--html` Treat --body / --body-file as HTML (default text) · `--importance <low|normal|high>` low|normal|high · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
+```bash
+its outlook drafts create --to jane.smith@example.com --subject "Laptop ready" --body "Come and collect when convenient." --user jane.smith@example.com
+its outlook drafts create --to jane.smith@example.com --subject "Change notice" --body-file ./notice.html --html --user jane.smith@example.com
+```
 
 ### `its outlook drafts reply <message_id>`
 Create a reply draft. By default replies to the sender only; use --all to Reply-All. Does not send — use `drafts send <id>` after edits.
 Flags: `--comment` Inline comment prepended to the reply body · `--comment-file` Read --comment from a UTF-8 file (bypasses Windows ~32K command-line cap) · `--all` Reply to all recipients · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
+```bash
+its outlook drafts reply AAMkAGI1AAAt0M0AAA= --comment "On it now." --user jane.smith@example.com
+its outlook drafts reply AAMkAGI1AAAt0M0AAA= --all --comment "Adding IT." --user jane.smith@example.com
+```
 
 ### `its outlook drafts forward <message_id>`
 Create a forward draft.
 Flags: `--to` Comma-separated recipients · `--comment` Inline comment prepended to the forwarded body · `--comment-file` Read --comment from a UTF-8 file (bypasses Windows ~32K command-line cap) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
+```bash
+its outlook drafts forward AAMkAGI1AAAt0M0AAA= --to jane.smith@example.com --comment "FYI" --user jane.smith@example.com
+```
 
 ### `its outlook drafts update <draft_id>`
 Patch an existing draft. Any of subject/body/to/cc/bcc/importance/categories.
 Flags: `--subject` Replace subject · `--body` Replace body · `--body-file` Read replacement body from a UTF-8 file (use for bodies > ~15KB — Windows command-line cap) · `--html` Treat --body / --body-file as HTML · `--to` Replace To recipients (comma-separated) · `--cc` Replace CC recipients · `--bcc` Replace BCC recipients · `--importance <low|normal|high>` low|normal|high · `--categories` Replace categories (comma-separated) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
+```bash
+its outlook drafts update AAMkAGDraft01 --subject "Revised: laptop ready" --user jane.smith@example.com
+```
 
 ### `its outlook drafts send <draft_id>`
 Send an existing draft.
 Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook drafts send AAMkAGDraft01 --user jane.smith@example.com
+```
 
 ### `its outlook drafts`
 List draft messages (convenience for `mail list --folder drafts`).
@@ -118,6 +154,10 @@ Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_U
 ### `its outlook folders create <name>`
 Create a new mail folder (optionally nested under a parent).
 Flags: `--parent` Parent folder ID (omit for top-level) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook folders create "IT Archive" --user jane.smith@example.com
+its outlook folders create "2026" --parent "IT Archive" --user jane.smith@example.com
+```
 
 ## attachments
 
@@ -165,18 +205,33 @@ Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_U
 ### `its outlook events create`
 Create a calendar event. Times default to UTC unless --tz is set.
 Flags: `--subject` Event subject · `--start` Start datetime (ISO, e.g. 2026-05-25T09:00:00) · `--end` End datetime (ISO) · `--tz` Time zone (default UTC) · `--location` Location display name · `--body` Body content · `--body-file` Read body from a UTF-8 file (use for bodies > ~15KB — Windows command-line cap) · `--html` Treat --body / --body-file as HTML · `--attendees` Comma-separated email addresses (required) · `--optional-attendees` Comma-separated optional attendees · `--all-day` Mark as all-day event · `--online` Create Teams meeting link · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
+```bash
+its outlook events create --subject "IT catch-up" --start 2026-09-01T10:00 --end 2026-09-01T10:30 --tz Europe/London --attendees jane.smith@example.com --online --user jane.smith@example.com
+its outlook events create --subject "Server migration" --start 2026-09-05 --all-day --user jane.smith@example.com
+```
 
 ### `its outlook events update <event_id>`
 Update a calendar event (subject, times, location, all-day, online-meeting).
 Flags: `--subject` Replace subject · `--start` Replace start datetime (ISO) · `--end` Replace end datetime (ISO) · `--tz` Time zone for --start/--end (default UTC) · `--location` Replace location · `--body` Replace body · `--body-file` Read replacement body from a UTF-8 file (use for bodies > ~15KB — Windows command-line cap) · `--html` Treat --body / --body-file as HTML · `--all-day` Set isAllDay · `--online` Toggle isOnlineMeeting · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
+```bash
+its outlook events update AAMkAGEvent01 --start 2026-09-01T11:00 --end 2026-09-01T11:30 --tz Europe/London --user jane.smith@example.com
+```
 
 ### `its outlook events delete <event_id>`
 Delete a calendar event.
 Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--confirm` Confirm deletion
+```bash
+its outlook events delete AAMkAGI1... --user jane.smith@example.com --confirm
+its outlook events list --user jane.smith@example.com
+```
 
 ### `its outlook events respond <event_id> <response>`
 Respond to a meeting invite — accept, decline, or tentatively accept.
 Flags: `--comment` Reply comment to the organiser · `--comment-file` Read --comment from a UTF-8 file (bypasses Windows ~32K command-line cap) · `--no-response` Don't send a reply to the organiser · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
+```bash
+its outlook events respond AAMkAGEvent01 accept --user jane.smith@example.com
+its outlook events respond AAMkAGEvent01 decline --comment "On leave" --user jane.smith@example.com
+```
 
 ### `its outlook events availability <schedules>`
 Check free/busy across one or more mailboxes between two times.
@@ -220,10 +275,17 @@ Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_U
 ### `its outlook rules create`
 Create an inbox rule. Conditions + actions take raw JSON (Graph schema). See https://learn.microsoft.com/graph/api/resources/messagerule for shape.
 Flags: `--name` Display name · `--sequence` Run-order (lower runs first) · `--disabled` Create in disabled state · `--conditions` Conditions JSON (e.g. '{"fromAddresses":[{"emailAddress":{"address":"x@y"}}]}') · `--actions` Actions JSON (e.g. '{"moveToFolder":"<folderId>"}') · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook rules create --name "IT to folder" --conditions '{"senderContains":["helpdesk"]}' --actions '{"moveToFolder":"AQMkAGI1IT"}' --user jane.smith@example.com
+```
 
 ### `its outlook rules delete <rule_id>`
 Delete an inbox rule.
 Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--confirm` Confirm deletion
+```bash
+its outlook rules delete AQAAAL7z... --user jane.smith@example.com --confirm
+its outlook rules list --user jane.smith@example.com
+```
 
 ## contacts
 

@@ -155,7 +155,14 @@ its rmm agents --filter status=overdue --jsonl \
 # Explicit mapping overrides command metadata when needed
 its rmm agents --jsonl \
   | its rmm agents get --stdin --map agent=.agent_id --jsonl
+
+# `-` marks the argument that comes from the piped record. Positionals you type
+# fill from the left, so without it the date would land in the taskId slot.
+its wrike tickets --filter status=active --jsonl \
+  | its wrike tickets set-due - 2026-09-01 --stdin --max-input 50
 ```
+
+Only the first positional falls back to guessing a field, so a `-` after it needs `--map` or command-owned `pipeFrom`. `-` is only special under `--stdin`.
 
 Commands with no positional arguments reject record fan-out. Mutations validate every binding before the first write and run sequentially. Fan-out defaults to 100 records; irreversible commands require an explicit `--max-input`. Per-record failures go to stderr, successful records go to stdout, and any failure produces a non-zero exit code.
 

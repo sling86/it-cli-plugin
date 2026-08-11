@@ -9,6 +9,10 @@ GitHub via the local `gh` CLI. Piggybacks on the user's existing `gh auth` — n
 ### `its gh branch-protect apply <repo>`
 Apply the standard branch-protection block to <owner/repo> on the named branch (default `main`). 1 approving review, dismiss stale, no force push, no delete, conversation resolution required.
 Flags: `--branch` Branch to protect · `--dry-run` Print the planned PUT body without sending
+```bash
+its gh branch-protect apply acme/storefront --dry-run
+its gh branch-protect apply acme/storefront --branch main
+```
 
 ### `its gh branch-protect show <repo>`
 Show current branch-protection settings for <owner/repo>@<branch>. Read-only — no mutation.
@@ -19,6 +23,9 @@ Flags: `--branch` Branch
 ### `its gh webhook setup <repo> <url>`
 Create a push-event webhook on <owner/repo> pointing at <url>. Idempotent — bails if a hook with the same URL already exists.
 Flags: `--secret` Webhook secret (defaults to a random secret, printed once - save it) · `--events` Comma-separated events (default: push)
+```bash
+its gh webhook setup acme/storefront https://dok.example.com/api/deploy --events push
+```
 
 ### `its gh webhook <repo>`
 List webhooks on <owner/repo>.
