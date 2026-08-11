@@ -22,8 +22,8 @@ its az account get
 ### `its az account set <subscription>`
 Switch active subscription. Single-value write; idempotent on no-op.
 ```bash
-its az account set <sub-id>
 its az account set "Production"
+its az account set <sub-id>
 ```
 
 ## groups
@@ -75,6 +75,7 @@ its az vm get my-vm
 Start a VM. Start the resource. Idempotent.
 Flags: `--rg` Resource group (required) · `--confirm` Confirm the operation
 ```bash
+its az vm start app-vm-01 --rg rg-production --confirm
 its az vm start my-vm --rg my-rg
 its az vm start my-vm --rg my-rg --confirm
 ```
@@ -83,6 +84,7 @@ its az vm start my-vm --rg my-rg --confirm
 Stop a VM (still billed — use deallocate to stop billing). Stop the resource. Use --confirm if the action is destructive.
 Flags: `--rg` Resource group (required) · `--confirm` Confirm the operation
 ```bash
+its az vm stop app-vm-01 --rg rg-production --confirm
 its az vm stop my-vm --rg my-rg
 ```
 
@@ -90,6 +92,7 @@ its az vm stop my-vm --rg my-rg
 Restart a VM. Stop + start in one call.
 Flags: `--rg` Resource group (required) · `--confirm` Confirm the operation
 ```bash
+its az vm restart app-vm-01 --rg rg-production --confirm
 its az vm restart my-vm --rg my-rg
 ```
 
@@ -97,6 +100,7 @@ its az vm restart my-vm --rg my-rg
 Deallocate a VM (stops billing). Stop + release compute resources. Billing pauses.
 Flags: `--rg` Resource group (required) · `--confirm` Confirm the operation
 ```bash
+its az vm deallocate app-vm-01 --rg rg-production --confirm
 its az vm deallocate my-vm --rg my-rg
 ```
 
@@ -181,6 +185,7 @@ its az webapp get my-app --rg my-rg
 Restart a web app. Stop + start in one call.
 Flags: `--rg` Resource group (required) · `--confirm` Confirm the operation
 ```bash
+its az webapp restart web-prod --rg rg-production --confirm
 its az webapp restart my-app --rg my-rg
 ```
 

@@ -51,36 +51,43 @@ its wrike tickets search "printer"
 Create a new IT support ticket. Idempotent on duplicate names — use update/edit to mutate an existing record.
 Flags: `--title` Ticket title (required) · `--description` Ticket description (inline plain text) · `--description-file` Read description body from a file path · `--description-stdin` Read description body from stdin · `--markdown` Treat description as Markdown (converts to Wrike-safe HTML). Mutually exclusive with --html. · `--html` Description is raw Wrike-safe HTML. Mutually exclusive with --markdown. · `--assignee` Comma-separated user IDs or names (e.g. 'KUAABCDE,Jane Smith') · `--due` Due date (YYYY-MM-DD) · `--importance <High|Normal|Low>` Importance (High, Normal, Low)
 ```bash
+its wrike tickets create --title "Printer offline in Finance" --description "Label printer not responding"
+its wrike tickets create --title "Server migration plan" --description-file ./plan.md --markdown --importance High
 its wrike tickets create --title "Outlook crashes" --description "Repro: open shared mailbox"
 ```
 
 ### `its wrike tickets set-due <taskId> <dueDate>`
 Set due date on a ticket (YYYY-MM-DD). Set the task's due date.
 ```bash
+its wrike tickets set-due IEACW7BXKQ2R4KMT 2026-09-01
 its wrike tickets set-due <task-id> 2026-06-01
 ```
 
 ### `its wrike tickets assign <taskId> <userId>`
 Add an assignee to a ticket. Idempotent — assigning twice is a no-op.
 ```bash
+its wrike tickets assign IEACW7BXKQ2R4KMT KUAEXAMP
 its wrike tickets assign <task-id> <user-id>
 ```
 
 ### `its wrike tickets update-title <taskId> <title>`
 Change a ticket's title. Rename the task — keeps the same ID.
 ```bash
+its wrike tickets update-title IEACW7BXKQ2R4KMT "Printer offline — Finance, resolved"
 its wrike tickets update-title <task-id> "New title"
 ```
 
 ### `its wrike tickets update-importance <taskId> <importance>`
 Change ticket importance (High, Normal, Low). Set Low / Normal / High importance.
 ```bash
+its wrike tickets update-importance IEACW7BXKQ2R4KMT High
 its wrike tickets update-importance <task-id> High
 ```
 
 ### `its wrike tickets update-status <taskId> <status>`
 Change ticket status. Move the task to a different workflow stage.
 ```bash
+its wrike tickets update-status IEACW7BXKQ2R4KMT Completed
 its wrike tickets update-status <task-id> "Completed"
 ```
 
@@ -88,6 +95,8 @@ its wrike tickets update-status <task-id> "Completed"
 Replace a ticket's description. Same formatting rules as add-comment: plain text by default (\n → <br>, @Name auto-mentions), --markdown for bold/italic/links/bullets, --html for raw. Wrike renders <br>, <a>, <b>, <i>, and mention anchors only.
 Flags: `--file` Read comment body from a file path · `--stdin` Read comment body from stdin · `--html` Send body as raw HTML. Wrike only renders <br>, <a>, <b>, <i>, and mention anchors — other tags are ignored. Use --markdown for richer formatting. · `--markdown` Convert Markdown to Wrike-safe HTML. Supported: **bold**, _italic_, `code` (rendered italic), # headings (rendered bold), [text](url), - bullets (flattened to •). In this mode, mention users with plain @Name (auto-resolves). Mutually exclusive with --html. Recommended over --html. · `--skip-mention-check` Bypass the @mention markup guard Use only when posting a literal string that happens to contain mention-like markup.
 ```bash
+its wrike tickets update-description IEACW7BXKQ2R4KMT "**Root cause:** stale spooler" --markdown
+cat notes.md | its wrike tickets update-description IEACW7BXKQ2R4KMT --stdin --markdown
 its wrike tickets update-description <task-id> --markdown "**Repro:** open Outlook → file → ..."
 ```
 
@@ -95,6 +104,8 @@ its wrike tickets update-description <task-id> --markdown "**Repro:** open Outlo
 Add a comment to a ticket. Prefer --markdown (bold/italic/links/bullets + plain @Name auto-resolves to mentions). Plain text also works (\n → <br>, @Name auto-resolved). Use --html only when you need raw anchor-based mentions; the mention markup guard rejects mismatched modes unless --skip-mention-check is set. Wrike only renders <br>, <a>, <b>, <i>, and mention anchors.
 Flags: `--file` Read comment body from a file path · `--stdin` Read comment body from stdin · `--html` Send body as raw HTML. Wrike only renders <br>, <a>, <b>, <i>, and mention anchors — other tags are ignored. Use --markdown for richer formatting. · `--markdown` Convert Markdown to Wrike-safe HTML. Supported: **bold**, _italic_, `code` (rendered italic), # headings (rendered bold), [text](url), - bullets (flattened to •). In this mode, mention users with plain @Name (auto-resolves). Mutually exclusive with --html. Recommended over --html. · `--skip-mention-check` Bypass the @mention markup guard Use only when posting a literal string that happens to contain mention-like markup.
 ```bash
+its wrike tickets add-comment IEACW7BXKQ2R4KMT "Fixed — restarted spooler on WKS-9" --markdown
+its wrike tickets add-comment IEACW7BXKQ2R4KMT --file ./update.md --markdown
 its wrike tickets add-comment <task-id> "Replicated, escalating"
 ```
 
@@ -102,6 +113,7 @@ its wrike tickets add-comment <task-id> "Replicated, escalating"
 Replace the body of an existing comment. Same formatting rules as add-comment (--markdown / --html / plain text). Use the commentId returned by add-comment, or read it from `tickets get`.
 Flags: `--file` Read comment body from a file path · `--stdin` Read comment body from stdin · `--html` Send body as raw HTML. Wrike only renders <br>, <a>, <b>, <i>, and mention anchors — other tags are ignored. Use --markdown for richer formatting. · `--markdown` Convert Markdown to Wrike-safe HTML. Supported: **bold**, _italic_, `code` (rendered italic), # headings (rendered bold), [text](url), - bullets (flattened to •). In this mode, mention users with plain @Name (auto-resolves). Mutually exclusive with --html. Recommended over --html. · `--skip-mention-check` Bypass the @mention markup guard Use only when posting a literal string that happens to contain mention-like markup.
 ```bash
+its wrike tickets update-comment IEACW7BXIMBB3B7F "Corrected: it was the driver, not the spooler" --markdown
 its wrike tickets update-comment <comment-id> "fixed typo"
 ```
 
@@ -109,6 +121,7 @@ its wrike tickets update-comment <comment-id> "fixed typo"
 Delete a comment by ID. Requires --confirm. Use the commentId from add-comment output or `tickets get`.
 Flags: `--confirm` Confirm deletion (irreversible)
 ```bash
+its wrike tickets delete-comment IEACW7BXIMBB3B7F --confirm
 its wrike tickets delete-comment <comment-id> --confirm
 ```
 
@@ -129,12 +142,15 @@ its wrike tickets attachments <task-id>
 Download an attachment from a ticket. Stream the resource to a local file.
 Flags: `--output` Output file path (defaults to original filename in cwd)
 ```bash
+its wrike tickets download IEACW7BXKQ2R4KMT --output ./ticket-files
+its wrike tickets download IEACW7BXKQ2R4KMT IEAExampleAtt --output ./screenshot.png
 its wrike tickets download <task-id> <attachment-id> --output ./screenshot.png
 ```
 
 ### `its wrike tickets attach <taskId> <filePath>`
 Attach a file to a ticket. Upload a local file as an attachment.
 ```bash
+its wrike tickets attach IEACW7BXKQ2R4KMT ./screenshot.png
 its wrike tickets attach <task-id> ./screenshot.png
 ```
 
@@ -165,30 +181,35 @@ its wrike tasks get https://www.wrike.com/open.htm?id=...
 Create a new task in a folder or project (accepts name or ID).
 Flags: `--title` Task title · `--description` Task description · `--description-file` Read description from a UTF-8 file (use for descriptions > ~15KB — Windows command-line cap) · `--status` Task status · `--importance` Task importance (High, Normal, Low)
 ```bash
+its wrike tasks create "IT Projects" --title "Roll out FIDO2 keys" --importance High
 its wrike tasks create "My folder" --title "New task"
 ```
 
 ### `its wrike tasks set-due <taskId> <dueDate>`
 Set due date on a task (YYYY-MM-DD). Set the task's due date.
 ```bash
+its wrike tasks set-due IEACW7BXKQ2R4KMT 2026-09-01
 its wrike tasks set-due <task-id> 2026-06-01
 ```
 
 ### `its wrike tasks update-title <taskId> <title>`
 Change a task's title. Rename the task — keeps the same ID.
 ```bash
+its wrike tasks update-title IEACW7BXKQ2R4KMT "Roll out FIDO2 keys — phase 2"
 its wrike tasks update-title <task-id> "New title"
 ```
 
 ### `its wrike tasks update-importance <taskId> <importance>`
 Change task importance (High, Normal, Low). Set Low / Normal / High importance.
 ```bash
+its wrike tasks update-importance IEACW7BXKQ2R4KMT Low
 its wrike tasks update-importance <task-id> Low
 ```
 
 ### `its wrike tasks update-status <taskId> <status>`
 Change task status. Move the task to a different workflow stage.
 ```bash
+its wrike tasks update-status IEACW7BXKQ2R4KMT Completed
 its wrike tasks update-status <task-id> "In Progress"
 ```
 
@@ -196,6 +217,7 @@ its wrike tasks update-status <task-id> "In Progress"
 Replace a task's description. Same formatting rules as add-comment: plain text by default (\n → <br>, @Name auto-mentions), --markdown for bold/italic/links/bullets, --html for raw. Wrike renders <br>, <a>, <b>, <i>, and mention anchors only.
 Flags: `--file` Read comment body from a file path · `--stdin` Read comment body from stdin · `--html` Send body as raw HTML. Wrike only renders <br>, <a>, <b>, <i>, and mention anchors — other tags are ignored. Use --markdown for richer formatting. · `--markdown` Convert Markdown to Wrike-safe HTML. Supported: **bold**, _italic_, `code` (rendered italic), # headings (rendered bold), [text](url), - bullets (flattened to •). In this mode, mention users with plain @Name (auto-resolves). Mutually exclusive with --html. Recommended over --html. · `--skip-mention-check` Bypass the @mention markup guard Use only when posting a literal string that happens to contain mention-like markup.
 ```bash
+its wrike tasks update-description IEACW7BXKQ2R4KMT "## Plan\n- Order keys" --markdown
 its wrike tasks update-description <task-id> --markdown "## Plan\n- step 1"
 ```
 
@@ -203,12 +225,14 @@ its wrike tasks update-description <task-id> --markdown "## Plan\n- step 1"
 Add a comment to a task. Prefer --markdown (bold/italic/links/bullets + plain @Name auto-resolves to mentions). Plain text also works (\n → <br>, @Name auto-resolved). Use --html only when you need raw anchor-based mentions; the mention markup guard rejects mismatched modes unless --skip-mention-check is set. Wrike only renders <br>, <a>, <b>, <i>, and mention anchors.
 Flags: `--file` Read comment body from a file path · `--stdin` Read comment body from stdin · `--html` Send body as raw HTML. Wrike only renders <br>, <a>, <b>, <i>, and mention anchors — other tags are ignored. Use --markdown for richer formatting. · `--markdown` Convert Markdown to Wrike-safe HTML. Supported: **bold**, _italic_, `code` (rendered italic), # headings (rendered bold), [text](url), - bullets (flattened to •). In this mode, mention users with plain @Name (auto-resolves). Mutually exclusive with --html. Recommended over --html. · `--skip-mention-check` Bypass the @mention markup guard Use only when posting a literal string that happens to contain mention-like markup.
 ```bash
+its wrike tasks add-comment IEACW7BXKQ2R4KMT "Keys ordered, ETA Friday" --markdown
 its wrike tasks add-comment <task-id> --markdown "**done** — pushed to main"
 ```
 
 ### `its wrike tasks attach <taskId> <filePath>`
 Attach a file to a task. Upload a local file as an attachment.
 ```bash
+its wrike tasks attach IEACW7BXKQ2R4KMT ./quote.pdf
 its wrike tasks attach <task-id> ./diagram.png
 ```
 
@@ -329,6 +353,11 @@ Flags: `--status` Filter by status (default: Active; 'all' for any) · `--limit`
 ### `its wrike leavers complete <idOrPermalink>`
 Orchestrate the IT offboarding flow for a leaver ticket — disable + revoke sessions, clear manager, set extensionAttribute13=Leaver, convert mailbox to shared + GAL-hide, remove licences and groups, then mark the Wrike ticket Completed (only on full success). The status comment is returned as a draft — never posted directly, per wrike-comment-approval. Destructive — needs --confirm. Use --dry-run first.
 Flags: `--confirm` Required to execute mutations — otherwise dry-run · `--dry-run` Print the plan without running anything · `--user` Override the resolved Entra UPN (skip ticket → user lookup) · `--skip` Comma-separated steps to skip (disable, sessions, manager, ext13, mailbox, licences, groups, wrike)
+```bash
+its wrike leavers complete IEACW7BXKQ2R4KMT --dry-run
+its wrike leavers complete IEACW7BXKQ2R4KMT --confirm
+its wrike leavers complete IEACW7BXKQ2R4KMT --skip convert-mailbox --confirm
+```
 
 ### `its wrike leavers get <idOrPermalink>`
 Get full leaver-ticket details with comments. Pass the id (or Wrike permalink) as the positional arg.
@@ -346,9 +375,15 @@ its wrike dashboard --watch
 
 ### `its wrike auth login`
 Sign in to Wrike via OAuth (browser). Requires WRIKE_CLIENT_ID/WRIKE_CLIENT_SECRET from a Wrike app registration — run `its wrike setup` first.
+```bash
+its wrike auth login
+```
 
 ### `its wrike auth logout`
 Clear the persisted Wrike OAuth token.
+```bash
+its wrike auth logout
+```
 
 ### `its wrike auth status`
 Show Wrike OAuth sign-in state.

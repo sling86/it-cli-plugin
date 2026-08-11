@@ -52,6 +52,7 @@ its rmm agents ping aaron.lock
 Reboot the agent's host OS. Destructive — needs --confirm. Returns immediately; the host may take 1-3 minutes to come back.
 Flags: `--confirm` Confirm the reboot
 ```bash
+its rmm agents reboot WKS-9 --confirm
 its rmm agents reboot OFFICE-PC-01 --confirm
 its rmm agents reboot c3e5f1a7-... --confirm
 ```
@@ -60,6 +61,7 @@ its rmm agents reboot c3e5f1a7-... --confirm
 Permanently delete the agent record from RMM. Doesn't uninstall the local agent service — pair with the RMM uninstall script if the device is being decommissioned.
 Flags: `--confirm` Confirm the removal
 ```bash
+its rmm agents remove WKS-9 --confirm
 its rmm agents remove OFFICE-PC-01 --confirm
 ```
 
@@ -76,6 +78,10 @@ its rmm agents prune --older-than 6w --confirm
 Execute a one-shot shell command on the target agent. Returns stdout + stderr + exit code. Use --shell powershell|cmd|bash; default timeout is 30s.
 Flags: `--shell <powershell|cmd|bash>` Shell type · `--cmd` Command to execute (use --file for multi-line scripts) · `--file` Path to a local script file (overrides --cmd). PowerShell multi-line scripts auto-wrapped via base64 + temp file. · `--raw` Disable auto-wrapping for multi-line PowerShell (sends as-is) · `--timeout` Timeout in seconds · `--as-user` Run in the active user's session instead of SYSTEM (requires a signed-in desktop user)
 ```bash
+its rmm agents run WKS-9 --shell powershell --cmd "Get-Service spooler"
+its rmm agents run WKS-9 --shell powershell --cmd "gpupdate /force" --timeout 300
+its rmm agents run WKS-9 --shell powershell --cmd "whoami" --as-user
+its rmm agents run WKS-9 --shell powershell --file ./fix-printer.ps1
 its rmm agents run OFFICE-PC-01 --shell powershell --cmd "Get-Process"
 its rmm agents run OFFICE-PC-01 --shell cmd --cmd "ipconfig /all"
 its rmm agents run LINUX-WEB-01 --shell bash --cmd "uname -a && uptime"
@@ -102,6 +108,7 @@ its rmm agents pending OFFICE-PC-01
 ### `its rmm agents wake <agent>`
 Send a magic packet via another online agent on the same LAN. Doesn't work across VLANs / VPN — agent must be on a network with a reachable RMM peer.
 ```bash
+its rmm agents wake WKS-9
 its rmm agents wake OFFICE-PC-01
 its rmm agents wake c3e5f1a7-...
 ```
@@ -110,6 +117,8 @@ its rmm agents wake c3e5f1a7-...
 Reassign an agent's client/site or update description (PUT /agents/{id}/).
 Flags: `--client` Client name or ID to move the agent into · `--site` Site name or ID to move the agent into (must belong to --client if both given) · `--description` New description text
 ```bash
+its rmm agents edit WKS-9 --client "Acme" --site "Head Office"
+its rmm agents edit WKS-9 --description "Finance workstation"
 its rmm agents edit OFFICE-PC-01 --site <site-id>
 its rmm agents edit OFFICE-PC-01 --description "Marketing — Jane's desk"
 ```
@@ -117,6 +126,7 @@ its rmm agents edit OFFICE-PC-01 --description "Marketing — Jane's desk"
 ### `its rmm agents refresh <agent>`
 Trigger a WMI/sysinfo refresh on an agent — repopulates hardware fields (serial, model, etc.).
 ```bash
+its rmm agents refresh WKS-9
 its rmm agents refresh OFFICE-PC-01
 ```
 
@@ -145,10 +155,18 @@ its rmm clients --watch
 ### `its rmm clients create`
 Create a client (POST /clients/). TRMM also creates its first site in the same call — pass --site for its name (default 'Default'). Idempotent — skips if a client of that name already exists.
 Flags: `--name` New client name · `--site` Name of the client's initial site (default 'Default')
+```bash
+its rmm clients create --name "Acme" --site "Head Office"
+```
 
 ### `its rmm clients delete <client>`
 Delete a client by ID or name (DELETE /clients/{id}/). --confirm required. If the client still has agents, pass --move-to-site <siteId> to reassign them first (TRMM refuses otherwise).
 Flags: `--confirm` Confirm deletion · `--move-to-site` Site ID to move this client's agents to before deleting
+```bash
+its rmm clients delete Acme
+its rmm clients delete Acme --confirm
+its rmm clients delete Acme --move-to-site 12 --confirm
+```
 
 ## sites
 
@@ -163,10 +181,17 @@ its rmm sites --watch
 ### `its rmm sites create`
 Create a site under a client (POST /clients/sites/). Idempotent — skips if a site of that name already exists for the client.
 Flags: `--client` Client name or ID · `--name` New site name
+```bash
+its rmm sites create --client "Acme" --name "Warehouse"
+```
 
 ### `its rmm sites delete <site_id>`
 Delete a site by ID (DELETE /clients/sites/{id}/). Fails if the site still has agents. --confirm required.
 Flags: `--confirm` Confirm deletion
+```bash
+its rmm sites delete 12 --confirm
+its rmm sites
+```
 
 ## processes
 
@@ -182,6 +207,7 @@ its rmm processes OFFICE-PC-01 --watch
 Top processes by CPU usage (live snapshot via PowerShell).
 Flags: `--count` Number of processes to show
 ```bash
+its rmm processes top WKS-9 --count 10
 its rmm processes top OFFICE-PC-01
 ```
 
@@ -189,6 +215,8 @@ its rmm processes top OFFICE-PC-01
 Terminate a process by PID. Destructive — needs --confirm. Use `processes list` first to find the PID.
 Flags: `--pid` Process ID to kill · `--confirm` Confirm the kill
 ```bash
+its rmm processes kill WKS-9 --pid 4821 --confirm
+its rmm processes list WKS-9
 its rmm processes kill OFFICE-PC-01 --pid 1234 --confirm
 its rmm processes OFFICE-PC-01 --filter name=notepad
 ```
@@ -214,6 +242,8 @@ its rmm services get OFFICE-PC-01 --name spooler
 Control a service (start/stop/restart). Stop requires --confirm.
 Flags: `--name` Service name · `--action <start|stop|restart>` Action to perform · `--confirm` Required for stop action
 ```bash
+its rmm services control WKS-9 --name spooler --action restart
+its rmm services control WKS-9 --name spooler --action stop --confirm
 its rmm services control OFFICE-PC-01 --name spooler --action restart
 its rmm services control OFFICE-PC-01 --name spooler --action start
 ```
@@ -222,6 +252,7 @@ its rmm services control OFFICE-PC-01 --name spooler --action start
 Set startup type to Automatic and start the service if stopped. Idempotent.
 Flags: `--name` Service name
 ```bash
+its rmm services enable WKS-9 --name spooler
 its rmm services enable OFFICE-PC-01 --name spooler
 ```
 
@@ -229,6 +260,7 @@ its rmm services enable OFFICE-PC-01 --name spooler
 Set a service startup type to Disabled (requires --confirm).
 Flags: `--name` Service name · `--confirm` Confirm the disable
 ```bash
+its rmm services disable WKS-9 --name spooler --confirm
 its rmm services disable OFFICE-PC-01 --name spooler --confirm
 ```
 
@@ -322,14 +354,23 @@ its rmm alerts get <alert-id>
 ### `its rmm alerts resolve <alert_id>`
 Mark an alert resolved (clears it from the active dashboard). Needs --confirm.
 Flags: `--confirm` Confirm the resolve
+```bash
+its rmm alerts resolve 4821 --confirm
+```
 
 ### `its rmm alerts snooze <alert_id>`
 Suppress an alert for N days (default 1). Needs --confirm.
 Flags: `--days` Days to snooze for · `--confirm` Confirm the snooze
+```bash
+its rmm alerts snooze 4821 --days 7 --confirm
+```
 
 ### `its rmm alerts unsnooze <alert_id>`
 Lift a snooze early so the alert can fire again. Needs --confirm.
 Flags: `--confirm` Confirm the unsnooze
+```bash
+its rmm alerts unsnooze 4821 --confirm
+```
 
 ## scripts
 
@@ -364,6 +405,8 @@ its rmm scripts run OFFICE-PC-01 --script "Long Audit" --timeout 600
 Upload a local .ps1/.sh/.py script to TRMM, run it on the agent, capture output, and delete the script afterwards. Use for ad-hoc local maintenance scripts. Pass --keep to leave the script registered.
 Flags: `--shell <powershell|cmd|shell|python|nushell|deno>` Script shell (defaults to auto-detect from extension: ps1=powershell, sh=shell, py=python, nu=nushell, ts=deno) · `--args` Script arguments (comma-separated) · `--timeout` Timeout in seconds (default 120) · `--keep` Leave the uploaded script registered in TRMM after execution · `--category` Category for the uploaded script (default 'Ad-hoc') · `--as-user` Run in the logged-on user's session instead of as SYSTEM. Fails if nobody is signed in.
 ```bash
+its rmm scripts upload-local WKS-9 ./Fix-Printer.ps1 --timeout 300
+its rmm scripts upload-local WKS-9 ./Fix-Profile.ps1 --as-user
 its rmm scripts upload-local ./fix-printers.ps1
 its rmm scripts upload-local ./linux-housekeeping.sh --shell bash
 ```
@@ -372,6 +415,8 @@ its rmm scripts upload-local ./linux-housekeeping.sh --shell bash
 Permanently remove a script from the library. Destructive — needs --confirm.
 Flags: `--confirm` Confirm the deletion
 ```bash
+its rmm scripts delete 57 --confirm
+its rmm scripts list
 its rmm scripts delete <script-id> --confirm
 ```
 
@@ -440,6 +485,8 @@ its rmm checks edit --check 41 --severity warning
 Remove a scheduled check from an agent. Destructive — needs --confirm.
 Flags: `--check` Check ID to delete · `--confirm` Confirm the deletion
 ```bash
+its rmm checks delete --check 418 --confirm
+its rmm checks list WKS-9
 its rmm checks delete <check-id> --confirm
 ```
 
@@ -477,6 +524,8 @@ its rmm tasks edit --task 15 --disable
 Remove a scheduled task from an agent. Destructive — needs --confirm.
 Flags: `--task` Task ID to delete · `--confirm` Confirm the deletion
 ```bash
+its rmm tasks delete --task 92 --confirm
+its rmm tasks list WKS-9
 its rmm tasks delete --task <task-id> --confirm
 ```
 
@@ -514,12 +563,16 @@ its rmm policies add-check <policy-id> --script <script-id>
 ### `its rmm policies patch-policy <policy_id>`
 Edit a policy's Windows Update schedule + per-severity approvals (WinUpdatePolicy). Partial update — only the flags you pass change. --confirm required: applies to EVERY agent under the policy.
 Flags: `--run-time-hour` Install hour 0–23 (hour-only — no minutes) · `--frequency <daily|monthly|inherit>` Schedule frequency (daily = daily/weekly + --days) · `--days` Weekdays for daily/weekly schedule, e.g. mon,wed,fri (run_time_days) · `--day-of-month` Day of month 1–31 for monthly schedule (run_time_day) · `--reboot <never|required|always|inherit>` Reboot after install · `--critical <approve|manual|ignore|inherit>` Critical updates · `--important <approve|manual|ignore|inherit>` Important updates · `--moderate <approve|manual|ignore|inherit>` Moderate updates · `--low <approve|manual|ignore|inherit>` Low updates · `--other <approve|manual|ignore|inherit>` Other updates · `--confirm` Apply — affects every agent under the policy
+```bash
+its rmm policies patch-policy 7 --run-time-hour 3 --frequency daily --critical approve --important approve --confirm
+```
 
 ## diagnostics
 
 ### `its rmm diagnostics <agent>`
 System health snapshot — CPU, RAM, disk, power plan, uptime, top processes.
 ```bash
+its rmm diagnostics list WKS-9
 its rmm diagnostics OFFICE-PC-01
 its rmm diagnostics OFFICE-PC-01 --watch
 ```
@@ -541,3 +594,7 @@ Flags: `--model <agent|client|site>` Filter by model
 
 ### `its rmm custom-fields set <agent> <field> <value>`
 Set a custom field value on an agent. Accepts the field by numeric id OR by exact name (looked up against /core/customfields/). Writes both `value` and the typed column TRMM actually reads.
+```bash
+its rmm custom-fields set WKS-9 "RustDesk ID" 123456789
+its rmm custom-fields set WKS-9 4 123456789
+```

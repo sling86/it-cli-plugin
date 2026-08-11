@@ -45,6 +45,7 @@ Flags: `--environment` Environment id (required)
 Turn a flow off (admin). Stop the resource. Use --confirm if the action is destructive.
 Flags: `--environment` Environment id (required)
 ```bash
+its pa flows stop 8f1c2d3e-... --environment Default-1a2b3c4d
 its pa flows stop <flow-id> --environment <env-id>
 ```
 
@@ -52,6 +53,7 @@ its pa flows stop <flow-id> --environment <env-id>
 Turn a flow on (admin). Start the resource. Idempotent.
 Flags: `--environment` Environment id (required)
 ```bash
+its pa flows start 8f1c2d3e-... --environment Default-1a2b3c4d
 its pa flows start <flow-id> --environment <env-id>
 ```
 
@@ -59,12 +61,18 @@ its pa flows start <flow-id> --environment <env-id>
 Delete a flow (admin). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record.
 Flags: `--environment` Environment id (required) · `--confirm` Confirm deletion
 ```bash
+its pa flows delete 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --environment Default-1a2b3c4d --confirm
+its pa flows list --environment Default-1a2b3c4d
 its pa flows delete <flow-id> --environment <env-id> --confirm
 ```
 
 ### `its pa flows set-owner <flow_id>`
 Change ownership / permissions on a cloud flow (admin). --owner <upn|guid> upserts a principal (default role CanEdit = full co-owner); --remove <upn|guid> revokes one. Idempotent. Used to reclaim flows from disabled accounts during licence reclaim
 Flags: `--environment` Environment id (required) · `--owner` Principal to grant the role to (UPN or AAD object id). Mutually exclusive with --remove. · `--remove` Principal to revoke (UPN or AAD object id). Mutually exclusive with --owner. · `--role <CanEdit|CanViewWithShare|CanView>` Permission tier when granting · `--confirm` Required to execute the mutation
+```bash
+its pa flows set-owner 8f1c2d3e-... --environment Default-1a2b3c4d --owner jane.smith@example.com --role CanEdit --confirm
+its pa flows set-owner 8f1c2d3e-... --environment Default-1a2b3c4d --remove jane.smith@example.com --confirm
+```
 
 ### `its pa flows runs <flow_id>`
 List recent runs for a flow. Returns historical run records.

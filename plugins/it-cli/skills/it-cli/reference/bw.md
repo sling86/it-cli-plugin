@@ -33,6 +33,8 @@ its bw items get "Server admin"
 Generate current TOTP code for an item. Returns the current TOTP code — refresh every 30s.
 Flags: `--copy` Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. · `--clear-after` Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. · `--vault` Named vault profile (omit for default)
 ```bash
+its bw items totp "GitHub"
+its bw items totp "GitHub" --copy --clear-after 30
 its bw items totp "Server admin"
 ```
 
@@ -79,11 +81,15 @@ its bw items update <item-id> --password "NewP@ss" --confirm
 ### `its bw items share <id>`
 Irreversibly transfer a personal item to an organisation collection. There is no automatic rollback.
 Flags: `--organisation` Organisation name or ID · `--collection` Collection name or ID · `--confirm` Confirm the irreversible ownership transfer · `--vault` Named vault profile (omit for default)
+```bash
+its bw items share 3f2b1c94-... --organisation Acme --collection IT --confirm
+```
 
 ### `its bw items move <id>`
 Move vault items to a folder. Move an item between folders. --confirm required.
 Flags: `--folder` Destination folder name (created if needed) · `--confirm` Confirm the move · `--vault` Named vault profile (omit for default)
 ```bash
+its bw items move 3f2b1c94-... --folder "Infrastructure" --confirm
 its bw items move <item-id> --folder "Servers" --confirm
 ```
 
@@ -91,6 +97,7 @@ its bw items move <item-id> --folder "Servers" --confirm
 Move a vault item to trash (soft-delete, recoverable). Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record.
 Flags: `--confirm` Confirm the deletion · `--vault` Named vault profile (omit for default)
 ```bash
+its bw items delete 3f2b1c94-... --confirm
 its bw items delete <item-id> --confirm
 ```
 
@@ -98,6 +105,7 @@ its bw items delete <item-id> --confirm
 Restore a vault item from the trash. Restore a soft-deleted item from trash.
 Flags: `--confirm` Confirm the restore · `--vault` Named vault profile (omit for default)
 ```bash
+its bw items restore 3f2b1c94-... --confirm
 its bw items restore <item-id> --confirm
 ```
 
@@ -105,6 +113,7 @@ its bw items restore <item-id> --confirm
 PERMANENTLY delete a vault item. This CANNOT be undone.
 Flags: `--confirm` Confirm permanent deletion (REQUIRED) · `--yes-permanently-delete` Double-confirm that you understand this is irreversible · `--vault` Named vault profile (omit for default)
 ```bash
+its bw items purge 3f2b1c94-... --confirm --yes-permanently-delete
 its bw items purge <item-id> --confirm --yes-permanently-delete
 ```
 
@@ -137,6 +146,7 @@ its bw folders summary --watch
 Create a new folder. Idempotent on duplicate names — use update/edit to mutate an existing record.
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
+its bw folders create "Infrastructure"
 its bw folders create "Servers"
 ```
 
@@ -144,6 +154,7 @@ its bw folders create "Servers"
 Delete a folder (items in it are moved to No Folder, not deleted).
 Flags: `--confirm` Confirm folder deletion · `--vault` Named vault profile (omit for default)
 ```bash
+its bw folders delete "Old kit" --confirm
 its bw folders delete "Old stuff" --confirm
 ```
 
@@ -207,6 +218,7 @@ Unlock vault — skip PIN prompt for subsequent commands. Begin an interactive s
 Flags: `--ttl` Session duration in minutes (default 480 = 8 hours) · `--vault` Named vault profile (omit for default)
 ```bash
 its bw session unlock
+its bw session unlock --ttl 3600
 ```
 
 ### `its bw session lock`
@@ -237,6 +249,7 @@ its bw vaults --watch
 Save a named vault profile — its own host, account and master password (use for a second vault on a different server).
 Flags: `--url` Server URL (defaults to current BW_URL) · `--email` Email (defaults to current BW_EMAIL) · `--client-id` API client ID (for API key auth) · `--client-secret` API client secret (for API key auth)
 ```bash
+its bw vaults create work --url https://vault.example.com --email jane.smith@example.com
 its bw vaults create "personal"
 ```
 
@@ -244,6 +257,8 @@ its bw vaults create "personal"
 Delete a named vault profile (local config only — does NOT touch the actual vault or its data).
 Flags: `--confirm` Required to actually remove the profile
 ```bash
+its bw vaults delete work --confirm
+its bw vaults list
 its bw vaults delete "personal" --confirm
 ```
 

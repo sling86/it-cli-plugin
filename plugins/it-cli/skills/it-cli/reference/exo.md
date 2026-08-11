@@ -29,6 +29,7 @@ its exo groups members "All Staff"
 Create a new distribution group. Idempotent on duplicate names — use update/edit to mutate an existing record.
 Flags: `--alias` Email alias (before @domain) · `--managed-by` Owner email address · `--type <distribution|security>` Group type
 ```bash
+its exo groups create "All Finance" --alias all-finance --managed-by jane.smith@example.com
 its exo groups create "Marketing Team" --type distribution --alias marketing
 ```
 
@@ -43,6 +44,7 @@ its exo groups delete "Old DL" --confirm
 ### `its exo groups add-member <group> <member>`
 Add a member to a distribution group. Idempotent — already-a-member is a no-op.
 ```bash
+its exo groups add-member "All Finance" jane.smith@example.com
 its exo groups add-member "All Staff" jane.smith@example.com
 ```
 
@@ -80,6 +82,7 @@ its exo mailboxes stats jane.smith@example.com
 ### `its exo mailboxes create <name> <alias>`
 Create a shared mailbox. Idempotent on duplicate names — use update/edit to mutate an existing record.
 ```bash
+its exo mailboxes create "IT Helpdesk" helpdesk
 its exo mailboxes create "Support" support
 ```
 
@@ -93,6 +96,7 @@ its exo mailboxes permissions shared@example.com
 Grant mailbox access to a user. Grant a new permission. Idempotent.
 Flags: `--rights <FullAccess|ReadPermission|SendAs>` Access rights to grant
 ```bash
+its exo mailboxes add-permission helpdesk jane.smith@example.com --rights FullAccess
 its exo mailboxes add-permission shared@example.com jane.smith@example.com --rights FullAccess
 ```
 
@@ -134,6 +138,10 @@ its exo mailboxes set-type jo@example.com SharedMailbox --confirm
 ### `its exo mailboxes set-visibility <mailbox>`
 Hide or show a mailbox in the global address list (GAL). Pass exactly one of --hide / --show.
 Flags: `--hide` Hide from the GAL · `--show` Show in the GAL
+```bash
+its exo mailboxes set-visibility helpdesk --hide
+its exo mailboxes set-visibility helpdesk --show
+```
 
 ## rules
 
@@ -229,6 +237,9 @@ its exo trace detail <msg-id>
 ### `its exo trace historical`
 Submit a historical message-trace search (Start-HistoricalSearch) for the 11–90 day window that `trace list` (10-day cap) can't reach. Async — returns a JobId; poll with `trace historical-status <jobId>`.
 Flags: `--sender` Sender email address · `--recipient` Recipient email address · `--days` Days back to search (max 90) · `--notify` Email address to notify when the CSV is ready (required by EXO)
+```bash
+its exo trace historical --sender jane.smith@example.com --days 30 --notify jane.smith@example.com
+```
 
 ### `its exo trace historical-status <job-id>`
 Poll a historical search job (Get-HistoricalSearch). FileUrl is populated once Status is Done.
@@ -245,6 +256,7 @@ its exo autoreply get jane.smith@example.com
 Enable out-of-office auto-reply. Switch to active state. Idempotent.
 Flags: `--internal` Internal message (HTML or plain text) · `--external` External message (HTML or plain text) · `--start` Start time for scheduled OOF (e.g. 2026-03-20T09:00) · `--end` End time for scheduled OOF (e.g. 2026-03-25T17:00)
 ```bash
+its exo autoreply enable jane.smith@example.com --internal "On leave until Monday." --external "Away, please contact helpdesk@example.com." --start 2026-09-01 --end 2026-09-08
 its exo autoreply enable jane.smith@example.com --internal "Out of office until Monday" --external "On leave — contact support@example.com"
 ```
 
@@ -271,6 +283,7 @@ its exo recipients send-as shared@example.com
 ### `its exo recipients add-send-as <identity> <trustee>`
 Grant Send-As permission. Idempotent — already-granted delegates are skipped.
 ```bash
+its exo recipients add-send-as helpdesk jane.smith@example.com
 its exo recipients add-send-as shared@example.com jane.smith@example.com
 ```
 
