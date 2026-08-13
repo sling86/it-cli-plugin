@@ -286,6 +286,15 @@ Flags: `--type` Database type: postgres, mysql, mariadb, mongo, redis
 its dokploy databases get <db-id>
 ```
 
+### `its dokploy databases sql <database> [query]`
+Run SQL against a Dokploy-managed database — resolves the live container and execs its own client (psql/mysql/mongosh). Omit [query] for an interactive session. Reads only unless --confirm is passed; credentials are taken from the container's env and never printed. Replaces the `apps shell` + `docker exec` detour.
+Flags: `--confirm` Required for anything that writes (INSERT/UPDATE/DDL) · `--timeout` One-shot query timeout in seconds (default 30)
+```bash
+its dokploy databases sql ccd-prod-postgres "select count(*) from crm.tasks"
+its dokploy databases sql ccd-prod-postgres
+its dokploy databases sql ccd-prod-postgres "update crm.tasks set done = true where id = 42" --confirm
+```
+
 ### `its dokploy databases create`
 Create a database (postgres, mysql, mariadb, mongo, or redis).
 Flags: `--project` Project ID · `--type` Database type: postgres, mysql, mariadb, mongo, redis · `--name` Database display name · `--dbName` Internal database name · `--dbUser` Database user (default varies by type) · `--dbPassword` Database password · `--image` Docker image (default varies by type) · `--description` Description
