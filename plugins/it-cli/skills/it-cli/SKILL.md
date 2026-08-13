@@ -47,15 +47,26 @@ its health <hostname|username>  # Cross-provider device/user health
 its audit <user|UPN>            # Security audit — MFA, sign-ins, risk, endpoint, compliance
 its inventory [--unifi]         # Device gap matrix across endpoint sources
 its onboard preview <email>     # Starter readiness check (read-only)
+its user <upn>                  # Single-user snapshot — Entra + groups + licences + devices + tickets
+its resume [--project <p>]      # Open backlog / resume-prompt ctxc memories, grouped by project
+its log <text>                  # Append a timestamped entry to today's vault daily note
 its auth login                  # OAuth sign-in (browser PKCE; --device-code for headless)
 its auth status                 # Inspect delegated identity + token cache
 its auth doctor                 # Full diagnostic — env + delegated + per-resource swap
 its auth scopes [provider]      # Required Delegated + Application Graph scopes per provider
+its secrets                     # Keychain entries (names only, never values); migrate / clear
 its trust-cert <url>            # Trust + remember a self-signed TLS cert (TOFU); list / remove <host>
 its watch <provider> <resource> # Re-run on an interval with change highlighting
 its diff <provider> <resource> <snapshot.json>   # Diff live vs saved JSON
 its export [--data]             # Export config (+ optionally live data)
+its info                        # Diagnostic snapshot — version, paths, update state, keychain
+its tui                         # Interactive browser over every command (needs a TTY)
+its update                      # Check for a newer release
 ```
+
+Full detail for all of these — usage, flags, worked examples — is in
+[reference/global.md](reference/global.md), generated from the same source as
+the commands themselves.
 
 ## Global output flags (work on every command)
 

@@ -2,7 +2,7 @@
 
 > Auto-generated from the live command definitions. Do not edit by hand.
 
-**21 providers** · **204 resources** · **712 commands**. Pick a provider for its full command list.
+**21 providers** · **204 resources** · **713 commands**. Pick a provider for its full command list.
 
 | Provider | Alias | Resources | Commands |
 |----------|-------|-----------|----------|
@@ -26,4 +26,6 @@
 | [GitHub](./gh.md) | `gh` | 2 | 4 |
 | [Outlook](./outlook.md) | `outlook` | 11 | 42 |
 | [Microsoft 365 Health](./m365.md) | `m365` | 2 | 3 |
-| [Teams](./teams.md) | `teams` | 2 | 3 |
+| [Teams](./teams.md) | `teams` | 2 | 4 |
+
+Plus **[23 global commands](./global.md)** that take no provider — `its status`, `its find`, `its user`, `its setup` and the rest.
