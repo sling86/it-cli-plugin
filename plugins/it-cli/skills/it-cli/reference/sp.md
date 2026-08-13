@@ -234,6 +234,14 @@ its sp search "quarterly report" --watch
 
 ## permissions
 
+### `its sp permissions find-group <groupId>`
+Reverse-lookup: which sites grant an Entra group access, directly or nested inside a site's Owners/Members group. Run this before retiring a security group. Reports sites it could not read rather than counting them as clear — absence of hits only proves the group is unused if every site was readable.
+Flags: `--top` Maximum sites to scan (default 200) · `--concurrency` Sites scanned in parallel (default 6)
+```bash
+its sp permissions find-group 462e4d2a-1f3c-4b8e-9d21-7a5e0c9b1234
+its sp permissions find-group <groupId> --top 50 --concurrency 10
+```
+
 ### `its sp permissions <siteId>`
 List app-level site permissions. Surfaces the most common fields; pass --json for raw shape.
 ```bash

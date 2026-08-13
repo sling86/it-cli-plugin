@@ -853,6 +853,14 @@ Flags: `--search` Path/prefix to list under (e.g. ccd-prod-postgres-tydlay). Emp
 its dokploy backup files <destination-id>
 ```
 
+### `its dokploy backup restore`
+Restore a backup file OVER a live database, streaming Dokploy's progress log. Destructive and irreversible — the target's current contents are replaced. Needs --confirm; use --dry-run first to see the exact payload without starting anything. Find the file with `its dokploy backup files <destinationId>`.
+Flags: `--db-id` Target database ID · `--db-type <postgres|mysql|mariadb|mongo|libsql|web-server>` Database type · `--destination` Destination ID holding the backup file · `--file` Backup file key within the destination · `--database` Database name to restore into · `--backup-type <database|compose>` database (default) or compose · `--service` Service name — compose backups only · `--dry-run` Resolve and print the payload without restoring · `--confirm` Required — this overwrites the target database
+```bash
+its dokploy backup restore --db-id pg_2mN8vC --db-type postgres --destination dst_2mN8vC --file ccd-prod/2026-08-13.sql.gz --database ccd --dry-run
+its dokploy backup restore --db-id pg_2mN8vC --db-type postgres --destination dst_2mN8vC --file ccd-prod/2026-08-13.sql.gz --database ccd --confirm
+```
+
 ### `its dokploy backup run <backupId>`
 Trigger a manual backup run for a given backup config (backup.manualBackup).
 ```bash
