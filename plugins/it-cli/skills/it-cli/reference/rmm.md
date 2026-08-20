@@ -1,6 +1,6 @@
 # Tactical RMM (`rmm`)
 
-Tactical RMM endpoint management — agents, alerts, software, services, updates, scripts, checks, tasks, policies.
+Tactical RMM endpoint management — agents, live terminal, alerts, software, services, updates, scripts, checks, tasks, policies.
 
 > Auto-generated reference. Configure: `its rmm setup`. For a command you can name, prefer live help `its rmm <resource> help` (always current) — read this file to discover what exists. [Index](./index.md)
 
@@ -597,4 +597,52 @@ Set a custom field value on an agent. Accepts the field by numeric id OR by exac
 ```bash
 its rmm custom-fields set WKS-9 "RustDesk ID" 123456789
 its rmm custom-fields set WKS-9 4 123456789
+```
+
+## accounts
+
+### `its rmm accounts roles`
+List TRMM roles with the count of granted permissions. A role is what actually scopes an API key — the key itself carries no permissions.
+Flags: `--permissions` Show every granted can_* flag, not just the count
+
+### `its rmm accounts users`
+List TRMM users and the role each carries. API-only users should show blocked dashboard login.
+
+### `its rmm accounts apikeys`
+List TRMM API keys with their linked user and expiry. Key values are MASKED — the API returns them in full, so an unmasked listing would dump every live credential.
+Flags: `--reveal` Show full key values. Interactive terminals only; audit-logged.
+
+### `its rmm accounts provision <name>`
+Create a least-privilege API key end-to-end: a role with only the permissions you name, an API-only user carrying it with dashboard login blocked, and a key bound to that user. Additive — nothing existing is modified. The key is never printed; it goes to Bitwarden and/or the keychain.
+Flags: `--permissions` Comma-separated can_* flags to grant. Default: can_list_agents (read agents only). · `--expires-days` Key lifetime in days (default: no expiry) · `--bw` Upsert a "TRMM - <name>" login item in the Bitwarden Infrastructure folder · `--dry-run` Print the planned objects without creating anything
+```bash
+its rmm accounts provision shuttle-worker --permissions can_list_agents --bw
+```
+
+## terminal
+
+### `its rmm terminal <agent>`
+Open a live interactive shell on an RMM agent over Tactical's terminal WebSocket. Windows automatically tries PowerShell 7, Windows PowerShell, then Command Prompt; use --shell to choose explicitly. Requires can_use_terminal and a real TTY. Ctrl+] disconnects.
+Flags: `--shell <cmd|powershell|bash|zsh>` Choose a shell token or absolute path explicitly; when omitted, Windows tries PowerShell 7, Windows PowerShell, then Command Prompt while Linux/macOS use the agent default · `--as-user` Run as the active desktop user instead of SYSTEM (Windows only)
+```bash
+its rmm terminal WKS-9
+its rmm terminal WKS-9 --shell 'C:\Program Files\PowerShell\7\pwsh.exe'
+its rmm terminal WKS-9 --shell powershell
+its rmm terminal WKS-9 --shell cmd
+its rmm terminal WKS-9 --shell powershell --as-user
+```
+
+### `its rmm terminal login`
+Sign in with a local Tactical dashboard account and store the short-lived terminal token in the encrypted its session store. Supports Tactical TOTP; SSO-only and dashboard-blocked users are rejected upstream.
+```bash
+its rmm terminal login
+```
+
+### `its rmm terminal status`
+Show whether a valid local RMM terminal login exists and its remaining lifetime. Never prints the token.
+
+### `its rmm terminal logout`
+Revoke the Tactical dashboard token and remove the encrypted local terminal session.
+```bash
+its rmm terminal logout
 ```

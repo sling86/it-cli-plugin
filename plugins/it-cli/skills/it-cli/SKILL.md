@@ -112,7 +112,7 @@ For a command you can already name, prefer **live help** — `its <provider> <re
 
 | Provider | Alias | What it covers | Reference |
 | -------- | ----- | -------------- | --------- |
-| Tactical RMM | `rmm` | Endpoint agents — status, processes, services, updates, software, remote run | [rmm](./reference/rmm.md) |
+| Tactical RMM | `rmm` | Endpoint agents — status, processes, services, updates, software, remote run, live terminal | [rmm](./reference/rmm.md) |
 | Entra ID | `entra` | Users, groups, licences, roles, MFA, sign-ins, CA policies, on/offboarding | [entra](./reference/entra.md) |
 | Intune | `intune` | Managed devices, apps, scripts, remediations, compliance, ESP, Autopilot | [intune](./reference/intune.md) |
 | Exchange Online | `exo` | Distribution groups, mailboxes, permissions, forwarding, rules, message trace | [exo](./reference/exo.md) |

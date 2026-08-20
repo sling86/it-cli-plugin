@@ -2,11 +2,11 @@
 
 > Auto-generated from the live command definitions. Do not edit by hand.
 
-**21 providers** · **204 resources** · **716 commands**. Pick a provider for its full command list.
+**21 providers** · **206 resources** · **724 commands**. Pick a provider for its full command list.
 
 | Provider | Alias | Resources | Commands |
 |----------|-------|-----------|----------|
-| [Tactical RMM](./rmm.md) | `rmm` | 16 | 70 |
+| [Tactical RMM](./rmm.md) | `rmm` | 18 | 78 |
 | [Entra ID](./entra.md) | `entra` | 21 | 106 |
 | [Dokploy](./dokploy.md) | `dokploy` | 25 | 118 |
 | [Bitwarden](./bw.md) | `bw` | 12 | 40 |
