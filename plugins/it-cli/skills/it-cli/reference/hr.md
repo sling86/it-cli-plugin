@@ -24,6 +24,28 @@ Flags: `--year` Calendar year; defaults to current year
 Rank a manager's direct reports or a department by Bradford factor for one year. Contains special-category health data. Refuses teams larger than 25.
 Flags: `--manager` Manager email, EmployeeId, or exact full name · `--department` Exact department name · `--year` Calendar year; defaults to current year
 
+## org
+
+### `its hr org chain <employee>`
+Show an employee's management chain up to the top of the tree — level 1 is their direct manager.
+```bash
+its hr org chain jane.smith@example.com
+```
+
+### `its hr org reports <employee>`
+List an employee's direct reports, or the whole sub-tree with --recursive. Level 1 is a direct report.
+Flags: `--recursive` Include reports of reports, all the way down · `--depth` Limit --recursive to this many levels
+```bash
+its hr org reports jane.smith@example.com
+its hr org reports jane.smith@example.com --recursive
+```
+
+### `its hr org leadership`
+List employees with no manager set — the top of the tree, plus anyone PeopleHR is missing a reporting line for.
+```bash
+its hr org leadership
+```
+
 ## employees
 
 ### `its hr employees`

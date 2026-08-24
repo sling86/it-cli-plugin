@@ -32,6 +32,22 @@ List all BC environments (Production/Sandbox) on the tenant.
 List entity sets exposed by the BC API (OData service document).
 Flags: `--env` BC environment name (default: BC_ENVIRONMENT) · `--api` Custom API route <publisher>/<group>/<version> (default: standard v2.0 API)
 
+## extensions
+
+### `its bc extensions`
+List published AL extensions with their versions — the direct answer to "which environment is on which app version?". Reads the Automation API, so it needs the SP's BC user to hold D365 EXTENSION MGT (not the Admin Centre grant).
+Flags: `--env` BC environment name (default: BC_ENVIRONMENT) · `--company` Company name/id (default: first company) · `--publisher` Only extensions from this publisher (substring)
+```bash
+its bc extensions list --env Production
+its bc extensions list --env Production --publisher ```
+
+### `its bc extensions get <name>`
+Get one extension's published version by name (substring, case-insensitive) — for gating on "is this environment on >= x.y.z?".
+Flags: `--env` BC environment name (default: BC_ENVIRONMENT) · `--company` Company name/id (default: first company)
+```bash
+its bc extensions get platformSync --env Production
+```
+
 ## query
 
 ### `its bc query get <entity>`
