@@ -660,6 +660,24 @@ Licence and app usage summary. Aggregated app + licence usage across the tenant.
 its entra directory app-usage
 ```
 
+## devices
+
+### `its entra devices`
+List Entra-registered and Entra-joined devices. Wider than `its intune devices`, which only sees Intune-managed ones — filter with --filter isManaged=false to find registered-but-unenrolled devices. Needs Device.Read.All.
+Flags: `--search` Match on display name · `--top` Maximum devices to return
+```bash
+its entra devices list
+its entra devices list --search -UD
+its entra devices list --filter isManaged=false
+```
+
+### `its entra devices get <device>`
+Get one device by directory object id, deviceId, or exact display name. Needs Device.Read.All.
+```bash
+its entra devices get -UD-MP27XZ31
+its entra devices get 12345678-90ab-cdef-1234-567890abcdef
+```
+
 ## onboarding
 
 ### `its entra onboarding summary <user_id>`

@@ -34,6 +34,20 @@ its intune devices sync 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f
 its intune devices sync <device-id>
 ```
 
+### `its intune devices primary-user <device>`
+Show a device's primary user. Resolve the device by id or name.
+```bash
+its intune devices primary-user -UD-MP27XZ31
+```
+
+### `its intune devices set-primary-user <device> <user>`
+Reassign a device's primary user (requires --confirm) — the device handover step. Without --confirm it previews the change, naming the current primary user it would replace.
+Flags: `--confirm` Apply the reassignment
+```bash
+its intune devices set-primary-user -UD-MP27XZ31 jane.smith@example.com
+its intune devices set-primary-user -UD-MP27XZ31 jane.smith@example.com --confirm
+```
+
 ### `its intune devices noncompliant`
 List devices failing compliance. Returns devices failing compliance checks.
 ```bash
