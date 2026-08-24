@@ -10,6 +10,20 @@ PeopleHR — bulk employee directory, upcoming and recent starters/leavers. tena
 Detect drift between PeopleHR and Entra ID. Reports field mismatches plus PHR-only / Entra-only orphans. Read-only.
 Flags: `--domain` Entra UPN domain to audit (e.g. example.com). Defaults to every domain seen in active Entra users. · `--company` Restrict PHR side to this company (substring match against Company DisplayValue). Default: search globally. · `--include-disabled` Include disabled Entra accounts (default: only enabled).
 
+## absences
+
+### `its hr absences get <employee>`
+Get one employee's sickness-absence records. Contains special-category health data. Dates use YYYY-MM-DD; free-text notes are omitted unless --include-notes is passed.
+Flags: `--from` Start date (YYYY-MM-DD); defaults to 1 January this year · `--to` End date (YYYY-MM-DD); defaults to today · `--include-notes` Include free-text absence comments
+
+### `its hr absences summary <employee>`
+Summarise one employee's sickness absence for a calendar year: episodes, days, longest spell, Bradford factor, emergency leave, outstanding return-to-work interviews, and reason breakdown. Contains special-category health data.
+Flags: `--year` Calendar year; defaults to current year
+
+### `its hr absences team`
+Rank a manager's direct reports or a department by Bradford factor for one year. Contains special-category health data. Refuses teams larger than 25.
+Flags: `--manager` Manager email, EmployeeId, or exact full name · `--department` Exact department name · `--year` Calendar year; defaults to current year
+
 ## employees
 
 ### `its hr employees`
