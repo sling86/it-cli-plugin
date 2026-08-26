@@ -767,7 +767,7 @@ Flags: `--warn-days` Flag credentials expiring within this many days · `--expir
 
 ### `its entra apps rotate <app>`
 Mint a new client secret on an app registration and store it straight into the OS keychain (--env-key) and/or Bitwarden (--bw). Additive — existing credentials are untouched unless --prune-expired. Output carries a fingerprint, never the secret (unless --include-secrets). Fails closed: if every storage target fails (locked vault, unavailable keychain) the new credential is rolled back and nothing is printed — pass --include-secrets to accept the secret on stderr instead.
-Flags: `--name` Display name for the new secret (default its-rotated-YYYY-MM) · `--months` Lifetime in months · `--env-key` Store the secret in the OS keychain under this env var name (must be a known secret key, e.g. CLIENT_SECRET) · `--bw` Upsert a "<app> - <secret name>" login item in the Bitwarden Infrastructure folder · `--prune-expired` Also remove credentials that had already expired before this rotation (prompts per credential unless --confirm) · `--confirm` Skip the interactive confirmation
+Flags: `--name` Display name for the new secret (default its-rotated-YYYY-MM) · `--months` Lifetime in months · `--env-file` Fall back to ~/.its/.env (plaintext, 0600) when the OS keychain and Bitwarden are both unavailable. Opt-in: without it, rotate fails closed rather than silently downgrading where the secret is stored. · `--env-key` Store the secret in the OS keychain under this env var name (must be a known secret key, e.g. CLIENT_SECRET) · `--bw` Upsert a "<app> - <secret name>" login item in the Bitwarden Infrastructure folder · `--prune-expired` Also remove credentials that had already expired before this rotation (prompts per credential unless --confirm) · `--confirm` Skip the interactive confirmation
 ```bash
 its entra apps rotate "its CLI" --env-key CLIENT_SECRET --months 12 --confirm
 its entra apps rotate "its CLI" --bw --prune-expired --confirm
@@ -786,6 +786,13 @@ Execute the manifest plan against the tenant — ADDITIVE ONLY, nothing is ever 
 Flags: `--manifest` Path to the JSONC apps manifest · `--app` Only apply one manifest entry (by name or appId) · `--confirm` Skip the interactive confirmation
 ```bash
 its entra apps apply --confirm
+```
+
+### `its entra apps permissions <app>`
+What an app ACTUALLY holds — declared (requiredResourceAccess) and granted (appRoleAssignments / delegated consent) side by side, with permission GUIDs resolved to names. The two drift independently and in both directions, so neither alone answers "can this app do X?".
+```bash
+its entra apps permissions c15df88c-3070-4606-a95b-27a871b6a7da
+its entra apps permissions <appId> --filter status~^(granted|declared)-only$
 ```
 
 ### `its entra apps export <appIds>`
