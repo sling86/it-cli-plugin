@@ -404,11 +404,12 @@ its dokploy env push <app-id> --file .env.production
 ```
 
 ### `its dokploy env set <applicationId> <pairs>`
-Set one or more env vars (KEY=value) without affecting others. NB: a plain set updates the record only — on Docker Swarm the running container will NOT pick the change up until the service is recreated. Pass --deploy to recreate + verify (brief outage), or run `dokploy apps apply-env <app>` later. Pass --dry-run to preview which keys would change (no values, nothing saved).
-Flags: `--deploy` After saving, recreate the swarm service (stop + deploy) and verify the new vars reached the container. Causes a brief outage. Without this, the change only lands in the record. · `--force-mask` Override the redaction-mask guard and write values like `***REDACTED***` verbatim. Almost never what you want — the guard exists to stop a masked round-trip clobbering real secrets
+Set one or more env vars (KEY=value) without affecting others. For a secret, pass the bare KEY plus --from-file/--from-stdin instead of KEY=value: `KEY=$SECRET` on the command line is world-readable in /proc/<pid>/cmdline and lands in shell history. NB: a plain set updates the record only — on Docker Swarm the running container will NOT pick the change up until the service is recreated. Pass --deploy to recreate + verify (brief outage), or run `dokploy apps apply-env <app>` later. Pass --dry-run to preview which keys would change (no values, nothing saved).
+Flags: `--from-file` Read the value for the single named KEY from this file (one trailing newline stripped) instead of argv. Use for secrets. · `--from-stdin` Read the value for the single named KEY from stdin instead of argv. Use for secrets. · `--deploy` After saving, recreate the swarm service (stop + deploy) and verify the new vars reached the container. Causes a brief outage. Without this, the change only lands in the record. · `--force-mask` Override the redaction-mask guard and write values like `***REDACTED***` verbatim. Almost never what you want — the guard exists to stop a masked round-trip clobbering real secrets
 ```bash
 its dokploy env set aB3xY7pL LOG_LEVEL=debug
 its dokploy env set aB3xY7pL LOG_LEVEL=debug NODE_ENV=production --deploy
+its dokploy env set aB3xY7pL CLIENT_SECRET --from-file /dev/shm/sec --deploy
 its dokploy env set <app-id> DEBUG=true
 ```
 

@@ -23,15 +23,17 @@ its bw items search "github"
 ```
 
 ### `its bw items get <id>`
-Get a vault item by ID (includes password and fields). Pass the id (or any natural identifier) as the positional arg.
-Flags: `--copy` Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. · `--clear-after` Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. · `--vault` Named vault profile (omit for default)
+Get a vault item by ID (includes password and fields). Pass the id (or any natural identifier) as the positional arg. The secret is redacted unless a sink is given: --copy for desk work, --to-file to hand it to another command. --field <name> targets a custom field instead of the login password.
+Flags: `--copy` Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. · `--clear-after` Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. · `--to-file` Write the secret to this path (created 0600 / owner-only) instead of printing it. Unlike --copy this needs no terminal or clipboard tool, so it works headless — the sanctioned way to hand a secret to another command. · `--field` Send this custom field to the sink instead of the login password (case-insensitive name match). · `--vault` Named vault profile (omit for default)
 ```bash
+its bw items get "server-login" --to-file /dev/shm/sec
+its bw items get "Outlook MCP" --field "API KEY" --to-file /dev/shm/sec
 its bw items get "Server admin"
 ```
 
 ### `its bw items totp <query>`
 Generate current TOTP code for an item. Returns the current TOTP code — refresh every 30s.
-Flags: `--copy` Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. · `--clear-after` Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. · `--vault` Named vault profile (omit for default)
+Flags: `--copy` Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. · `--clear-after` Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. · `--to-file` Write the secret to this path (created 0600 / owner-only) instead of printing it. Unlike --copy this needs no terminal or clipboard tool, so it works headless — the sanctioned way to hand a secret to another command. · `--vault` Named vault profile (omit for default)
 ```bash
 its bw items totp "GitHub"
 its bw items totp "GitHub" --copy --clear-after 30
@@ -174,10 +176,11 @@ Flags: `--organisation` Organisation name or ID · `--vault` Named vault profile
 
 ### `its bw password <query>`
 Get the password for an item by search query. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--copy` Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. · `--clear-after` Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. · `--vault` Named vault profile (omit for default)
+Flags: `--copy` Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. · `--clear-after` Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. · `--to-file` Write the secret to this path (created 0600 / owner-only) instead of printing it. Unlike --copy this needs no terminal or clipboard tool, so it works headless — the sanctioned way to hand a secret to another command. · `--vault` Named vault profile (omit for default)
 ```bash
 its bw password "server-login" --include-secrets
 its bw password "server-login" --copy
+its bw password "server-login" --to-file /dev/shm/sec
 its bw password "server-login"
 its bw password "server-login" --watch
 ```

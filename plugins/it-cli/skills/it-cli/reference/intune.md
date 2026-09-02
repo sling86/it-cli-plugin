@@ -196,6 +196,14 @@ Flags: `--top` Number of results (default 50, paginates automatically) · `--all
 its intune autopilot devices
 ```
 
+### `its intune autopilot sync`
+Trigger the Autopilot device sync (the portal's Sync button). Intune allows one manual sync per 10 minutes. Pass --status to read the last sync without triggering one.
+Flags: `--status` Report the last sync without triggering a new one
+```bash
+its intune autopilot sync
+its intune autopilot sync --status
+```
+
 ### `its intune autopilot tag <serial> [tag]`
 Set group tag on an Autopilot device. Set or clear a tag value.
 Flags: `--clear` Remove the group tag
