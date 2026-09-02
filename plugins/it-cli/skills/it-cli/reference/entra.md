@@ -766,11 +766,12 @@ Credential expiry dashboard — every client secret and certificate across all a
 Flags: `--warn-days` Flag credentials expiring within this many days · `--expiring` Only show EXPIRED and expiring credentials
 
 ### `its entra apps rotate <app>`
-Mint a new client secret on an app registration and store it straight into the OS keychain (--env-key) and/or Bitwarden (--bw). Additive — existing credentials are untouched unless --prune-expired. Output carries a fingerprint, never the secret (unless --include-secrets). Fails closed: if every storage target fails (locked vault, unavailable keychain) the new credential is rolled back and nothing is printed — pass --include-secrets to accept the secret on stderr instead.
-Flags: `--name` Display name for the new secret (default its-rotated-YYYY-MM) · `--months` Lifetime in months · `--env-file` Fall back to ~/.its/.env (plaintext, 0600) when the OS keychain and Bitwarden are both unavailable. Opt-in: without it, rotate fails closed rather than silently downgrading where the secret is stored. · `--env-key` Store the secret in the OS keychain under this env var name (must be a known secret key, e.g. CLIENT_SECRET) · `--bw` Upsert a "<app> - <secret name>" login item in the Bitwarden Infrastructure folder · `--prune-expired` Also remove credentials that had already expired before this rotation (prompts per credential unless --confirm) · `--confirm` Skip the interactive confirmation
+Mint a new client secret on an app registration and store it straight into the OS keychain (--env-key), Bitwarden (--bw), and/or a mode-0600 file (--to-file, for handing straight to `dokploy env set --from-file`). Additive — existing credentials are untouched unless --prune-expired. Output carries a fingerprint, never the secret (unless --include-secrets). Fails closed: if every storage target fails (locked vault, unavailable keychain) the new credential is rolled back and nothing is printed — pass --include-secrets to accept the secret on stderr instead.
+Flags: `--name` Display name for the new secret (default its-rotated-YYYY-MM) · `--months` Lifetime in months · `--env-file` Fall back to ~/.its/.env (plaintext, 0600) when the OS keychain and Bitwarden are both unavailable. Opt-in: without it, rotate fails closed rather than silently downgrading where the secret is stored. · `--env-key` Store the secret in the OS keychain under this env var name (must be a known secret key, e.g. CLIENT_SECRET) · `--bw` Upsert a "<app> - <secret name>" login item in the Bitwarden Infrastructure folder · `--to-file` Also write the secret to this path (created 0600 / owner-only) so it can be handed to another command — pairs with `its dokploy env set <app> KEY --from-file <path>`. Delete the file once consumed. · `--prune-expired` Also remove credentials that had already expired before this rotation (prompts per credential unless --confirm) · `--confirm` Skip the interactive confirmation
 ```bash
 its entra apps rotate "its CLI" --env-key CLIENT_SECRET --months 12 --confirm
 its entra apps rotate "its CLI" --bw --prune-expired --confirm
+its entra apps rotate "Entra MCP" --bw --to-file /dev/shm/sec --confirm
 ```
 
 ### `its entra apps plan`
@@ -812,6 +813,30 @@ Unblock an admin who can't sign in for phishing-resistant MFA. Tries TAP first; 
 Flags: `--ttl` TAP lifetime in minutes (default 60) · `--one-time` TAP is single-use · `--no-fallback` Don't exclude from the phish-resistant policy if TAP fails — just report. · `--dry-run` Show the plan without mutating
 ```bash
 its entra admin-bootstrap run jane.smith@example.com --ttl 60 --one-time --dry-run
+```
+
+## sync
+
+### `its entra sync status <app>`
+Health of an app's SCIM provisioning job — quarantine, successive failures, paused schedule or staleness against its own cycle. Pass the enterprise application name (or its service-principal object ID).
+```bash
+its entra sync status Wrike
+```
+
+### `its entra sync logs <app>`
+Provisioning log for an app — what the SCIM job did to each user and whether the target accepted it. The place a 'why is this leaver still there' question gets answered.
+Flags: `--action <create|update|disable|delete|other>` Provisioning action to show · `--status <success|failure|skipped|warning>` Outcome to show · `--user` Filter to one source identity by display name · `--limit` Maximum entries (default 50)
+```bash
+its entra sync logs Wrike --action disable --status failure
+its entra sync logs Wrike --user 'Jane Doe'
+```
+
+### `its entra sync provision <app>`
+Force an immediate provisioning evaluation for one user against an app's SCIM job, instead of waiting for the next cycle. For a user who has fallen out of the job's scoping filter — a disabled leaver — this is what pushes the deprovision. Needs --confirm.
+Flags: `--user` UPN or object ID of the user to evaluate · `--rule-id` Synchronization rule to apply (default: the job's own user rule, read from its schema) · `--confirm` Actually run the provisioning evaluation
+```bash
+its entra sync provision Wrike --user jane.doe@example.com --confirm
+its entra sync provision Wrike --user jane.doe@example.com
 ```
 
 ## graph
