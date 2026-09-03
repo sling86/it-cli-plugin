@@ -824,6 +824,14 @@ its dokploy compose list
 its dokploy compose delete <compose-id> --confirm
 ```
 
+### `its dokploy compose create <name> <projectId>`
+Create a compose stack in a project. Creates the record only — set the source and compose file in the UI (or with `compose config`), then `compose deploy`.
+Flags: `--app-name` Internal app name (lowercase, no spaces — defaults to a slug of the display name) · `--description` Optional description · `--type <docker-compose|stack>` Compose runtime
+```bash
+its dokploy compose create "Metrics" aB3xY7pL
+its dokploy compose create "Metrics" aB3xY7pL --app-name metrics --type stack
+```
+
 ## backup
 
 ### `its dokploy backup create`
@@ -908,6 +916,14 @@ Flags: `--confirm` Confirm the delete
 its dokploy schedule delete sQ2gH8mT --confirm
 its dokploy schedule list
 its dokploy schedule delete <schedule-id> --confirm
+```
+
+### `its dokploy schedule create <id> <name> <cron> <command>`
+Create a cron schedule against an application, compose stack, or the server. The parent id field is derived from --type — passing the wrong one is accepted upstream and yields a schedule that never fires.
+Flags: `--type <application|compose|server>` Schedule type · `--service` Compose service to run inside (compose schedules only) · `--shell <sh|bash>` Shell used to run the command · `--disabled` Create it switched off
+```bash
+its dokploy schedule create aB3xY7pL "nightly prune" "0 3 * * *" "bun run prune"
+its dokploy schedule create cM9kQ2wT "db vacuum" "30 2 * * 0" "vacuumdb -az" --type compose --service postgres
 ```
 
 ## git

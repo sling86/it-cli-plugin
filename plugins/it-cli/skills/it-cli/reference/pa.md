@@ -91,6 +91,14 @@ its pa apps --environment <env-id>
 its pa apps --environment <env-id> --watch
 ```
 
+### `its pa apps get <app>`
+Get one Power App by id (the id column from `apps list`) or display name. Without --environment every environment is searched, which costs one call per environment — pass it when you know it.
+Flags: `--environment` Environment to look in (skips the cross-env search)
+```bash
+its pa apps get 3f1b2c40-... --environment Default-abc123
+its pa apps get "Stock Take"
+```
+
 ## connections
 
 ### `its pa connections`
