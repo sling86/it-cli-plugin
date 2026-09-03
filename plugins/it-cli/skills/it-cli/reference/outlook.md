@@ -141,6 +141,13 @@ its outlook drafts send AAMkAGDraft01 --user jane.smith@example.com
 List draft messages (convenience for `mail list --folder drafts`).
 Flags: `--top` Number of drafts (max 50) · `--skip` Skip first N (pagination) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
 
+### `its outlook drafts delete <id>`
+Delete a draft by message id. Refuses anything that is not a draft, so a mistyped id cannot delete a sent or received message through this command. Permanent — use --confirm.
+Flags: `--confirm` Required to perform this destructive deletion · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook drafts delete AAMkAGI2... --confirm
+```
+
 ## folders
 
 ### `its outlook folders`
@@ -157,6 +164,13 @@ Flags: `--parent` Parent folder ID (omit for top-level) · `--user` Override mai
 ```bash
 its outlook folders create "IT Archive" --user jane.smith@example.com
 its outlook folders create "2026" --parent "IT Archive" --user jane.smith@example.com
+```
+
+### `its outlook folders delete <folder>`
+Delete a mail folder by id or display name. Graph deletes the folder AND every message and child folder inside it — there is no move-contents-out option, and no undo. Use --confirm.
+Flags: `--confirm` Required to perform this destructive deletion · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook folders delete "IT Archive" --user jane.smith@example.com --confirm
 ```
 
 ## attachments

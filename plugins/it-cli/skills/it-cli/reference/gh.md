@@ -18,6 +18,13 @@ its gh branch-protect apply acme/storefront --branch main
 Show current branch-protection settings for <owner/repo>@<branch>. Read-only — no mutation.
 Flags: `--branch` Branch
 
+### `its gh branch-protect remove <repo>`
+Remove ALL branch protection from <owner/repo>@<branch> (default `main`). Permanent — use --confirm. This does not restore the previous rules; re-apply with `branch-protect apply`.
+Flags: `--branch` Branch to unprotect (default main) · `--confirm` Required to perform this destructive removal
+```bash
+its gh branch-protect remove acme/storefront --confirm
+```
+
 ## webhook
 
 ### `its gh webhook setup <repo> <url>`
@@ -29,3 +36,11 @@ its gh webhook setup acme/storefront https://dok.example.com/api/deploy --events
 
 ### `its gh webhook <repo>`
 List webhooks on <owner/repo>.
+
+### `its gh webhook delete <repo> <hook>`
+Delete a webhook from <owner/repo> by id (from `webhook list`) or by its exact URL. Permanent — use --confirm. Deliveries stop immediately; GitHub keeps no undo.
+Flags: `--confirm` Required to perform this destructive deletion
+```bash
+its gh webhook delete acme/storefront 12345678 --confirm
+its gh webhook delete acme/storefront https://dok.example.com/api/deploy --confirm
+```

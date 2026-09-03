@@ -143,6 +143,13 @@ its exo mailboxes set-visibility helpdesk --hide
 its exo mailboxes set-visibility helpdesk --show
 ```
 
+### `its exo mailboxes delete <mailbox>`
+Delete a mailbox. For a UserMailbox this ALSO deletes the Entra user account (Remove-Mailbox removes both), soft-deleted for 30 days. This is not how offboards a leaver — that converts to shared and hides from the GAL. The intended use is an orphaned shared, room, or equipment mailbox. Requires --confirm, and a UserMailbox additionally requires --delete-account.
+Flags: `--confirm` Required to perform this destructive deletion · `--delete-account` Additionally required for a UserMailbox — acknowledges that the Entra user account goes too
+```bash
+its exo mailboxes delete old-project@example.com --confirm
+```
+
 ## rules
 
 ### `its exo rules`

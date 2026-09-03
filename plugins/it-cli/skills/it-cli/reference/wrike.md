@@ -245,6 +245,13 @@ its wrike tasks attach IEACW7BXKQ2R4KMT ./quote.pdf
 its wrike tasks attach <task-id> ./diagram.png
 ```
 
+### `its wrike tasks delete <taskId>`
+Delete a task by id or permalink. Wrike moves it to the account Recycle Bin, so an account admin can restore it — you cannot, and not from this CLI. Use --confirm.
+Flags: `--confirm` Required to perform this destructive deletion
+```bash
+its wrike tasks delete IEACW7BXKQ2R4KMT --confirm
+```
+
 ## projects
 
 ### `its wrike projects`
@@ -384,7 +391,8 @@ its wrike spaces --watch
 ## folders
 
 ### `its wrike folders <space>`
-List folders in a space (accepts space name or ID). Surfaces the most common fields; pass --json for raw shape.
+List folders in a space (accepts space name or ID). The table shows root folders by default — pass --all for every folder including nested ones. Machine output (--json/--ai) always carries all of them, each flagged `root`.
+Flags: `--all` Show nested folders too, not just the root level
 ```bash
 its wrike folders "IT Operations"
 its wrike folders "IT Operations" --watch
