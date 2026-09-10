@@ -31,6 +31,36 @@ its bw items get "Outlook MCP" --field "API KEY" --to-file /dev/shm/sec
 its bw items get "Server admin"
 ```
 
+### `its bw items attachments <id>`
+List the files attached to a vault item. Names are decrypted locally — the server never sees them.
+Flags: `--vault` Named vault profile (omit for default)
+```bash
+its bw items attachments "Exchange Online cert"
+```
+
+### `its bw items attach <id> <file>`
+Attach a local file to a vault item. The file is encrypted locally under its own key before upload — the server never sees the contents or the filename. Additive: existing attachments are untouched.
+Flags: `--name` Store under this filename instead of the file's own · `--vault` Named vault profile (omit for default)
+```bash
+its bw items attach "Exchange Online cert" ./exo-auth.pfx
+its bw items attach 3f2b1c94-... ./key.pem --name exo-key.pem
+```
+
+### `its bw items download <id> <attachment>`
+Download and decrypt one attachment to a mode-0600 file. Never prints the contents — an attachment is usually key material, so it goes straight to disk like every other secret sink.
+Flags: `--output` Where to write it (a directory keeps the vault's filename; defaults to the vault's filename in the current directory) · `--vault` Named vault profile (omit for default)
+```bash
+its bw items download "Exchange Online cert" exo-auth.pfx --output /dev/shm/exo-auth.pfx
+its bw items download 3f2b1c94-... exo-key.pem --output ./certs
+```
+
+### `its bw items detach <id> <attachment>`
+Permanently delete one attachment from a vault item. There is no trash for attachments — this cannot be undone. Requires --confirm.
+Flags: `--confirm` Required — attachment deletion is irreversible · `--vault` Named vault profile (omit for default)
+```bash
+its bw items detach "Exchange Online cert" exo-key.pem --confirm
+```
+
 ### `its bw items totp <query>`
 Generate current TOTP code for an item. Returns the current TOTP code — refresh every 30s.
 Flags: `--copy` Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. · `--clear-after` Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. · `--to-file` Write the secret to this path (created 0600 / owner-only) instead of printing it. Unlike --copy this needs no terminal or clipboard tool, so it works headless — the sanctioned way to hand a secret to another command. · `--vault` Named vault profile (omit for default)
@@ -72,8 +102,8 @@ its bw items create "API keys" --type note --notes "stuff"
 ```
 
 ### `its bw items update <id>`
-Update a vault item. Preserve-by-default: only the flags you pass change — everything omitted (password, notes, URIs, TOTP, custom fields) is left intact. Use --field-remove to drop a custom field.
-Flags: `--name` New name · `--username` Login username · `--password` Login password · `--password-file` Read the password from a UTF-8 file (keeps the secret out of shell history and the command line) · `--uri` Login URL · `--totp` TOTP secret · `--notes` Notes · `--notes-file` Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) · `--folder` Folder name (created if needed) · `--field` Custom text field(s) — comma-separated name=value (e.g. --field lan_ip=10.0.0.1,rack=A3). On update, upserts by name. · `--field-hidden` Custom hidden field(s) — comma-separated name=value. Stored as a secret (masked in the UI like a password). · `--field-remove` Custom field name(s) to remove — comma-separated (e.g. --field-remove old_ip,legacy_token). · `--confirm` Confirm the update · `--vault` Named vault profile (omit for default)
+Update a vault item. Preserve-by-default: only the flags you pass change — everything omitted (password, notes, URIs, TOTP, custom fields) is left intact. --field and --uri add to what is there; use --field-remove / --uri-remove to drop one.
+Flags: `--name` New name · `--username` Login username · `--password` Login password · `--password-file` Read the password from a UTF-8 file (keeps the secret out of shell history and the command line) · `--uri` Login URL to add. Appended to the item's existing URIs (no duplicate) — use --uri-remove to drop one. · `--uri-remove` Login URL to remove from the item, matched exactly (case-insensitive). · `--totp` TOTP secret · `--notes` Notes · `--notes-file` Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) · `--folder` Folder name (created if needed) · `--field` Custom text field(s) — comma-separated name=value (e.g. --field lan_ip=10.0.0.1,rack=A3). On update, upserts by name. · `--field-hidden` Custom hidden field(s) — comma-separated name=value. Stored as a secret (masked in the UI like a password). · `--field-remove` Custom field name(s) to remove — comma-separated (e.g. --field-remove old_ip,legacy_token). · `--confirm` Confirm the update · `--vault` Named vault profile (omit for default)
 ```bash
 its bw items update <id> --field lan_ip=10.0.0.2 --confirm
 its bw items update <id> --field-remove lan_ip --confirm

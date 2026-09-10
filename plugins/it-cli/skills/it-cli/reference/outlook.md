@@ -151,8 +151,8 @@ its outlook drafts delete AAMkAGI2... --confirm
 ## folders
 
 ### `its outlook folders`
-List mail folders with counts (totalItemCount, unreadItemCount).
-Flags: `--top` Max folders (default 50, max 100) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+List mail folders with counts (totalItemCount, unreadItemCount). Graph returns the root level only, so nested folders need --all.
+Flags: `--all` Walk the whole hierarchy, not just the root level · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
 
 ### `its outlook folders get <folder_id>`
 Get a single mail folder by ID or well-known name (inbox, sentitems, drafts, deleteditems, archive).
@@ -206,7 +206,7 @@ its outlook attachments <message_id> --json | its outlook attachments delete <me
 
 ### `its outlook events`
 List calendar events between two dates (calendarView — includes expanded recurrences).
-Flags: `--start` Start ISO date/datetime (default: today) · `--end` End ISO date/datetime (default: 7 days from start) · `--top` Max events (default 50, max 100) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+Flags: `--start` Start ISO date/datetime (default: today) · `--end` End ISO date/datetime (default: 7 days from start) · `--top` Cap the rows shown (default: every event in the range) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
 ```bash
 its outlook events
 its outlook events --start 2026-05-25 --end 2026-06-01

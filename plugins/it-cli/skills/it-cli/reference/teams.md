@@ -8,10 +8,10 @@ Microsoft Teams (Graph) for the logged-in user — list recent chats, read chat 
 
 ### `its teams chats`
 Your recent Teams chats (1:1, group, meeting), most-recently-active first. Delegated — run `its auth login` first.
-Flags: `--limit` Max chats to return (1-50)
+Flags: `--limit` Max chats to show (0 for every chat)
 ```bash
 its teams chats
-its teams chats --limit 50
+its teams chats --limit 0
 ```
 
 ### `its teams chats messages <chat_id>`

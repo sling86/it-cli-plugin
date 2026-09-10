@@ -2,20 +2,20 @@
 
 > Auto-generated from the live command definitions. Do not edit by hand.
 
-**21 providers** · **215 resources** · **762 commands**. Pick a provider for its full command list.
+**21 providers** · **215 resources** · **768 commands**. Pick a provider for its full command list.
 
 | Provider | Alias | Resources | Commands |
 |----------|-------|-----------|----------|
 | [Tactical RMM](./rmm.md) | `rmm` | 18 | 78 |
 | [Entra ID](./entra.md) | `entra` | 23 | 112 |
 | [Dokploy](./dokploy.md) | `dokploy` | 25 | 120 |
-| [Bitwarden](./bw.md) | `bw` | 12 | 40 |
+| [Bitwarden](./bw.md) | `bw` | 12 | 44 |
 | [SharePoint](./sp.md) | `sp` | 11 | 49 |
 | [UniFi Network](./unifi.md) | `unifi` | 17 | 43 |
 | [Wrike](./wrike.md) | `wrike` | 17 | 64 |
 | [Azure CLI](./az.md) | `az` | 11 | 24 |
 | [Exchange Online](./exo.md) | `exo` | 9 | 43 |
-| [Intune](./intune.md) | `intune` | 17 | 45 |
+| [Intune](./intune.md) | `intune` | 17 | 47 |
 | [UniFi Protect](./protect.md) | `protect` | 5 | 9 |
 | [Power BI](./pbi.md) | `pbi` | 6 | 21 |
 | [Power Platform](./pa.md) | `pa` | 4 | 13 |

@@ -230,17 +230,17 @@ its entra licences --watch
 
 ### `its entra licences assign <user_id>`
 Assign one or more licences to a user. Pass --sku as a comma-separated list to assign several atomically in a single Graph call (parallel single-assigns trip 409 Directory_ConcurrencyViolation). Idempotent.
-Flags: `--sku` SKU ID (GUID), or comma-separated list of GUIDs
+Flags: `--sku` SKU GUID, part number (ENTERPRISEPACK) or friendly name ("Office 365 E3") — comma-separate several
 ```bash
-its entra licences assign jane@x.com --sku <guid>
-its entra licences assign jane@x.com --sku <guid1>,<guid2>,<guid3>
+its entra licences assign jane@x.com --sku ENTERPRISEPACK
+its entra licences assign jane@x.com --sku SPE_E3,EMS,POWER_BI_PRO
 its entra licences assign jane.smith@example.com --sku SPB
 its entra licences assign jane.smith@example.com --sku SPB,ENTERPRISEPACK
 ```
 
 ### `its entra licences remove <user_id>`
 Remove a licence from a user (requires --confirm). Permanent — use --confirm.
-Flags: `--sku` SKU ID (GUID) · `--confirm` Confirm the removal
+Flags: `--sku` SKU GUID, part number (ENTERPRISEPACK) or friendly name ("Office 365 E3") · `--confirm` Confirm the removal
 ```bash
 its entra licences remove jane.smith@example.com --sku ENTERPRISEPACK --confirm
 its entra users licences jane.smith@example.com
@@ -248,8 +248,8 @@ its entra licences remove jane.smith@example.com --sku SPB --confirm
 its entra onboarding convert-mailbox jane.smith@example.com --confirm
 ```
 
-### `its entra licences users <sku_id>`
-List users assigned a specific licence SKU. List by resource membership; use --json for the raw shape.
+### `its entra licences users <sku>`
+List users assigned a specific licence SKU, named by GUID, part number or friendly name. List by resource membership; use --json for the raw shape.
 ```bash
 its entra licences users SPB
 ```

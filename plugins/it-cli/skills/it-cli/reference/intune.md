@@ -54,6 +54,21 @@ List devices failing compliance. Returns devices failing compliance checks.
 its intune devices noncompliant
 ```
 
+### `its intune devices recovery-keys [device]`
+List escrowed BitLocker recovery keys — metadata only, never key material. Pass a device to see just its keys; omit it for the tenant-wide escrow list. Reading a key's value needs the delegated-only BitlockerKey.Read.All, which this app-only provider does not hold: use the Entra portal or Company Portal for the key itself.
+```bash
+its intune devices recovery-keys -UD-MP27XZ31
+its intune devices recovery-keys
+```
+
+### `its intune devices rotate-bitlocker <device>`
+Rotate a device's BitLocker recovery key (requires --confirm). The device rotates at its next check-in and escrows the new key; anyone holding the printed or copied old key loses access at that point. Needs DeviceManagementManagedDevices.PrivilegedOperations.All.
+Flags: `--confirm` Apply the rotation
+```bash
+its intune devices rotate-bitlocker -UD-MP27XZ31
+its intune devices rotate-bitlocker -UD-MP27XZ31 --confirm
+```
+
 ## compliance
 
 ### `its intune compliance why <device>`
