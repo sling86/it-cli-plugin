@@ -8,7 +8,7 @@ Microsoft Outlook (Graph) mailbox + calendar — list/search/send mail, manage d
 
 ### `its outlook mail`
 List messages from the mailbox. Defaults to Inbox (top 25 by receivedDateTime desc). Use --folder for a specific folder, --filter for OData expressions, --search to switch to keyword search.
-Flags: `--folder` Folder ID or well-known name (inbox, sentitems, drafts, deleteditems, archive) · `--top` Number of messages (max 50) · `--skip` Skip first N messages (pagination) · `--filter` OData $filter expression · `--search` KQL-style search query (alternative to --filter) · `--unread` Only unread messages · `--has-attachments` Only messages with attachments · `--from` Filter by sender email address (substring match via OData) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+Flags: `--folder` Folder ID or well-known name (inbox, sentitems, drafts, deleteditems, archive) · `--top` Number of messages (max 50) · `--skip` Skip first N messages (pagination) · `--filter` OData $filter expression (or a window: today, yesterday, 7d) · `--since` Only messages received since this window — today, yesterday, 7d, 6h, or a date · `--search` KQL-style search query (alternative to --filter) · `--unread` Only unread messages · `--has-attachments` Only messages with attachments · `--from` Filter by sender email address (substring match via OData) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
 ```bash
 its outlook mail
 its outlook mail --unread
@@ -89,8 +89,17 @@ its outlook mail delete <message_id> --confirm
 its outlook mail --filter "from/emailAddress/address eq 'spammer@x'" --json | its outlook mail delete --stdin --confirm
 ```
 
+### `its outlook mail draft`
+Create a draft instead of sending. Nothing leaves the mailbox until `its outlook drafts send <id>`. Alias of `drafts create` / `drafts reply` — it lives here because `mail send` is where people look during an incident, and only finding `send` means firing straight at a third party (ctxc #11845 item 6).
+Flags: `--reply-to` Message ID to reply to (omit for a new message) · `--all` With --reply-to: reply to all recipients · `--to` Comma-separated recipients (new message) · `--cc` Comma-separated CC recipients · `--bcc` Comma-separated BCC recipients · `--subject` Subject line (new message) · `--body` Body content · `--body-file` Read body from a UTF-8 file · `--html` Treat --body / --body-file as HTML (default text) · `--importance <low|normal|high>` low|normal|high · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook mail draft --reply-to AAMkAGI1AAAt0M0AAA= --body "Looking into it now."
+its outlook mail draft --reply-to AAMkAGI1AAAt0M0AAA= --all --body "Adding IT."
+its outlook mail draft --to jane@example.com --subject "Kit request" --body "Details to follow."
+```
+
 ### `its outlook mail send`
-Send a new email directly (no draft step). Saves a copy in Sent Items.
+Send a new email directly (no draft step). Saves a copy in Sent Items. To review before it goes out — the safer default for anything to a third party — use `its outlook mail draft` (alias of `drafts create` / `drafts reply`), then `its outlook drafts send <id>`.
 Flags: `--to` Comma-separated recipients (Name <addr> or addr) · `--cc` Comma-separated CC recipients · `--bcc` Comma-separated BCC recipients · `--subject` Subject line · `--body` Body content · `--body-file` Read body from a UTF-8 file (use for bodies > ~15KB — Windows command-line cap) · `--html` Treat --body / --body-file as HTML (default text) · `--importance <low|normal|high>` low|normal|high · `--attach` File to attach. Comma-separated for multiple. `path:cid:<id>` syntax marks an attachment inline with that cid (pair with `<img src="cid:<id>">` in body). · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
 ```bash
 its outlook mail send --to user@example.com --subject "Hi" --body "Quick note"

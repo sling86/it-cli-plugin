@@ -8,7 +8,7 @@ Tactical RMM endpoint management — agents, live terminal, alerts, software, se
 
 ### `its rmm agents`
 List all RMM agents with status, hostname, OS, site. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--status <online|offline|overdue>` Filter by status · `--type <server|workstation>` Filter by type · `--client` Filter by client name · `--site` Filter by site name · `--rebooted-since` Only agents whose last boot is more recent than this — ISO timestamp or relative span (7d, 24h, 30m)
+Flags: `--search` Match hostname, agent ID, client, site, user, serial or IP · `--status <online|offline|overdue>` Filter by status · `--type <server|workstation>` Filter by type · `--client` Filter by client name · `--site` Filter by site name · `--rebooted-since` Only agents whose last boot is more recent than this — ISO timestamp or relative span (7d, 24h, 30m)
 ```bash
 its rmm agents
 its rmm agents --status offline
@@ -461,7 +461,7 @@ its rmm checks run OFFICE-PC
 
 ### `its rmm checks create <agent>`
 Attach a check to an agent. Use --type to pick: diskspace/cpuload/memory/ping/winsvc/script (defaults to script when --script is given). Tune alerting with --severity, --fails, --interval.
-Flags: `--type <diskspace|cpuload|memory|ping|winsvc|script>` Check type · `--severity <error|warning|info>` Alert severity (default error) · `--fails` Failures before alert (default 1) · `--interval` Run interval seconds, 0 = inherit (default 0) · `--disk` diskspace: drive (e.g. C:) · `--error` diskspace/cpuload/memory: error threshold % · `--warning` diskspace/cpuload/memory: warning threshold % · `--ip` ping: host/IP to ping · `--service` winsvc: Windows service name · `--restart-if-stopped` winsvc: restart the service if found stopped · `--pass-if-pending` winsvc: pass when start is pending · `--pass-if-missing` winsvc: pass when the service doesn't exist · `--script` script: script ID · `--timeout` script: timeout seconds (default 120) · `--args` script: arguments (comma-separated)
+Flags: `--type <diskspace|cpuload|memory|ping|winsvc|script>` Check type · `--severity <error|warning|info>` Alert severity (default error) · `--fails` Failures before alert (default 1) · `--interval` Run interval seconds, 0 = inherit (default 0) · `--disk` diskspace: drive (e.g. C:) · `--error` diskspace/cpuload/memory: error threshold % · `--warning` diskspace/cpuload/memory: warning threshold % · `--ip` ping: host/IP to ping · `--service` winsvc: Windows service name · `--restart-if-stopped` winsvc: restart the service if found stopped · `--pass-if-pending` winsvc: pass when start is pending · `--pass-if-missing` winsvc: pass when the service doesn't exist · `--script` script: script ID · `--timeout` script: timeout seconds (default 120) · `--args` script: arguments (comma-separated) · `--email-alert` Send an email when this check fails · `--text-alert` Send an SMS when this check fails · `--dashboard-alert` Raise a dashboard alert when this check fails · `--alert-template` Alert template ID to attach
 ```bash
 its rmm checks create OFFICE-PC --type diskspace --disk C: --error 10 --warning 25
 its rmm checks create OFFICE-PC --type cpuload --error 90 --warning 75
@@ -473,7 +473,7 @@ its rmm checks create OFFICE-PC-01 --script <script-id> --interval 600
 
 ### `its rmm checks edit [agent]`
 Retune an existing check without delete+recreate — change interval, severity, fail-count, or thresholds. PUT is partial, so only the flags you pass change. Works on POLICY checks too: they are edited by --check id, so the agent is optional (find policy check ids via `its rmm policies checks <id>`).
-Flags: `--check` Check ID to edit · `--severity <error|warning|info>` Alert severity · `--fails` Failures before alert · `--interval` Run interval seconds · `--error` Error threshold % (diskspace/cpuload/memory) · `--warning` Warning threshold % (diskspace/cpuload/memory) · `--timeout` Script check: timeout seconds · `--args` Script check: comma-separated script args (replaces existing)
+Flags: `--check` Check ID to edit · `--severity <error|warning|info>` Alert severity · `--fails` Failures before alert · `--interval` Run interval seconds · `--error` Error threshold % (diskspace/cpuload/memory) · `--warning` Warning threshold % (diskspace/cpuload/memory) · `--timeout` Script check: timeout seconds · `--args` Script check: comma-separated script args (replaces existing) · `--email-alert` Send an email when this check fails · `--text-alert` Send an SMS when this check fails · `--dashboard-alert` Raise a dashboard alert when this check fails · `--alert-template` Alert template ID to attach
 ```bash
 its rmm checks edit OFFICE-PC --check 7 --warning 60 --error 80
 its rmm checks edit OFFICE-PC --check 7 --severity warning --fails 3
@@ -552,7 +552,7 @@ its rmm policies checks <policy-id>
 
 ### `its rmm policies add-check <policy_id>`
 Add a check to a policy (applies to every agent under it). --type: diskspace/cpuload/memory/ping/winsvc/script (defaults to script when --script is given). Uses POST /checks/ with `policy` set and `agent` OMITTED — including agent:null returns 404 because the route resolver hits the agent path first
-Flags: `--type <diskspace|cpuload|memory|ping|winsvc|script>` Check type · `--severity <info|warning|error>` Alert severity (default error; script branch defaults warning) · `--fails` Failures before alert (default 1) · `--interval` Run interval seconds (script defaults 86400 daily, others 0=inherit) · `--disk` diskspace: drive (e.g. C:) · `--error` diskspace/cpuload/memory: error threshold % · `--warning` diskspace/cpuload/memory: warning threshold % · `--ip` ping: host/IP · `--service` winsvc: Windows service name · `--restart-if-stopped` winsvc: restart if stopped · `--pass-if-pending` winsvc: pass when start pending · `--pass-if-missing` winsvc: pass when service absent · `--script` script: Script ID · `--timeout` script: timeout seconds (default 90)
+Flags: `--type <diskspace|cpuload|memory|ping|winsvc|script>` Check type · `--severity <info|warning|error>` Alert severity (default error; script branch defaults warning) · `--fails` Failures before alert (default 1) · `--interval` Run interval seconds (script defaults 86400 daily, others 0=inherit) · `--disk` diskspace: drive (e.g. C:) · `--error` diskspace/cpuload/memory: error threshold % · `--warning` diskspace/cpuload/memory: warning threshold % · `--ip` ping: host/IP · `--service` winsvc: Windows service name · `--restart-if-stopped` winsvc: restart if stopped · `--pass-if-pending` winsvc: pass when start pending · `--pass-if-missing` winsvc: pass when service absent · `--script` script: Script ID · `--timeout` script: timeout seconds (default 90) · `--email-alert` Send an email when this check fails · `--text-alert` Send an SMS when this check fails · `--dashboard-alert` Raise a dashboard alert when this check fails · `--alert-template` Alert template ID to attach
 ```bash
 its rmm policies add-check 4 --type diskspace --disk C: --error 10 --warning 25
 its rmm policies add-check 4 --type winsvc --service Spooler --restart-if-stopped

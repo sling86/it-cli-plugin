@@ -72,7 +72,7 @@ its dokploy apps delete <app-id> --confirm
 ```
 
 ### `its dokploy apps deploy <app>`
-Trigger deployment, optionally wait for healthy and show logs.
+Pull the configured source, build it and deploy. Use after a git push; waits for the new deployment with --wait. Do not trigger this while an auto-deploy webhook is still queued.
 Flags: `--wait` Wait for container to become healthy · `--logs` Show last 50 lines of logs after deploy
 ```bash
 its dokploy apps deploy storefront
@@ -123,7 +123,7 @@ its dokploy apps set-build <app-id> --type dockerfile --dockerfile "./Dockerfile
 ```
 
 ### `its dokploy apps rebuild <app>`
-Force a fresh build from source (clones, builds image, deploys). Distinct from `redeploy` (re-uses last image) and `deploy` which is the alias for this. Internally maps to application.deploy — `application.rebuild` returns 404.
+Rebuild and deploy Dokploy's last-pulled source. This maps to application.deploy and does NOT fetch a newer commit; after a git push use `apps deploy`/`apps redeploy` instead.
 ```bash
 its dokploy apps rebuild storefront
 its dokploy apps rebuild <app-id>
@@ -139,7 +139,7 @@ its dokploy apps wait-deploy <app-id> --timeout 600
 ```
 
 ### `its dokploy apps redeploy <applicationId>`
-Redeploy an application without rebuilding. Redeploys the existing container; doesn't rebuild from source.
+Pull the configured source, build it and deploy. This is the legacy direct form of `apps deploy`; use it when a webhook has not appeared after a few minutes.
 ```bash
 its dokploy apps redeploy aB3xY7pL
 its dokploy apps redeploy <app-id>

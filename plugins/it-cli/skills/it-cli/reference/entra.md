@@ -282,7 +282,7 @@ its entra roles
 its entra roles --watch
 ```
 
-### `its entra roles members <role_id>`
+### `its entra roles members <role>`
 List members of a directory role. Returns direct members; nested groups aren't expanded.
 ```bash
 its entra roles members <role-id>
@@ -337,7 +337,7 @@ its entra signin explain <signin-id>
 
 ### `its entra signin suspicious`
 List sign-ins with risk indicators. Bounded by --since; defaults to last 24h.
-Flags: `--days` Look-back period in days
+Flags: `--days` Look-back period in days · `--since` Look-back window (e.g. 6h, 7d) — same spelling as `signin list --since`
 ```bash
 its entra signin suspicious --days 7
 ```
@@ -664,12 +664,16 @@ its entra directory app-usage
 
 ### `its entra devices`
 List Entra-registered and Entra-joined devices. Wider than `its intune devices`, which only sees Intune-managed ones — filter with --filter isManaged=false to find registered-but-unenrolled devices. Needs Device.Read.All.
-Flags: `--search` Match on display name · `--top` Maximum devices to return
+Flags: `--search` Match on display name · `--top` Maximum devices to return (default all)
 ```bash
 its entra devices list
 its entra devices list --search -UD
 its entra devices list --filter isManaged=false
 ```
+
+### `its entra devices search <query>`
+Search Entra devices by display name. Paginates matching results instead of searching only the first list page.
+Flags: `--top` Maximum matches (default all)
 
 ### `its entra devices get <device>`
 Get one device by directory object id, deviceId, or exact display name. Needs Device.Read.All.

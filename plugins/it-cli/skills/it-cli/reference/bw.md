@@ -8,7 +8,7 @@ Bitwarden vault — search items, get passwords, browse folders.
 
 ### `its bw items`
 List all vault items. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--type` Filter by type (login/note/card/identity) · `--folder` Filter by folder name · `--favourite` Show only favourites · `--organisation` Organisation name or ID · `--collection` Collection name or ID · `--personal-only` Show only personal items · `--vault` Named vault profile (omit for default)
+Flags: `--type` Filter by type (login/note/card/identity/ssh-key) · `--folder` Filter by folder name · `--favourite` Show only favourites · `--organisation` Organisation name or ID · `--collection` Collection name or ID · `--personal-only` Show only personal items · `--vault` Named vault profile (omit for default)
 ```bash
 its bw items
 its bw items --folder "Servers"
@@ -20,6 +20,13 @@ Search vault items by name, username, URL, or notes. Substring match across the 
 Flags: `--organisation` Organisation name or ID · `--collection` Collection name or ID · `--personal-only` Show only personal items · `--vault` Named vault profile (omit for default)
 ```bash
 its bw items search "github"
+```
+
+### `its bw items find-login [query]`
+Rank login candidates by name, URL and username without returning secrets. Timestamps only break equal-score ties; pass an exact ID to `items get` after choosing.
+Flags: `--url` Site URL or hostname to match strongly · `--username` Expected username to match strongly · `--organisation` Organisation name or ID · `--collection` Collection name or ID · `--personal-only` Show only personal items · `--vault` Named vault profile (omit for default)
+```bash
+its bw items find-login office.com --url login.microsoftonline.com --username admin@company.test --json
 ```
 
 ### `its bw items get <id>`
@@ -93,17 +100,19 @@ its bw items favourites
 
 ### `its bw items create <name>`
 Create a new vault item (login, note, card, or identity). Idempotent on duplicate names — use update/edit to mutate an existing record.
-Flags: `--type` Item type: login (default), note, card, identity · `--username` Login username · `--password` Login password · `--password-file` Read the password from a UTF-8 file (keeps the secret out of shell history and the command line) · `--uri` Login URL · `--totp` TOTP secret or otpauth URI · `--notes` Notes · `--notes-file` Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) · `--folder` Folder name (created if it does not exist) · `--field` Custom text field(s) — comma-separated name=value (e.g. --field lan_ip=10.0.0.1,rack=A3). On update, upserts by name. · `--field-hidden` Custom hidden field(s) — comma-separated name=value. Stored as a secret (masked in the UI like a password). · `--organisation` Organisation name or ID · `--collection` Collection name or ID · `--vault` Named vault profile (omit for default)
+Flags: `--type <login|note|card|identity|ssh-key>` Item type: login (default), note, card, identity, ssh-key · `--username` Login (or identity) username · `--password` Login password · `--password-file` Read the password from a UTF-8 file (keeps the secret out of shell history and the command line) · `--uri` Login URL · `--totp` TOTP secret or otpauth URI · `--notes` Notes · `--notes-file` Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) · `--folder` Folder name (created if it does not exist) · `--field` Custom text field(s) — comma-separated name=value (e.g. --field lan_ip=10.0.0.1,rack=A3). On update, upserts by name. · `--field-hidden` Custom hidden field(s) — comma-separated name=value. Stored as a secret (masked in the UI like a password). · `--cardholder` Card: name on the card · `--card-number` Card: number · `--card-brand` Card: brand (visa, mastercard, amex …) · `--card-exp` Card: expiry as MM/YYYY · `--card-code` Card: security code · `--first-name` Identity: first name · `--middle-name` Identity: middle name · `--last-name` Identity: last name · `--title` Identity: title (Mr, Ms …) · `--company` Identity: company · `--email` Identity: e-mail · `--phone` Identity: phone · `--address` Identity: address line 1 · `--address2` Identity: address line 2 · `--address3` Identity: address line 3 · `--city` Identity: city · `--county` Identity: county / state · `--postcode` Identity: postcode · `--country` Identity: country · `--ssn` Identity: national insurance / SSN · `--passport` Identity: passport number · `--licence` Identity: driving licence number · `--private-key-file` SSH key: path to the private key (OpenSSH/PEM). Public key + fingerprint are derived · `--public-key` SSH key: public key line, if it cannot be derived · `--fingerprint` SSH key: fingerprint, if it cannot be derived · `--organisation` Organisation name or ID · `--collection` Collection name or ID · `--vault` Named vault profile (omit for default)
 ```bash
 its bw items create "Router" --username admin --password "s3cret"
 its bw items create "Router" --field lan_ip=10.0.0.1 --field-hidden api_token=abc123
+its bw items create "Company Amex" --type card --cardholder "A Payer" --card-number 4111111111111111 --card-exp 09/2028 --card-code 1234
+its bw items create "deploy@prod" --type ssh-key --private-key-file ~/.ssh/id_ed25519
 its bw items create "Server admin" --username admin --password "P@ssw0rd" --uri https://server.example.com
 its bw items create "API keys" --type note --notes "stuff"
 ```
 
 ### `its bw items update <id>`
 Update a vault item. Preserve-by-default: only the flags you pass change — everything omitted (password, notes, URIs, TOTP, custom fields) is left intact. --field and --uri add to what is there; use --field-remove / --uri-remove to drop one.
-Flags: `--name` New name · `--username` Login username · `--password` Login password · `--password-file` Read the password from a UTF-8 file (keeps the secret out of shell history and the command line) · `--uri` Login URL to add. Appended to the item's existing URIs (no duplicate) — use --uri-remove to drop one. · `--uri-remove` Login URL to remove from the item, matched exactly (case-insensitive). · `--totp` TOTP secret · `--notes` Notes · `--notes-file` Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) · `--folder` Folder name (created if needed) · `--field` Custom text field(s) — comma-separated name=value (e.g. --field lan_ip=10.0.0.1,rack=A3). On update, upserts by name. · `--field-hidden` Custom hidden field(s) — comma-separated name=value. Stored as a secret (masked in the UI like a password). · `--field-remove` Custom field name(s) to remove — comma-separated (e.g. --field-remove old_ip,legacy_token). · `--confirm` Confirm the update · `--vault` Named vault profile (omit for default)
+Flags: `--name` New name · `--username` Login username · `--password` Login password · `--password-file` Read the password from a UTF-8 file (keeps the secret out of shell history and the command line) · `--uri` Login URL to add. Appended to the item's existing URIs (no duplicate) — use --uri-remove to drop one. · `--uri-remove` Login URL to remove from the item, matched exactly (case-insensitive). · `--totp` TOTP secret · `--notes` Notes · `--notes-file` Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) · `--folder` Folder name (created if needed) · `--field` Custom text field(s) — comma-separated name=value (e.g. --field lan_ip=10.0.0.1,rack=A3). On update, upserts by name. · `--field-hidden` Custom hidden field(s) — comma-separated name=value. Stored as a secret (masked in the UI like a password). · `--cardholder` Card: name on the card · `--card-number` Card: number · `--card-brand` Card: brand (visa, mastercard, amex …) · `--card-exp` Card: expiry as MM/YYYY · `--card-code` Card: security code · `--first-name` Identity: first name · `--middle-name` Identity: middle name · `--last-name` Identity: last name · `--title` Identity: title (Mr, Ms …) · `--company` Identity: company · `--email` Identity: e-mail · `--phone` Identity: phone · `--address` Identity: address line 1 · `--address2` Identity: address line 2 · `--address3` Identity: address line 3 · `--city` Identity: city · `--county` Identity: county / state · `--postcode` Identity: postcode · `--country` Identity: country · `--ssn` Identity: national insurance / SSN · `--passport` Identity: passport number · `--licence` Identity: driving licence number · `--private-key-file` SSH key: path to the private key (OpenSSH/PEM). Public key + fingerprint are derived · `--public-key` SSH key: public key line, if it cannot be derived · `--fingerprint` SSH key: fingerprint, if it cannot be derived · `--field-remove` Custom field name(s) to remove — comma-separated (e.g. --field-remove old_ip,legacy_token). · `--confirm` Confirm the update · `--vault` Named vault profile (omit for default)
 ```bash
 its bw items update <id> --field lan_ip=10.0.0.2 --confirm
 its bw items update <id> --field-remove lan_ip --confirm
@@ -117,9 +126,9 @@ Flags: `--organisation` Organisation name or ID · `--collection` Collection nam
 its bw items share 3f2b1c94-... --organisation Acme --collection IT --confirm
 ```
 
-### `its bw items move <id>`
+### `its bw items move <id> [folder]`
 Move vault items to a folder. Move an item between folders. --confirm required.
-Flags: `--folder` Destination folder name (created if needed) · `--confirm` Confirm the move · `--vault` Named vault profile (omit for default)
+Flags: `--folder` Destination folder name (created if needed; positional name also accepted) · `--confirm` Confirm the move · `--vault` Named vault profile (omit for default)
 ```bash
 its bw items move 3f2b1c94-... --folder "Infrastructure" --confirm
 its bw items move <item-id> --folder "Servers" --confirm
@@ -147,6 +156,22 @@ Flags: `--confirm` Confirm permanent deletion (REQUIRED) · `--yes-permanently-d
 ```bash
 its bw items purge 3f2b1c94-... --confirm --yes-permanently-delete
 its bw items purge <item-id> --confirm --yes-permanently-delete
+```
+
+### `its bw items export`
+Export the vault in the official Bitwarden formats (json, csv, encrypted_json) so the file imports back into any Bitwarden client. Writes to --output (0600) or prints with --stdout. Trashed items are skipped.
+Flags: `--format <json|csv|encrypted_json>` json (default), csv, or encrypted_json · `--password` encrypted_json only: password-protect instead of account-key encryption (importable to another account) · `--password-file` Read the export password from a file · `--output` File or directory to write (default: bitwarden_export_<stamp>.<ext> in cwd) · `--stdout` Print the export instead of writing a file · `--organisation` Export one organisation's vault (name or id) instead of the personal vault · `--vault` Named vault profile (omit for default)
+```bash
+its bw items export --output ~/backups/
+its bw items export --format encrypted_json --password-file /dev/shm/pw --output vault.json
+```
+
+### `its bw items import <file>`
+Import a Bitwarden export (json, csv, or encrypted/password-protected json) — folders come along. Items are added, never merged; import into a fresh folder first if unsure. Requires --confirm.
+Flags: `--format <auto|bitwardenjson|bitwardencsv|bitwardenpasswordprotected>` auto (default), bitwardenjson, bitwardencsv, bitwardenpasswordprotected · `--password` Password of a password-protected export · `--password-file` Read the export password from a file · `--organisation` Import into this organisation (name or id); collections in the file are created · `--confirm` Confirm the import · `--vault` Named vault profile (omit for default)
+```bash
+its bw items import ./vault.json
+its bw items import ./vault.json --confirm
 ```
 
 ## folders
@@ -196,11 +221,47 @@ its bw folders delete "Old stuff" --confirm
 List organisations available to the selected vault account.
 Flags: `--vault` Named vault profile (omit for default)
 
+### `its bw organisations members <organisation>`
+List an organisation's members with invite status and role. Needs an admin/owner account.
+Flags: `--status <invited|accepted|confirmed|revoked>` Filter: invited, accepted, confirmed, revoked · `--vault` Named vault profile (omit for default)
+```bash
+its bw organisations members ""
+its bw organisations members "" --status accepted
+```
+
+### `its bw organisations confirm <organisation> <member>`
+Confirm a member who has accepted their invite: the organisation key is encrypted to their public key and handed over. After this they can see the collections they were granted. Requires --confirm.
+Flags: `--confirm` Confirm handing the organisation key to the member · `--vault` Named vault profile (omit for default)
+```bash
+its bw organisations confirm "" jane@example.com --confirm
+```
+
 ## collections
 
 ### `its bw collections`
 List collections, optionally scoped by organisation name or ID.
 Flags: `--organisation` Organisation name or ID · `--vault` Named vault profile (omit for default)
+
+### `its bw collections create <organisation> <name>`
+Create a collection in an organisation. Access can be granted to groups by id with --group (repeat via comma).
+Flags: `--group` Group id(s) to grant, comma-separated. Suffix :ro for read-only, :manage for manage · `--external-id` External id (directory sync) · `--vault` Named vault profile (omit for default)
+```bash
+its bw collections create "" "IT/Servers"
+```
+
+### `its bw collections update <organisation> <collection>`
+Rename a collection or replace its group grants. Groups not passed are removed — pass the full set.
+Flags: `--name` New name · `--group` Group id(s) to grant, comma-separated (replaces existing). :ro / :manage suffixes · `--confirm` Confirm the update · `--vault` Named vault profile (omit for default)
+```bash
+its bw collections update "" "IT/Servers" --name "IT/Infrastructure" --confirm
+```
+
+### `its bw collections delete <organisation> <collection>`
+Delete a collection. Items in it stay in the organisation (unassigned). Requires --confirm.
+Flags: `--confirm` Confirm the deletion · `--vault` Named vault profile (omit for default)
+```bash
+its bw collections delete "" "IT/Old" --confirm
+```
 
 ## password
 
@@ -269,6 +330,13 @@ its bw session list
 its bw session list --watch
 ```
 
+### `its bw session serve`
+Run the `bw serve` REST API on localhost, backed by the its session — same routes and JSON as the official CLI, so tools built against bw serve work unchanged. Ctrl+C to stop.
+Flags: `--port` Port (default 8087) · `--hostname` Bind address (default localhost; 'all' for every interface) · `--disable-origin-protection` Accept requests that carry an Origin header (browser pages). Off by default for a reason. · `--vault` Named vault profile (omit for default)
+```bash
+its bw session serve --port 8087
+```
+
 ## vaults
 
 ### `its bw vaults`
@@ -335,7 +403,7 @@ its bw audit duplicates
 
 ### `its bw audit unfiled`
 Vault items with no folder assigned (hygiene issue). Items with no folder assignment.
-Flags: `--type` Filter by type: login, note, card, identity · `--vault` Named vault profile (omit for default)
+Flags: `--type` Filter by type: login, note, card, identity, ssh-key · `--vault` Named vault profile (omit for default)
 ```bash
 its bw audit unfiled
 ```
@@ -352,6 +420,98 @@ One-shot vault hygiene snapshot — counts, unfiled breakdown, weak/reused/dupli
 Flags: `--min-items` Only show folders with this many items or more (default 1) · `--vault` Named vault profile (omit for default)
 ```bash
 its bw audit vault-report
+```
+
+## generate
+
+### `its bw generate password`
+Generate a random password (default 14 chars, upper+lower+digits — the official bw defaults). Pass any of --upper/--lower/--number/--special to choose classes explicitly.
+Flags: `--length` Length (5–128, default 14) · `--upper` Include uppercase letters · `--lower` Include lowercase letters · `--number` Include digits · `--special` Include !@#$%^&* · `--min-number` Minimum digits · `--min-special` Minimum special characters · `--avoid-ambiguous` Leave out I, O, l, 0, 1 · `--copy` Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. · `--clear-after` Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. · `--to-file` Write the secret to this path (created 0600 / owner-only) instead of printing it. Unlike --copy this needs no terminal or clipboard tool, so it works headless — the sanctioned way to hand a secret to another command. · `--vault` Named vault profile (omit for default)
+```bash
+its bw generate password
+its bw generate password --length 32 --upper --lower --number --special
+its bw generate password --copy
+```
+
+### `its bw generate passphrase`
+Generate a passphrase from the EFF long wordlist (default 6 words joined by '-', like the official bw).
+Flags: `--words` Number of words (3–20, default 6) · `--separator` Word separator (default -) · `--capitalise` Title-case each word · `--include-number` Append a digit to one word · `--copy` Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. · `--clear-after` Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. · `--to-file` Write the secret to this path (created 0600 / owner-only) instead of printing it. Unlike --copy this needs no terminal or clipboard tool, so it works headless — the sanctioned way to hand a secret to another command. · `--vault` Named vault profile (omit for default)
+```bash
+its bw generate passphrase
+its bw generate passphrase --words 4 --separator . --capitalise --include-number
+```
+
+## sends
+
+### `its bw sends`
+List your Bitwarden Sends with their share URLs. Surfaces the most common fields; pass --json for raw shape.
+Flags: `--search` Filter by name or notes · `--vault` Named vault profile (omit for default)
+```bash
+its bw sends list
+```
+
+### `its bw sends get <id>`
+Show one Send by id or name, including its share URL. --text prints just the text body.
+Flags: `--text` Print only the text content · `--output` For a file Send: download the file here (dir or path) · `--vault` Named vault profile (omit for default)
+```bash
+its bw sends get "VPN config"
+```
+
+### `its bw sends create [name]`
+Create a Send — a self-expiring share link. --text for a snippet, --file for a file. Deletes after --delete-in (default 7d). The link is printed; anyone with it can open the Send until it expires.
+Flags: `--text` Text to share · `--text-file` Read the text from a UTF-8 file · `--file` Path of a file to share (file Send) · `--notes` Private notes (only you see them) · `--hidden` Hide the text by default in the web view · `--password` Require this password to open the Send · `--password-file` Read the Send password from a file · `--emails` Restrict to these recipient e-mails (comma-separated; they get a one-time code) · `--max-access` Maximum number of opens · `--delete-in` Delete after e.g. 1h, 7d (default 7d) or an ISO date · `--expire-in` Stop access after e.g. 24h (optional, must be before delete-in) · `--hide-email` Do not show your e-mail to the recipient · `--vault` Named vault profile (omit for default)
+```bash
+its bw sends create "WiFi" --text "guest / s3cret" --delete-in 1d
+its bw sends create --file ./cert.pfx --password hunter2 --max-access 1
+```
+
+### `its bw sends update <id>`
+Edit a Send's name, notes, limits or password. The content itself cannot change — create a new Send for that.
+Flags: `--name` New name · `--notes` New private notes · `--hidden` Hide text by default · `--password` Set / replace the password · `--max-access` Maximum number of opens · `--delete-in` New deletion time (30m, 7d, ISO) · `--expire-in` New expiry time · `--disabled` Disable the link without deleting · `--enabled` Re-enable a disabled Send · `--confirm` Confirm the edit · `--vault` Named vault profile (omit for default)
+```bash
+its bw sends update "WiFi" --delete-in 14d --confirm
+```
+
+### `its bw sends delete <id>`
+Delete a Send now. The link stops working immediately; there is no trash.
+Flags: `--confirm` Confirm the deletion · `--vault` Named vault profile (omit for default)
+```bash
+its bw sends delete "WiFi" --confirm
+```
+
+### `its bw sends remove-password <id>`
+Remove the password from a Send so the link alone opens it.
+Flags: `--confirm` Confirm removing the password · `--vault` Named vault profile (omit for default)
+```bash
+its bw sends remove-password "WiFi" --confirm
+```
+
+### `its bw sends receive <url>`
+Open someone else's Send link. Text is printed (or sent to --to-file/--copy); a file is saved 0600 to --output. Works without a vault — the key is in the URL.
+Flags: `--password` Send password, if it has one · `--password-file` Read the Send password from a file · `--email` Your e-mail, for recipient-restricted Sends · `--otp` One-time code e-mailed to you (after a first attempt with --email) · `--output` Where to save a file Send (dir or path; default current dir) · `--copy` Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. · `--clear-after` Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. · `--to-file` Write the secret to this path (created 0600 / owner-only) instead of printing it. Unlike --copy this needs no terminal or clipboard tool, so it works headless — the sanctioned way to hand a secret to another command. · `--vault` Named vault profile (omit for default)
+```bash
+its bw sends receive https://send.bitwarden.com/#abc/def
+its bw sends receive https://send.bitwarden.com/#abc/def --output ./downloads/
+```
+
+## compat
+
+### `its bw compat status`
+Show whether the drop-in `bw` shim is installed and which `bw` wins on PATH.
+```bash
+its bw compat status
+```
+
+### `its bw compat install`
+Install a `bw` shim so the official Bitwarden CLI syntax runs `its bw`: ~/.local/bin/bw on Linux/macOS (bw.cmd beside its.exe on Windows). Verbs its doesn't cover fall through to the real bw.
+```bash
+its bw compat install
+```
+
+### `its bw compat uninstall`
+Remove the `bw` shim. Only deletes a file this command wrote.
+```bash
+its bw compat uninstall
 ```
 
 ## doctor

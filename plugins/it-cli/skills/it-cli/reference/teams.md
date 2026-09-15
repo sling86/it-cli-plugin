@@ -16,9 +16,16 @@ its teams chats --limit 0
 
 ### `its teams chats messages <chat_id>`
 Read messages in one of your chats, newest first. Pass a chat ID from `its teams chats`.
-Flags: `--limit` Max messages to return (1-50)
+Flags: `--limit` Max matching messages (0 for all; default 20) · `--since` Oldest message time (ISO, local date or -7d/-24h) · `--until` Newest message time (ISO or local date/time) · `--from` Sender display-name substring
 ```bash
 its teams chats messages 19:abc...@thread.v2
+```
+
+### `its teams chats images <chat_id>`
+Download pasted and attached images from a chat using delegated Graph auth. Pages to the time boundary, checks image signatures and never overwrites an existing file.
+Flags: `--since` Oldest message time (default -1d) · `--until` Newest message time · `--from` Sender display-name substring · `--output` Directory to write images (default current directory)
+```bash
+its teams chats images 19:abc...@thread.v2 --since -1d --output ./teams-images
 ```
 
 ### `its teams chats send <chat_id>`

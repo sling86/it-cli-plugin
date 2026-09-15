@@ -8,10 +8,10 @@ Microsoft Intune device management — managed devices, apps, platform scripts, 
 
 ### `its intune devices`
 List Intune-managed devices. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--top` Number of results (default 50, paginates automatically) · `--all` Fetch all results (overrides --top)
+Flags: `--top` Maximum results (default all, paginates automatically) · `--all` Fetch all results (overrides --top)
 ```bash
 its intune devices
-its intune devices --all
+its intune devices --top 50
 its intune devices --filter compliance=noncompliant
 ```
 
@@ -206,7 +206,7 @@ its intune autopilot --watch
 
 ### `its intune autopilot devices`
 List Autopilot-registered devices. Returns devices for the resource.
-Flags: `--top` Number of results (default 50, paginates automatically) · `--all` Fetch all results (overrides --top)
+Flags: `--top` Maximum results (default all, paginates automatically) · `--all` Fetch all results (overrides --top)
 ```bash
 its intune autopilot devices
 ```

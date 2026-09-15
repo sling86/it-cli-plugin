@@ -35,7 +35,7 @@ Flags: `--env` BC environment name (default: BC_ENVIRONMENT) · `--api` Custom A
 ## extensions
 
 ### `its bc extensions`
-List published AL extensions with their versions — the direct answer to "which environment is on which app version?". Reads the Automation API, so it needs the SP's BC user to hold D365 EXTENSION MGT (not the Admin Centre grant).
+List published AL extensions with their versions — the direct answer to "which environment is on which app version?". Prefers the Automation API (per-company, includes per-tenant extensions); where that identity is refused, falls back to the Admin Centre route, which needs a delegated Dynamics 365 admin (--auth az) and covers AppSource apps only. The summary says which answered.
 Flags: `--env` BC environment name (default: BC_ENVIRONMENT) · `--company` Company name/id (default: first company) · `--publisher` Only extensions from this publisher (substring)
 ```bash
 its bc extensions list --env Production

@@ -16,7 +16,7 @@ its unifi sites --watch
 
 ### `its unifi sites health`
 Site health — WAN/WLAN/LAN subsystem status. Live health check across the resource's dependencies.
-Flags: `--site` Site name override
+Flags: `--site` Site code, ID or friendly name · `--all-sites` Sweep every site
 ```bash
 its unifi sites health
 its unifi sites health --watch
@@ -33,7 +33,7 @@ its unifi sites sysinfo
 
 ### `its unifi devices`
 List all UniFi devices with name, MAC, IP, type, state, uptime, clients.
-Flags: `--type <ap|switch|gateway|all>` Filter by type · `--site` Site name override
+Flags: `--type <ap|switch|gateway|all>` Filter by type · `--site` Site code, ID or friendly name · `--all-sites` Sweep every site and include the site on each row
 ```bash
 its unifi devices
 its unifi devices --site "Office"
@@ -108,7 +108,7 @@ its unifi devices poe
 
 ### `its unifi clients`
 List online clients. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--filter <wired|wireless|all>` Filter by connection type · `--site` Site name override
+Flags: `--filter <wired|wireless|all>` Filter by connection type · `--site` Site code, ID or friendly name · `--all-sites` Sweep every site and include the site on each row
 ```bash
 its unifi clients
 its unifi clients --filter wireless
@@ -124,9 +124,38 @@ its unifi clients get <mac>
 
 ### `its unifi clients search <query>`
 Search all known clients by name, hostname, IP, or MAC. Substring match across the most relevant fields; case-insensitive.
-Flags: `--site` Site name override
+Flags: `--site` Site code, ID or friendly name · `--all-sites` Sweep every site
 ```bash
 its unifi clients search "jane"
+```
+
+### `its unifi clients locate [query]`
+Show the current site, switch/AP and switch port for matching clients. This is network-location evidence, not attendance; --include-offline returns clearly marked last-known locations.
+Flags: `--site` Site code, ID or friendly name · `--all-sites` Sweep every site · `--include-offline` Include saved clients at their last-known location
+```bash
+its unifi clients locate scanner --all-sites
+its unifi clients locate --all-sites --filter type=wired
+its unifi clients locate tony --all-sites --include-offline
+```
+
+### `its unifi clients inventory`
+List the controller's saved client inventory, including offline devices and last AP/switch by name. Merges rest/user with stat/alluser for hostnames.
+Flags: `--site` Site code, ID or friendly name · `--all-sites` Sweep every site
+
+### `its unifi clients set-alias <mac> [alias]`
+Set or clear a saved client's alias. Writes to the controller's known-client inventory.
+Flags: `--site` Site code, ID or friendly name · `--clear` Clear the alias · `--confirm` Confirm the write
+```bash
+its unifi clients set-alias aa:bb:cc:dd:ee:ff "Warehouse scanner" --confirm
+its unifi clients set-alias aa:bb:cc:dd:ee:ff --clear --confirm
+```
+
+### `its unifi clients set-note <mac> [note]`
+Set or clear a saved client's note. Writes to the controller's known-client inventory.
+Flags: `--site` Site code, ID or friendly name · `--clear` Clear the note · `--confirm` Confirm the write
+```bash
+its unifi clients set-note aa:bb:cc:dd:ee:ff "Owned by Goods In" --confirm
+its unifi clients set-note aa:bb:cc:dd:ee:ff --clear --confirm
 ```
 
 ### `its unifi clients block <mac>`
@@ -155,7 +184,7 @@ its unifi clients reconnect <mac>
 
 ### `its unifi clients offline`
 List recently disconnected clients. Returns recently-disconnected clients.
-Flags: `--hours` Look-back period in hours (default 24) · `--site` Site name override
+Flags: `--hours` Look-back period in hours (default 24) · `--site` Site code, ID or friendly name · `--all-sites` Sweep every site
 ```bash
 its unifi clients offline
 ```
@@ -183,7 +212,7 @@ its unifi guests unauthorise <mac>
 
 ### `its unifi networks`
 List networks and VLANs. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--site` Site name override
+Flags: `--site` Site code, ID or friendly name · `--all-sites` Sweep every site and include the site on each row
 ```bash
 its unifi networks
 its unifi networks --watch
@@ -193,7 +222,7 @@ its unifi networks --watch
 
 ### `its unifi wlans`
 List WiFi SSIDs. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--site` Site name override
+Flags: `--site` Site code, ID or friendly name · `--all-sites` Sweep every site and include the site on each row
 ```bash
 its unifi wlans
 its unifi wlans --watch
@@ -222,7 +251,7 @@ its unifi wlans password <wlan-id> --passphrase "new-password" --confirm
 
 ### `its unifi firewall`
 List firewall rules. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--site` Site name override
+Flags: `--site` Site code, ID or friendly name · `--all-sites` Sweep every site and include the site on each row
 ```bash
 its unifi firewall
 its unifi firewall --watch
@@ -230,7 +259,7 @@ its unifi firewall --watch
 
 ### `its unifi firewall groups`
 List firewall groups. List groups for a resource.
-Flags: `--site` Site name override
+Flags: `--site` Site code, ID or friendly name · `--all-sites` Sweep every site and include the site on each row
 ```bash
 its unifi firewall groups
 ```
@@ -239,7 +268,7 @@ its unifi firewall groups
 
 ### `its unifi routes`
 List static routes. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--site` Site name override
+Flags: `--site` Site code, ID or friendly name · `--all-sites` Sweep every site and include the site on each row
 ```bash
 its unifi routes
 its unifi routes --watch
@@ -249,7 +278,7 @@ its unifi routes --watch
 
 ### `its unifi portforwards`
 List every WAN port-forward rule — your inbound attack surface. Columns: WAN port → forward IP:port, protocol and source restriction ("any" = open to the whole internet). Pass --json for the raw shape.
-Flags: `--site` Site name override
+Flags: `--site` Site code, ID or friendly name · `--all-sites` Sweep every site
 ```bash
 its unifi portforwards
 its unifi port-forwards
@@ -267,7 +296,7 @@ its unifi portforwards toggle <id> --disable --confirm
 
 ### `its unifi port-forwards`
 List every WAN port-forward rule — your inbound attack surface. Columns: WAN port → forward IP:port, protocol and source restriction ("any" = open to the whole internet). Pass --json for the raw shape.
-Flags: `--site` Site name override
+Flags: `--site` Site code, ID or friendly name · `--all-sites` Sweep every site
 ```bash
 its unifi portforwards
 its unifi port-forwards
@@ -285,7 +314,7 @@ its unifi portforwards toggle <id> --disable --confirm
 
 ### `its unifi ports`
 List every WAN port-forward rule — your inbound attack surface. Columns: WAN port → forward IP:port, protocol and source restriction ("any" = open to the whole internet). Pass --json for the raw shape.
-Flags: `--site` Site name override
+Flags: `--site` Site code, ID or friendly name · `--all-sites` Sweep every site
 ```bash
 its unifi portforwards
 its unifi port-forwards
@@ -298,7 +327,7 @@ its unifi ports --watch
 
 ### `its unifi events`
 List recent events. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--hours` Look-back period in hours (default 24) · `--limit` Maximum number of events (default 50) · `--site` Site name override
+Flags: `--hours` Look-back period in hours (default 24) · `--limit` Maximum number of events (default 50) · `--site` Site code, ID or friendly name · `--all-sites` Sweep every site
 ```bash
 its unifi events --hours 1
 its unifi events --hours 1 --watch
@@ -308,15 +337,15 @@ its unifi events --hours 1 --watch
 
 ### `its unifi alarms`
 List alarms with archived status. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--site` Site name override
+Flags: `--site` Site code, ID or friendly name · `--all-sites` Sweep every site
 ```bash
 its unifi alarms
 its unifi alarms --watch
 ```
 
 ### `its unifi alarms count`
-Count active (non-archived) alarms. Returns a single number — cheap for thresholds.
-Flags: `--site` Site name override
+Count active (non-archived) alarms. Returns per-site and total counts with --all-sites.
+Flags: `--site` Site code, ID or friendly name · `--all-sites` Sweep every site
 ```bash
 its unifi alarms count
 ```
@@ -332,7 +361,7 @@ its unifi alarms archive --confirm
 
 ### `its unifi rogue`
 List detected rogue access points. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--hours` Look-back period in hours (default 24) · `--site` Site name override
+Flags: `--hours` Look-back period in hours (default 24) · `--site` Site code, ID or friendly name · `--all-sites` Sweep every site
 ```bash
 its unifi rogue
 its unifi rogue --watch
@@ -342,7 +371,7 @@ its unifi rogue --watch
 
 ### `its unifi vouchers`
 List guest WiFi vouchers. Surfaces the most common fields; pass --json for raw shape.
-Flags: `--site` Site name override
+Flags: `--site` Site code, ID or friendly name · `--all-sites` Sweep every site
 ```bash
 its unifi vouchers
 its unifi vouchers --watch
@@ -379,4 +408,4 @@ its unifi dashboard --watch
 
 ### `its unifi audit`
 Audit RF and firewall/VLAN posture — co-channel overlap, unisolated VLANs, insecure WiFi defaults.
-Flags: `--site` Site name override
+Flags: `--site` Site code, ID or friendly name · `--all-sites` Sweep every site
