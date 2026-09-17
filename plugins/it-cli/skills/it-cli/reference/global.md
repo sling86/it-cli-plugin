@@ -306,6 +306,6 @@ its watch <provider> <resource> [action] [--flags]
 its watch <provider> <resource> --interval <seconds>
 
 its watch rmm agents --status online --interval 10
-its watch entra users --filter company=candle
+its watch entra users --filter company=acme
 its watch unifi clients
 ```

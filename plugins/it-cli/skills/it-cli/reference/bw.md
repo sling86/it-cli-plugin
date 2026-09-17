@@ -104,7 +104,7 @@ Flags: `--type <login|note|card|identity|ssh-key>` Item type: login (default), n
 ```bash
 its bw items create "Router" --username admin --password "s3cret"
 its bw items create "Router" --field lan_ip=10.0.0.1 --field-hidden api_token=abc123
-its bw items create "Company Amex" --type card --cardholder "A Payer" --card-number 4111111111111111 --card-exp 09/2028 --card-code 1234
+its bw items create "Company Card" --type card --cardholder "A Payer" --card-number 4111111111111111 --card-exp 09/2028 --card-code 123
 its bw items create "deploy@prod" --type ssh-key --private-key-file ~/.ssh/id_ed25519
 its bw items create "Server admin" --username admin --password "P@ssw0rd" --uri https://server.example.com
 its bw items create "API keys" --type note --notes "stuff"

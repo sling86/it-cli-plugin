@@ -12,7 +12,7 @@ Flags: `--search` Match hostname, agent ID, client, site, user, serial or IP · 
 ```bash
 its rmm agents
 its rmm agents --status offline
-its rmm agents --site "head-office"
+its rmm agents --site "riverside"
 its rmm agents --rebooted-since 24h
 its rmm agents --rebooted-since 2026-06-14
 its rmm agents --ai | ai "which agents are overdue?"
@@ -396,7 +396,7 @@ its rmm scripts run OFFICE-PC --script 435 --as-user
 its rmm scripts run --all-online --script 12
 its rmm scripts run --all-online --script 12 --confirm
 its rmm scripts run --client "Acme Retail" --script 12 --confirm
-its rmm scripts run --site "head-office" --script 12 --confirm
+its rmm scripts run --site "Riverside" --script 12 --confirm
 its rmm scripts run OFFICE-PC-01 --script "Restart Print Spooler"
 its rmm scripts run OFFICE-PC-01 --script "Long Audit" --timeout 600
 ```
