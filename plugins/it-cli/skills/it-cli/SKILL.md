@@ -47,6 +47,8 @@ its health <hostname|username>  # Cross-provider device/user health
 its audit <user|UPN>            # Security audit — MFA, sign-ins, risk, endpoint, compliance
 its inventory [--unifi]         # Device gap matrix across endpoint sources
 its onboard preview <email>     # Starter readiness check (read-only)
+its plan "<request>" --ai       # TypeSafe-backed command plan; never executes on the first call
+its plan --execute <id> --confirm --ai  # Apply an inspected short-lived mutation plan + fresh-read verify
 its user <upn>                  # Single-user snapshot — Entra + groups + licences + devices + tickets
 its resume [--project <p>]      # Open backlog / resume-prompt ctxc memories, grouped by project
 its log <text>                  # Append a timestamped entry to today's vault daily note

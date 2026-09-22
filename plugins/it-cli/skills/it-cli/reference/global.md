@@ -4,7 +4,7 @@ Commands invoked as `its <command>`, without a provider — cross-provider looku
 
 > Auto-generated reference. For a command you can name, prefer live help `its <command> --help` (always current) — read this file to discover what exists. [Index](./index.md)
 
-**Changes state:** `auth`, `log`, `secrets`, `setup`, `trust-cert`. Everything else here is read-only.
+**Changes state:** `auth`, `log`, `plan`, `secrets`, `setup`, `trust-cert`. Everything else here is read-only.
 
 ## `its audit`
 Security audit for one person — Entra account, MFA, sign-ins, RMM health, Intune compliance.
@@ -174,6 +174,19 @@ its onboard preview <email>
 its onboard preview jane.smith@example.com
 ```
 
+## `its plan`
+Build a bounded TypeSafe plan from a natural-language IT request. **changes state**.
+
+Uses the existing provider command catalogue plus a bounded TypeSafe System One judgement to choose one provider, resource and action. Literal values stay local and are represented to Jev as C1/C2 aliases. The first call never executes; it saves a short-lived plan. A second call with the exact plan id executes it. Mutations require --confirm and are refused unless the CommandDef has deterministic fresh-read verification metadata.
+
+```bash
+its plan "<request>"
+its plan --execute <plan-id> [--confirm]
+
+its plan "disable jane.smith@example.com and revoke sessions" --json
+its plan --execute 12345678-1234-4123-8123-123456789abc --confirm --json
+```
+
 ## `its resume`
 List open ctxc backlog and resume-prompt memories, grouped by project.
 
@@ -189,12 +202,13 @@ its resume --project it-cli
 ## `its secrets`
 Manage credentials in the OS keychain. **changes state**.
 
-Secrets live in the OS-native credential store (Windows Credential Locker, macOS Keychain, Linux libsecret) and override any `.env` value. `list` shows which entries exist — never their values. `migrate` moves secrets out of `~/.its/.env` into the keychain. `clear` removes every entry. `audit-repos` scans local repositories for committed credentials.
+Secrets live in the OS-native credential store (Windows Credential Locker, macOS Keychain, Linux libsecret) and override any `.env` value. `list` shows which entries exist — never their values. `migrate` moves secrets out of `~/.its/.env` into the keychain. `clear` removes every entry. `doctor` is a read-only health check — it never writes, so it is safe on a box where the keyring itself is the problem. `audit-repos` scans local repositories for committed credentials.
 
 ```bash
 its secrets [list]
 its secrets migrate
 its secrets clear
+its secrets doctor
 its secrets audit-repos
 
 its secrets

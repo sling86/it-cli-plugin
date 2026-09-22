@@ -192,7 +192,7 @@ its entra groups create --displayName "Marketing"
 
 ### `its entra groups add-member <group_id>`
 Add a user to a group. Refuses dynamic-membership groups — Graph accepts the call but the dynamic engine immediately overrides. Also refuses if the candidate is disabled / a leaver / has an active namesake (lesson 326 — Adam picked the wrong Steve/Colette/Nick). Pass --force to override either guard.
-Flags: `--user` User ID to add · `--force` Override the dynamic-group guard AND the leaver / disabled / namesake guard · `--skip-leaver-check` Skip just the leaver/disabled/namesake guard (still enforces the dynamic-group guard)
+Flags: `--user` User ID or UPN to add · `--force` Override the dynamic-group guard AND the leaver / disabled / namesake guard · `--skip-leaver-check` Skip just the leaver/disabled/namesake guard (still enforces the dynamic-group guard)
 ```bash
 its entra groups add-member 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --user jane.smith@example.com
 its entra groups add-member <group-id> --user jane.smith@example.com
@@ -200,7 +200,7 @@ its entra groups add-member <group-id> --user jane.smith@example.com
 
 ### `its entra groups remove-member <group_id>`
 Remove a user from a group (requires --confirm). Refuses dynamic-membership groups; pass --force to override.
-Flags: `--user` User ID to remove · `--confirm` Confirm the removal · `--force` Override the dynamic-group guard
+Flags: `--user` User ID or UPN to remove · `--confirm` Confirm the removal · `--force` Override the dynamic-group guard
 ```bash
 its entra groups remove-member 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --user jane.smith@example.com --confirm
 its entra groups remove-member <group-id> --user jane.smith@example.com --confirm

@@ -72,7 +72,7 @@ its sp drives folder <site-id> --path "Shared Documents/Marketing"
 
 ### `its sp drives get <siteId>`
 Get file or folder details. Pass the id (or any natural identifier) as the positional arg.
-Flags: `--drive` Drive ID · `--item` Item ID
+Flags: `--drive` Drive ID · `--item` Item ID, or a path inside the drive (e.g. "/Archive/CC&D office (ex )/report.pdf") · `--path` Path inside the drive — the same as passing a path to --item, spelled explicitly
 ```bash
 its sp drives get <site-id> --drive <drive-id> --item <item-id>
 ```

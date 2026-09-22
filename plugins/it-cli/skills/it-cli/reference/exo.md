@@ -333,3 +333,47 @@ Flags: `--confirm` Confirm removing the forwarding exception
 ```bash
 its exo forwarding remove-mailbox accounts@example.com "Allow Accountancy Forwarding" --confirm
 ```
+
+## rooms
+
+### `its exo rooms`
+List every room mailbox in the tenant with its capacity and address.
+```bash
+its exo rooms list
+```
+
+### `its exo rooms processing <room>`
+Booking policy for a room mailbox (Get-CalendarProcessing) — auto-accept, who may book, duration and booking-window limits.
+```bash
+its exo rooms processing Chi-2-RD-Meeting-Room@example.com
+```
+
+### `its exo rooms calendar-permissions <room>`
+Calendar-folder permissions for a mailbox (Get-MailboxFolderPermission) — who can see or edit the room's calendar. The folder's localised name is resolved automatically.
+```bash
+its exo rooms calendar-permissions Chi-2-RD-Meeting-Room@example.com
+```
+
+### `its exo rooms events <room>`
+What is booked in a room over a window. Same calendar Graph sees, shown room-first — start, end, subject, organiser and whether the room accepted.
+Flags: `--start` Window start (default: today) · `--end` Window end (default: 7 days after start)
+```bash
+its exo rooms events Chi-1-Upstairs-Meeting-Room@example.com
+its exo rooms events Chi-1-Upstairs-Meeting-Room@example.com --start 2026-09-24 --end 2026-09-25
+```
+
+### `its exo rooms set-calendar-permission <room> <user>`
+Grant or change CALENDAR-only access to a mailbox. Use this rather than `mailboxes add-permission`, which grants FullAccess to the whole mailbox. Adds the entry or updates an existing one, then reads the result back.
+Flags: `--role <Owner|PublishingEditor|Editor|PublishingAuthor|Author|NonEditingAuthor|Reviewer|Contributor|AvailabilityOnly|LimitedDetails|None>` Calendar folder role
+```bash
+its exo rooms set-calendar-permission Chi-1-Upstairs-Meeting-Room@example.com jane.smith@example.com --role Editor
+its exo rooms set-calendar-permission Chi-1-Upstairs-Meeting-Room@example.com jane.smith@example.com --role Reviewer
+```
+
+### `its exo rooms diagnose <room>`
+Why a room declined a booking. Reads the booking policy, working hours, calendar permissions and accepted domains in one go, then names the rules that would decline. Free/busy cannot answer this — a room declines on policy, not only on conflicts.
+Flags: `--organiser` Organiser's address — checks them against BookInPolicy and the accepted domains · `--start` Meeting start (e.g. 2026-09-24T14:00) · `--end` Meeting end — with --start, checks the duration limit · `--recurring` The request is a recurring series
+```bash
+its exo rooms diagnose Chi-2-RD-Meeting-Room@example.com
+its exo rooms diagnose Chi-2-RD-Meeting-Room@example.com --organiser jane.smith@example.com --start 2026-09-24T14:00 --end 2026-09-24T17:30
+```
