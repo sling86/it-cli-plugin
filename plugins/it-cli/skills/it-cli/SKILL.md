@@ -1,6 +1,6 @@
 ---
 name: it-cli
-description: "Use the `its` CLI to query and manage IT infrastructure from one shell — across endpoint/RMM agents, Entra ID users & groups, Intune devices, Microsoft 365 (Exchange Online, SharePoint, Outlook, service health & message centre), Dokploy deployments, Bitwarden vaults, UniFi network & UniFi Protect CCTV, Wrike tickets, Azure resources, Cloudflare, Power BI, Power Platform, PeopleHR, and Business Central. Reach for `its` for any question about servers, devices, users, licences, passwords, deployments, network, tickets, files, or cloud resources. Prefer the `its` wrapper over the bare `dokploy`, `bw`, `az`, or Exchange Online PowerShell. Trigger on: agent/device health, user lookup, group membership, licence assignment, password/TOTP retrieval, deployment status, firewall rules, ticket updates, mailbox management, security audits, onboarding/offboarding, or any infrastructure management task."
+description: "Use the `its` CLI to query and manage IT infrastructure from one shell — across endpoint/RMM agents, Entra ID users & groups, Intune devices, Microsoft 365 (Exchange Online, SharePoint, Outlook, service health & message centre), Dokploy deployments, Bitwarden vaults, UniFi network & UniFi Protect CCTV, Wrike tickets, Azure resources, Cloudflare, Power BI, Power Platform, PeopleHR, factory attendance terminals, and Business Central. Reach for `its` for any question about servers, devices, users, licences, passwords, deployments, network, tickets, files, cloud resources, or who was in. Prefer the `its` wrapper over the bare `dokploy`, `bw`, `az`, or Exchange Online PowerShell. Trigger on: agent/device health, user lookup, group membership, licence assignment, password/TOTP retrieval, deployment status, firewall rules, ticket updates, mailbox management, security audits, onboarding/offboarding, clocking-in terminals, headcount or how many staff were on site, timesheets, holiday/sickness/absence, keeping Entra in step with HR, or any infrastructure management task."
 ---
 
 # IT CLI (`its`)
@@ -130,7 +130,8 @@ For a command you can already name, prefer **live help** — `its <provider> <re
 | Cloudflare | `cf` | Zones, DNS, tunnels | [cf](./reference/cf.md) |
 | Power BI | `pbi` | Workspaces, reports, datasets (tenant + delegated `my`) | [pbi](./reference/pbi.md) |
 | Power Platform | `pa` | Environments, apps, flows | [pa](./reference/pa.md) |
-| PeopleHR | `hr` | Employee directory, starters, leavers | [hr](./reference/hr.md) |
+| PeopleHR | `hr` | Employee directory, starters, leavers, timesheets, holiday, sickness, other leave, lateness, PeopleHR → Entra sync | [hr](./reference/hr.md) |
+| Factory attendance | `attendance` | Read-only clocking terminals — punches, per-person summaries, exceptions, aggregate department headcount | [attendance](./reference/attendance.md) |
 | Business Central | `bc` | Companies, OData entity queries | [bc](./reference/bc.md) |
 | GitHub | `gh` | Branch protection, webhooks (via local `gh`) | [gh](./reference/gh.md) |
 | M365 Service Health | `m365` | Service health, incidents, message centre | [m365](./reference/m365.md) |
@@ -193,6 +194,45 @@ Commands with no positional arguments reject record fan-out. Mutations validate 
 | `Get-Mailbox` / `Get-TransportRule` | `its exo mailboxes` / `its exo rules` | No manual Connect-ExchangeOnline; same output pipeline |
 
 If `its` exposes a command for what you want, use it. Only reach for the bare CLI if `its` genuinely doesn't cover it.
+
+## People and attendance data
+
+Two providers, two very different privacy levels. Pick by who will see the answer.
+
+**Aggregate — safe to show anyone.** `its attendance headcount` returns counts per department per day and never a name, employee ID or device user ID. Departments smaller than `--min-group` (default 5) fold into one combined row so no cell identifies a person.
+
+```bash
+its attendance headcount                                  # last 7 days
+its attendance headcount --department packing --since -30d
+its attendance headcount --department warehouse --since -2d --with-absence
+```
+
+Columns: `onSite` (distinct people at a reader), `typical` (median of complete days — today is excluded while it runs), `shopFloor` (staff in post that day who are expected at a reader), `onBooks` (contracted headcount). `--with-absence` adds `onHoliday`, `offSick`, `otherLeave`, `expectedIn` and `unaccounted` (due in, no punch, no logged reason). It is slow: PeopleHR only answers leave one person at a time, so keep `--since` short and add `--department`. A shortfall means *not seen at a reader*, never *absent without leave*.
+
+**Person-level — HR only.** `its attendance events`, `summary` and `exceptions` carry names. So do `its hr timesheets|holidays|otherleave|absences|lates get <employee>`. Don't paste their output anywhere it will be read beyond HR.
+
+**Which source for which day.** The terminals are live. PeopleHR timesheets arrive through a separate sync *after* the day, and can stall. So for today use `its attendance`, and for past days use `its hr timesheets get`. Only PeopleHR timesheets say whether a punch was IN or OUT — the terminal protocol records neither.
+
+**The resources are plural.** `its hr timesheets get`, not `timesheet`. Same for `holidays`, `lates`, `absences`, `employees`.
+
+### Keeping Entra in step with PeopleHR
+
+PeopleHR is the source of truth; `its hr drift` makes Entra agree with it. `detect` is read-only. `apply` writes exactly what `detect` reports and nothing else.
+
+```bash
+its hr drift detect                                        # what disagrees, with an `apply` column
+its hr drift apply --dry-run --confirm                     # every PATCH it would send — nothing sent
+its hr drift apply --field officeLocation --confirm        # one field
+its hr drift apply --user someone@example.com --confirm    # one person
+```
+
+Always run `detect` and read it before `apply`. Built-in holdbacks, reported with a `reason` and never written:
+
+- a **placeholder** in PeopleHR (`TBC`, `Test`, `n/a` and similar) — HR hasn't decided yet, so it must not overwrite a real value
+- **`displayName`** — reported only, never rewritten
+- **`companyName`** with no `PHR_COMPANY_MAP` entry — the tool won't guess a legal entity name
+
+A blank PeopleHR value never blanks an Entra field. A manager whose `ReportsToEmailAddress` matches no paired account is skipped rather than guessed. Anything specific to your organisation goes in the env file, not the code. `PHR_COMPANY_MAP` is a JSON object mapping each PeopleHR company to its Entra name. `PHR_SYNC_EXCLUDE` is a comma list of `upn` or `upn:field` to leave alone.
 
 ## Safety rules
 

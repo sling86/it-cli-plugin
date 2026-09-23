@@ -21,22 +21,31 @@ its outlook mail --folder sentitems
 Get a single message including body, recipients, and flags.
 Flags: `--no-body` Skip the body content (faster, smaller output) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
 
+### `its outlook mail export <message_id>`
+Save a message as a .eml file — the full raw MIME with headers, body, inline images and attachments intact (Graph /$value). Opens in Outlook or Thunderbird, and can be attached to another message.
+Flags: `--out` File to write (default <message_id>.eml) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook mail export <message_id> --out invoice-thread.eml
+its outlook mail export <message_id> --user leaver@example.com --out msg.eml
+```
+
 ### `its outlook mail headers <message_id>`
 Show a message's internet headers + parsed antispam verdict (SCL/SFV/CAT/BCL + spf/dkim/dmarc/compauth). The 'why did this land in Junk' tool. Add --all for every raw header.
 Flags: `--all` Show every raw internet header, not just the antispam summary · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
 
 ### `its outlook mail search <query>`
 Keyword search across the mailbox using Graph $search (KQL syntax).
-Flags: `--top` Max results (max 50) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+Flags: `--top` Max results (0 = every match, up to 2000) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
 ```bash
 its outlook mail search "subject:invoice"
+its outlook mail search "participants:acme.com" --top 0
 its outlook mail search "from:boss@example.com"
 its outlook mail search renewal
 ```
 
 ### `its outlook mail thread <conversation_id>`
 List every message in the same conversation (entire thread).
-Flags: `--top` Max messages (max 50) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+Flags: `--top` Max messages (0 = the whole thread) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
 
 ### `its outlook mail move <message_id> <folder_id>`
 Move a message to another folder.
@@ -133,10 +142,11 @@ its outlook drafts forward AAMkAGI1AAAt0M0AAA= --to jane.smith@example.com --com
 ```
 
 ### `its outlook drafts update <draft_id>`
-Patch an existing draft. Any of subject/body/to/cc/bcc/importance/categories.
-Flags: `--subject` Replace subject · `--body` Replace body · `--body-file` Read replacement body from a UTF-8 file (use for bodies > ~15KB — Windows command-line cap) · `--html` Treat --body / --body-file as HTML · `--to` Replace To recipients (comma-separated) · `--cc` Replace CC recipients · `--bcc` Replace BCC recipients · `--importance <low|normal|high>` low|normal|high · `--categories` Replace categories (comma-separated) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
+Patch an existing draft. Any of subject/body/to/cc/bcc/importance/categories. --body REPLACES the whole body; add --keep-quote on a reply/forward draft to replace only your part above the quoted thread.
+Flags: `--subject` Replace subject · `--body` Replace body · `--body-file` Read replacement body from a UTF-8 file (use for bodies > ~15KB — Windows command-line cap) · `--html` Treat --body / --body-file as HTML · `--to` Replace To recipients (comma-separated) · `--cc` Replace CC recipients · `--bcc` Replace BCC recipients · `--importance <low|normal|high>` low|normal|high · `--categories` Replace categories (comma-separated) · `--keep-quote` With --body: replace only what is ABOVE the quoted thread of a reply/forward draft, keeping the quote intact · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
 ```bash
 its outlook drafts update AAMkAGDraft01 --subject "Revised: laptop ready" --user jane.smith@example.com
+its outlook drafts update AAMkAGDraft01 --body-file reply.html --html --keep-quote
 ```
 
 ### `its outlook drafts send <draft_id>`
@@ -187,6 +197,14 @@ its outlook folders delete "IT Archive" --user jane.smith@example.com --confirm
 ### `its outlook attachments <message_id>`
 List attachments on a message.
 Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+
+### `its outlook attachments extract <message_id> [attachment_id]`
+Readable TEXT out of an attachment — DOCX, XLSX (tab-separated per sheet), PPTX (per slide), PDF (needs pdftotext), HTML, CSV/plain text. --all does every readable attachment on the message, skipping inline images. Nothing is written to disk.
+Flags: `--all` Every readable attachment on the message · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook attachments extract <message_id> <attachment_id>
+its outlook attachments extract <message_id> --all
+```
 
 ### `its outlook attachments get <message_id> [attachment_id]`
 Get a single attachment (includes contentBytes for fileAttachment). Pass --save-all <dir> to dump every attachment on the message instead of one.
@@ -288,6 +306,27 @@ its outlook autoreply set --status scheduled --start 2026-05-25T09:00:00 --end 2
 ### `its outlook categories`
 List master categories (named colour labels available for `mail categorise`).
 Flags: `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+
+### `its outlook categories create <name>`
+Add a master category. The name is fixed once created — Graph cannot rename one.
+Flags: `--colour <none|red|orange|brown|yellow|green|teal|olive|blue|purple|cranberry|steel|darksteel|gray|darkgray|black|darkred|darkorange|darkbrown|darkyellow|darkgreen|darkteal|darkolive|darkblue|darkpurple|darkcranberry>` Colour name (red, blue, darkgreen…), presetN, or none · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook categories create "Waiting on supplier" --colour blue
+```
+
+### `its outlook categories recolour <category>`
+Change a master category's colour. Match by name or id.
+Flags: `--colour <none|red|orange|brown|yellow|green|teal|olive|blue|purple|cranberry|steel|darksteel|gray|darkgray|black|darkred|darkorange|darkbrown|darkyellow|darkgreen|darkteal|darkolive|darkblue|darkpurple|darkcranberry>` Colour name (red, blue, darkgreen…), presetN, or none · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook categories recolour "Waiting on supplier" --colour red
+```
+
+### `its outlook categories delete <category>`
+Remove a master category. Messages keep the label text but it loses its colour. --confirm required.
+Flags: `--confirm` Confirm the delete · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook categories delete "Waiting on supplier" --confirm
+```
 
 ## rules
 

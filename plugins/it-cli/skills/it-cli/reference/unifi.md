@@ -158,6 +158,14 @@ its unifi clients set-note aa:bb:cc:dd:ee:ff "Owned by Goods In" --confirm
 its unifi clients set-note aa:bb:cc:dd:ee:ff --clear --confirm
 ```
 
+### `its unifi clients set-fixed-ip <mac> [ip]`
+Give a known client a fixed IP (a DHCP reservation), or --clear it. The network is the one whose subnet holds the IP; refuses an IP another client already has reserved. Reads it back. The client picks it up at its next DHCP renewal (reconnect it to hurry).
+Flags: `--site` Site code, ID or friendly name · `--clear` Remove the fixed IP · `--confirm` Confirm the write
+```bash
+its unifi clients set-fixed-ip aa:bb:cc:dd:ee:ff 10.1.20.50 --site Head Office --confirm
+its unifi clients set-fixed-ip aa:bb:cc:dd:ee:ff --clear --confirm
+```
+
 ### `its unifi clients block <mac>`
 Block a client by MAC address. Blocks a client. Reversible via `unblock`.
 Flags: `--confirm` Confirm the block · `--site` Site name override

@@ -288,7 +288,7 @@ its dokploy databases get <db-id>
 
 ### `its dokploy databases sql <database> [query]`
 Run SQL against a Dokploy-managed database — resolves the live container and execs its own client (psql/mysql/mongosh). Omit [query] for an interactive session. Reads only unless --confirm is passed; credentials are taken from the container's env and never printed. Replaces the `apps shell` + `docker exec` detour.
-Flags: `--confirm` Required for anything that writes (INSERT/UPDATE/DDL) · `--timeout` One-shot query timeout in seconds (default 30)
+Flags: `--confirm` Required for anything that writes (INSERT/UPDATE/DDL) · `--timeout` One-shot query timeout in seconds (default 30) · `--query` The one-shot query, as a flag instead of positionally
 ```bash
 its dokploy databases sql ccd-prod-postgres "select count(*) from crm.tasks"
 its dokploy databases sql ccd-prod-postgres

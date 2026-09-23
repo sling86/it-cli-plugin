@@ -1,6 +1,6 @@
 # Factory attendance (`attendance`)
 
-Read-only ZKTeco attendance collection over TCP 4370. Uses an explicit terminal allow-list, sequential transfers, device-count verification, Europe/London wall time and a private 30-day cache. Raw punches remain separate from inferred first/last summaries. Optional PeopleHR joins use only reviewed TimeAndAttendanceId values — never name matching or EmployeeId guesses.
+Read-only ZKTeco attendance collection over TCP 4370. Uses an explicit terminal allow-list, sequential transfers, device-count verification, Europe/London wall time and a private 30-day cache. Raw punches remain separate from inferred first/last summaries. The `--peoplehr` join on events and summaries uses only reviewed TimeAndAttendanceId values — never name matching or EmployeeId guesses. `headcount` is different: it resolves each clocker's department from a unique current-employee name match, uses that in memory only, and returns counts with no name, employee ID or device user ID. Departments below `--min-group` are folded together so no count identifies a person.
 
 > Auto-generated reference. Configure: `its attendance setup`. For a command you can name, prefer live help `its attendance <resource> help` (always current) — read this file to discover what exists. [Index](./index.md)
 

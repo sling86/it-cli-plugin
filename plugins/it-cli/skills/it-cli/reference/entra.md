@@ -30,6 +30,20 @@ its entra users update jane.smith@example.com --manager boss@example.com
 its entra users update jane.smith@example.com --set "officeLocation=London,jobTitle=Lead"
 ```
 
+### `its entra users photo <user>`
+Download a user's profile photo (JPEG/PNG) to --out, default <user>.jpg. Says so plainly when no photo is set.
+Flags: `--out` File to write
+```bash
+its entra users photo jane.smith@example.com --out jane.jpg
+```
+
+### `its entra users set-photo <user>`
+Upload a user's profile photo from a JPEG or PNG file (max 4 MB). Replaces any existing photo; reads it back to confirm.
+Flags: `--file` JPEG or PNG to upload
+```bash
+its entra users set-photo jane.smith@example.com --file jane.jpg
+```
+
 ### `its entra users search <query>`
 Fuzzy substring search across displayName, mail, UPN, jobTitle, department. Server-side startsWith for fast filtering — best for partial-name lookups.
 ```bash
@@ -212,6 +226,14 @@ Flags: `--add-upn` Append `or (user.userPrincipalName -eq "<upn>")` to the rule 
 ```bash
 its entra groups edit-rule 8f1c2d3e-... --add-upn jane.smith@example.com --confirm
 its entra groups edit-rule 8f1c2d3e-... --remove-upn jane.smith@example.com --confirm
+```
+
+### `its entra groups make-dynamic <group_id>`
+Convert a static (assigned) group to dynamic membership. Once the rule runs, Entra REMOVES every current member the rule does not match — so without --confirm this only previews. --paused converts with evaluation held (membershipRuleProcessingState=Paused); resume later with --resume. Keeps Unified (M365) type.
+Flags: `--rule` The membershipRule, e.g. (user.department -eq "Sales") · `--paused` Convert with rule evaluation paused · `--resume` Turn rule evaluation On for an already-dynamic group · `--confirm` Apply the change
+```bash
+its entra groups make-dynamic 8f1c2d3e-... --rule '(user.department -eq "Sales")'
+its entra groups make-dynamic 8f1c2d3e-... --rule '(user.department -eq "Sales")' --paused --confirm
 ```
 
 ### `its entra groups audit-rules [group_id]`
@@ -447,6 +469,13 @@ Show which enabled CA policies target a user, plus the grant controls each requi
 Flags: `--include-disabled` Also evaluate disabled and reportOnly policies
 ```bash
 its entra ca why-blocked jane.smith@example.com
+```
+
+### `its entra ca report-only [policy]`
+Sign-ins that report-only CA policies WOULD have blocked or interrupted if enforced (results reportOnlyFailure / reportOnlyInterrupted). The dry run before switching a policy on. Optional [policy] narrows to one policy by id or name.
+Flags: `--since` Look-back window, e.g. 24h, 7d (sign-in logs keep 30 days) · `--max-pages` Stop after this many 1000-row pages (default 20)
+```bash
+its entra ca report-only "Block sign-ins from outside allowed countries" --since 7d
 ```
 
 ### `its entra ca named-locations`

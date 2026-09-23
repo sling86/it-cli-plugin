@@ -12,6 +12,7 @@ Flags: `--limit` Max chats to show (0 for every chat)
 ```bash
 its teams chats
 its teams chats --limit 0
+its teams chats messages self
 ```
 
 ### `its teams chats messages <chat_id>`
@@ -30,10 +31,18 @@ its teams chats images 19:abc...@thread.v2 --since -1d --output ./teams-images
 
 ### `its teams chats send <chat_id>`
 Send a message to one of your chats, as you. Pass a chat ID from `its teams chats`. Delegated-only, and needs the ChatMessage.Send scope — after granting it, run `its auth login` again or the cached token still won't carry it.
-Flags: `--message` Message text · `--message-file` Read the message from a UTF-8 file (use for long bodies — Windows command-line cap) · `--html` Treat the message as HTML (default plain text)
+Flags: `--message` Message text · `--message-file` Read the message from a UTF-8 file (use for long bodies — Windows command-line cap) · `--html` Treat the message as HTML (default plain text) · `--file` Attach a local file (up to 4 MB): uploaded to your OneDrive 'Microsoft Teams Chat Files' and shared read-only with the chat's members. Needs Files.ReadWrite
 ```bash
+its teams chats send self --file evidence.pdf --message "for the file"
 its teams chats send 19:abc...@thread.v2 --message "on my way"
 its teams chats send 19:abc...@thread.v2 --html --message-file note.html
+```
+
+### `its teams chats delete-message <chat_id> <message_id>`
+Delete one of YOUR messages in a chat (Teams shows 'This message has been deleted'). Without --confirm, shows the message it would delete. A file the message shared stays in your OneDrive — delete that separately to remove access. Needs delegated Chat.ReadWrite.
+Flags: `--confirm` Delete it
+```bash
+its teams chats delete-message self 1775589175306 --confirm
 ```
 
 ## presence

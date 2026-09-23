@@ -1,14 +1,28 @@
 # PeopleHR (`hr`)
 
-PeopleHR — bulk employee directory, upcoming and recent starters/leavers. tenant key is bulk-read scoped (single-record endpoints return Access Denied), so lookups go through the bulk list + client-side filter.
+PeopleHR — bulk employee directory, upcoming and recent starters/leavers, per-employee timesheets (explicit IN/OUT pairs), booked holiday, sickness, other authorised leave and lateness, plus `drift detect` / `drift apply` to keep Entra ID in step with HR. A bulk-read scoped key denies single-record employee endpoints and bulk leave reads, so employee lookups go through the bulk list with a client-side filter, and leave is fetched one person at a time.
 
 > Auto-generated reference. Configure: `its hr setup`. For a command you can name, prefer live help `its hr <resource> help` (always current) — read this file to discover what exists. [Index](./index.md)
 
 ## drift
 
 ### `its hr drift detect`
-Detect drift between PeopleHR and Entra ID. Reports field mismatches plus PHR-only / Entra-only orphans. Read-only.
+Detect drift between PeopleHR and Entra ID across employeeId, jobTitle, department, officeLocation, employeeType, companyName, employeeHireDate, manager and displayName, plus PHR-only / Entra-only orphans. Read-only. A blank Entra field where PeopleHR has a value counts as drift; a blank PeopleHR value never does.
 Flags: `--domain` Entra UPN domain to audit (e.g. example.com). Defaults to every domain seen in active Entra users. · `--company` Restrict PHR side to this company (substring match against Company DisplayValue). Default: search globally. · `--include-disabled` Include disabled Entra accounts (default: only enabled).
+```bash
+its hr drift detect
+its hr drift detect --domain example.com
+its hr drift detect --filter apply=true
+```
+
+### `its hr drift apply`
+Make Entra ID agree with PeopleHR for the drift `hr drift detect` reports. Writes one PATCH per user plus a manager link where needed. Requires --confirm. Never blanks a field, never rewrites displayName, and holds back companyName unless PHR_COMPANY_MAP names the target. Preview first with `hr drift detect` or global --dry-run.
+Flags: `--domain` Entra UPN domain to audit (e.g. example.com). Defaults to every domain seen in active Entra users. · `--company` Restrict PHR side to this company (substring match against Company DisplayValue). Default: search globally. · `--include-disabled` Include disabled Entra accounts (default: only enabled). · `--field` Only write these fields, comma-separated. One of: employeeId, jobTitle, department, officeLocation, employeeType, companyName, employeeHireDate, manager. · `--user` Only update this UPN. · `--confirm` Actually write to Entra ID.
+```bash
+its hr drift apply --dry-run --confirm
+its hr drift apply --field officeLocation --confirm
+its hr drift apply --user someone@example.com --confirm
+```
 
 ## absences
 

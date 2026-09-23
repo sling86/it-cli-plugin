@@ -79,6 +79,12 @@ Get mailbox size and item statistics. Aggregated statistics — counts, totals, 
 its exo mailboxes stats jane.smith@example.com
 ```
 
+### `its exo mailboxes message-config <mailbox>`
+Compose defaults for a mailbox — font name, size, colour and style, HTML or plain text, and whether a signature is auto-added. What a drafted reply has to match to read as the person's own.
+```bash
+its exo mailboxes message-config jane.smith@example.com
+```
+
 ### `its exo mailboxes create <name> <alias>`
 Create a shared mailbox. Idempotent on duplicate names — use update/edit to mutate an existing record.
 ```bash
@@ -125,9 +131,22 @@ its exo mailboxes remove-inbox-rule accounts@example.com "Forward invoices" --co
 ```
 
 ### `its exo mailboxes user-access <user>`
-List all shared mailboxes a user has FullAccess to (scans all 400+ shared mailboxes, may take up to 5 minutes).
+What a user can get into: shared mailboxes they have FullAccess to (scans every shared mailbox — can take up to 5 minutes) and every recipient they can SendAs (quick, filtered server-side). --rights narrows to one.
+Flags: `--rights <all|fullaccess|sendas>` Which rights to check (default all)
 ```bash
 its exo mailboxes user-access jane.smith@example.com
+```
+
+### `its exo mailboxes add-alias <mailbox> <address>`
+Add ONE secondary SMTP address to a mailbox, keeping every existing address (Set-Mailbox -EmailAddresses @{add=...}). Unlike `entra users update --set proxyAddresses`, nothing else is touched. Cloud-only mailboxes; synced ones are changed on-prem.
+```bash
+its exo mailboxes add-alias jo@example.com jo.bloggs@example.com
+```
+
+### `its exo mailboxes remove-alias <mailbox> <address>`
+Remove ONE secondary SMTP address from a mailbox, keeping the rest. Refuses the primary address.
+```bash
+its exo mailboxes remove-alias jo@example.com jo.bloggs@example.com
 ```
 
 ### `its exo mailboxes set-forwarding <mailbox> <target>`
@@ -376,4 +395,29 @@ Flags: `--organiser` Organiser's address — checks them against BookInPolicy an
 ```bash
 its exo rooms diagnose Chi-2-RD-Meeting-Room@example.com
 its exo rooms diagnose Chi-2-RD-Meeting-Room@example.com --organiser jane.smith@example.com --start 2026-09-24T14:00 --end 2026-09-24T17:30
+```
+
+## app-access
+
+### `its exo app-access`
+Every rule limiting which mailboxes an app can reach — legacy ApplicationAccessPolicies and RBAC-for-Applications role assignments, side by side.
+```bash
+its exo app-access list
+```
+
+### `its exo app-access test <appId> <mailbox>`
+Can this app reach this mailbox? Asks Exchange through both mechanisms (Test-ApplicationAccessPolicy and Test-ServicePrincipalAuthorization) and says which one decided.
+```bash
+its exo app-access test 00000000-0000-0000-0000-000000000000 tickets@example.com
+```
+
+## audit
+
+### `its exo audit search`
+Search the Microsoft 365 unified audit log — SharePoint and OneDrive file access and sharing, mailbox actions, admin changes. The only route to 'who shared or downloaded what'; Graph has no equivalent. Give at least one filter. Slow on the service side for wide windows.
+Flags: `--since` Window start — 7d, 24h, or a date (default 7d) · `--until` Window end (default now) · `--user` ONE user address. Several at once returns zero rows without an error, so it is refused · `--text` Free text in the event body. Misses events where the name is only in the user field — pair with --user · `--object` Object id or URL; a trailing * matches everything under it · `--operation` Operation name(s), comma-separated (e.g. FileDownloaded,SharingSet) · `--cap` Stop after this many records (default 5000, max 50000)
+```bash
+its exo audit search --user jane.smith@example.com --since 7d
+its exo audit search --object "https://example.sharepoint.com/sites/HR/*" --operation SharingSet,AnonymousLinkCreated --since 30d
+its exo audit search --text "Payroll 2026" --since 90d
 ```
