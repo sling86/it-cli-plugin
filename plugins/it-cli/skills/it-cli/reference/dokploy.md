@@ -73,7 +73,7 @@ its dokploy apps delete <app-id> --confirm
 
 ### `its dokploy apps deploy <app>`
 Pull the configured source, build it and deploy. Use after a git push; waits for the new deployment with --wait. Do not trigger this while an auto-deploy webhook is still queued.
-Flags: `--wait` Wait for container to become healthy · `--logs` Show last 50 lines of logs after deploy
+Flags: `--wait` Wait for the deployment this trigger creates to finish (done or error) · `--timeout` With --wait: seconds to wait, including time queued behind other builds (default 600) · `--logs` Show last 50 lines of logs after deploy
 ```bash
 its dokploy apps deploy storefront
 its dokploy apps deploy storefront --wait --logs
@@ -131,7 +131,7 @@ its dokploy apps rebuild <app-id>
 
 ### `its dokploy apps wait-deploy <app>`
 Poll an application's deployments until the latest (or --since <id>) transitions from running to done/error. Exit code reflects the final state: 0 on done, 1 on error or timeout. Suitable for GitHub Actions
-Flags: `--timeout` Timeout in seconds (default 600) · `--interval` Poll interval in seconds (default 5) · `--since` Wait for this specific deployment ID. Avoids the race where two deploys fire close together and the latest snapshot changes mid-poll.
+Flags: `--timeout` Timeout in seconds (default 600) · `--interval` Poll interval in seconds (default 5) · `--since` Wait for this specific deployment ID. Avoids the race where two deploys fire close together and the latest snapshot changes mid-poll. · `--new` Ignore deployments that exist now and wait for the next one to appear — use straight after a git push, before the webhook's deployment is listed
 ```bash
 its dokploy apps wait-deploy storefront --timeout 600
 its dokploy apps wait-deploy storefront --since dep_8f1c2d3e
