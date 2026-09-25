@@ -2,7 +2,7 @@
 
 > Auto-generated from the live command definitions. Do not edit by hand.
 
-**22 providers** · **238 resources** · **862 commands**. Pick a provider for its full command list.
+**22 providers** · **239 resources** · **867 commands**. Pick a provider for its full command list.
 
 | Provider | Alias | Resources | Commands |
 |----------|-------|-----------|----------|
@@ -14,7 +14,7 @@
 | [UniFi Network](./unifi.md) | `unifi` | 17 | 49 |
 | [Wrike](./wrike.md) | `wrike` | 17 | 64 |
 | [Azure CLI](./az.md) | `az` | 11 | 24 |
-| [Exchange Online](./exo.md) | `exo` | 12 | 59 |
+| [Exchange Online](./exo.md) | `exo` | 13 | 64 |
 | [Intune](./intune.md) | `intune` | 21 | 61 |
 | [UniFi Protect](./protect.md) | `protect` | 5 | 9 |
 | [Power BI](./pbi.md) | `pbi` | 6 | 21 |

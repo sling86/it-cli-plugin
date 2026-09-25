@@ -49,7 +49,7 @@ its unifi devices get <mac>
 
 ### `its unifi devices ports <device>`
 Per-port link view of a switch: speed, duplex, PoE, STP state, error/drop counters and which online clients sit on each port. Flags copper ports up below 1000 Mbit or at half duplex.
-Flags: `--site` Site name override · `--degraded` Only ports below gigabit, at half duplex, or with errors
+Flags: `--site` Site name override · `--degraded` Only ports below gigabit, at half duplex, with errors, or silent (up but nothing received)
 ```bash
 its unifi devices ports "Office Switch" --site hq
 its unifi devices ports 74:ac:b9:12:34:56 --degraded

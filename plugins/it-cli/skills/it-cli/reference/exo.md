@@ -421,3 +421,32 @@ its exo audit search --user jane.smith@example.com --since 7d
 its exo audit search --object "https://example.sharepoint.com/sites/HR/*" --operation SharingSet,AnonymousLinkCreated --since 30d
 its exo audit search --text "Payroll 2026" --since 90d
 ```
+
+## sharing-policies
+
+### `its exo sharing-policies`
+List sharing policies with the external domains and levels each allows.
+
+### `its exo sharing-policies get <name>`
+One sharing policy: its domains and levels, plus every mailbox that uses it (slow — scans all mailboxes).
+
+### `its exo sharing-policies create <name>`
+Create a sharing policy for one external domain. Assign it to a single mailbox with `sharing-policies assign` rather than widening the default policy.
+Flags: `--domain` External domain, e.g. contoso.com (* = all, Anonymous = publishing) · `--level <CalendarSharingFreeBusySimple|CalendarSharingFreeBusyDetail|CalendarSharingFreeBusyReviewer|ContactsSharing>` Comma-separated sharing levels · `--confirm` Required — this opens mailbox data to an outside domain
+```bash
+its exo sharing-policies create "Jo - contoso" --domain contoso.com --level CalendarSharingFreeBusyDetail --confirm
+```
+
+### `its exo sharing-policies add-domain <name>`
+Add one external domain to an existing sharing policy, keeping the domains it already has. On the default policy this affects every mailbox.
+Flags: `--domain` External domain, e.g. contoso.com (* = all, Anonymous = publishing) · `--level <CalendarSharingFreeBusySimple|CalendarSharingFreeBusyDetail|CalendarSharingFreeBusyReviewer|ContactsSharing>` Comma-separated sharing levels · `--confirm` Required — this opens mailbox data to an outside domain
+```bash
+its exo sharing-policies add-domain "Jo - contoso" --domain fabrikam.com --level CalendarSharingFreeBusySimple --confirm
+```
+
+### `its exo sharing-policies assign <name>`
+Put one mailbox on a sharing policy (Set-Mailbox -SharingPolicy). The user then shares their calendar from Outlook as normal.
+Flags: `--mailbox` Mailbox email, name or alias · `--confirm` Required — changes what this mailbox may share outside
+```bash
+its exo sharing-policies assign "Jo - contoso" --mailbox jo@example.com --confirm
+```
