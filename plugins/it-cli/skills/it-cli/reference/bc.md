@@ -46,7 +46,7 @@ Operations on an environment (copy, create, delete, update) with status — how 
 ## entities
 
 ### `its bc entities`
-List entity sets exposed by the BC API (OData service document).
+List entity sets exposed by the BC API (OData service document). Tenant-level, so --company has no effect; pass --api publisher/group/version to discover a custom API's entities (e.g. /platformSync/v2.0). Listing an entity is not proof you can read it — a 403 on query means the app's BC user lacks a permission set.
 Flags: `--env` BC environment name (default: BC_ENVIRONMENT) · `--api` Custom API route <publisher>/<group>/<version> (default: standard v2.0 API)
 
 ## extensions
