@@ -38,6 +38,25 @@ its bw items get "Outlook MCP" --field "API KEY" --to-file /dev/shm/sec
 its bw items get "Server admin"
 ```
 
+### `its bw items shape <item>`
+What an item holds, as booleans and counts only: has password / TOTP / username, passkey count and relying-party ids, organisation or personal, collections, field and attachment counts. Prints no secret values — safe for a transcript or a hygiene sweep.
+Flags: `--vault` Named vault profile (omit for default)
+```bash
+its bw items shape "Break Glass 02 - Entra ID (FIDO2)"
+```
+
+### `its bw items passkeys <item>`
+List the passkeys (FIDO2 credentials) on a login: relying party, user name, created date and credential id. The private key is never shown. Creating a passkey needs a WebAuthn ceremony in a browser or the Bitwarden app — not possible from here.
+Flags: `--vault` Named vault profile (omit for default)
+
+### `its bw items remove-passkey <item>`
+Remove one passkey from a login by credential id (see `items passkeys`). Dry run without --confirm. The private key is gone for good once removed — the site will need a new passkey registering. Reads the item back afterwards to prove it went.
+Flags: `--credential-id` Credential id of the passkey to remove · `--confirm` Actually remove it · `--vault` Named vault profile (omit for default)
+```bash
+its bw items remove-passkey <item> --credential-id <id>
+its bw items remove-passkey <item> --credential-id <id> --confirm
+```
+
 ### `its bw items attachments <id>`
 List the files attached to a vault item. Names are decrypted locally — the server never sees them.
 Flags: `--vault` Named vault profile (omit for default)
@@ -521,4 +540,13 @@ Local health check — vault profiles, active sessions, 2FA-remember token age, 
 ```bash
 its bw doctor
 its bw doctor --watch
+```
+
+## search
+
+### `its bw search <query>`
+Shortcut for `its bw items search`. Search vault items by name, username, URL, or notes. Substring match across the most relevant fields; case-insensitive.
+Flags: `--organisation` Organisation name or ID · `--collection` Collection name or ID · `--personal-only` Show only personal items · `--vault` Named vault profile (omit for default)
+```bash
+its bw search "break glass"
 ```

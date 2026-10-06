@@ -319,6 +319,15 @@ its dokploy databases stop dB8kW2nQ --type postgres
 its dokploy databases stop <db-id>
 ```
 
+### `its dokploy databases update <database>`
+Change a database's container start command, args and stop grace period (postgres, mysql, mariadb, mongo, redis; type is inferred). Shows a before/after diff and changes nothing unless --confirm is passed. Dokploy splits --command on spaces, so put anything quoted in --args-json; reference secrets as env vars ($REDIS_PASSWORD) — a real secret value is refused and never printed. Saves the record only: run `databases deploy` to apply it to the running service.
+Flags: `--command` Start command, split on spaces by Dokploy ("" = image default) · `--args-json` Command args as a JSON array of strings ('[]' = image default) · `--stop-grace` Seconds Swarm waits after SIGTERM before SIGKILL, or "default" · `--confirm` Save the change (without it, only the diff is shown)
+```bash
+its dokploy databases update ccd-redis-p9ie2b --command /bin/sh --args-json '["-c","exec redis-server --requirepass \"$REDIS_PASSWORD\" --appendonly yes --appendfsync everysec"]' --stop-grace 30
+its dokploy databases update ccd-redis-p9ie2b --stop-grace 30 --confirm
+its dokploy databases update ccd-redis-p9ie2b --command "" --args-json '[]' --stop-grace default --confirm
+```
+
 ### `its dokploy databases delete <databaseId>`
 Delete a database instance. Permanent — use --confirm. Audit trail (if the upstream supports it) keeps the deletion record.
 Flags: `--type` Database type: postgres, mysql, mariadb, mongo, redis · `--confirm` Confirm deletion

@@ -209,3 +209,37 @@ its az advisor list
 its az advisor list --category Cost
 its az advisor list --category Security --json
 ```
+
+## role-assignments
+
+### `its az role-assignments`
+List Azure RBAC role assignments at a scope (incl. inherited), with role and principal names resolved.
+Flags: `--scope` ARM scope: /subscriptions/<id>[/resourceGroups/<rg>[/providers/...]] (default: current subscription) · `--principal` Only this principal's direct assignments (UPN, appId or object id)
+```bash
+its az role-assignments list --scope /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ai
+its az role-assignments list --principal someone@example.com
+```
+
+### `its az role-assignments create`
+Grant an Azure role to a user, group or service principal at a scope. Shows the PUT and stops unless --confirm; reads the assignment back after.
+Flags: `--scope` ARM scope to grant at (required) · `--principal` UPN, appId or object id of the user, group or service principal · `--role` Role name, role definition GUID, or full roleDefinitions ID · `--confirm` Apply the change (without it, show the plan and stop)
+```bash
+its az role-assignments create --scope /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-ai/providers/Microsoft.CognitiveServices/accounts/my-ai --principal 11111111-1111-1111-1111-111111111111 --role "Cognitive Services OpenAI User"
+its az role-assignments create --scope /subscriptions/00000000-0000-0000-0000-000000000000 --principal someone@example.com --role Reader --confirm
+```
+
+### `its az role-assignments delete <assignment_id>`
+Remove an Azure role assignment by its full ID, or its GUID with --scope. Shows what would go unless --confirm.
+Flags: `--scope` ARM scope: /subscriptions/<id>[/resourceGroups/<rg>[/providers/...]] (default: current subscription) · `--confirm` Apply the change (without it, show the plan and stop)
+```bash
+its az role-assignments delete /subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleAssignments/22222222-2222-2222-2222-222222222222 --confirm
+```
+
+## role-definitions
+
+### `its az role-definitions`
+List Azure RBAC role definitions (built-in and custom) assignable at a scope, optionally filtered by name.
+Flags: `--scope` ARM scope: /subscriptions/<id>[/resourceGroups/<rg>[/providers/...]] (default: current subscription) · `--name` Case-insensitive substring of the role name
+```bash
+its az role-definitions list --name "OpenAI"
+```

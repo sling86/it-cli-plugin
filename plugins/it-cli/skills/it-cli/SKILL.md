@@ -41,6 +41,7 @@ For providers without a secure destination command, the human may use `--include
 its setup                       # Configuration overview — which providers are set up + the exact setup command for the rest
 its status                      # Health check — every provider, configured/reachable (--test probes connectivity)
 its config                      # Show configuration — env vars (masked), secrets, sessions
+its config set KEY=value        # Set config without the wizard (scripts/agents); secrets: `its config set KEY --from-stdin` → keychain
 its digest                      # Morning snapshot — counts + warnings across providers
 its find <query>                # Cross-provider text search (users, devices, tickets, files)
 its health <hostname|username>  # Cross-provider device/user health
@@ -120,7 +121,7 @@ For a command you can already name, prefer **live help** — `its <provider> <re
 | Exchange Online | `exo` | Distribution groups, mailboxes, permissions, forwarding, rules, message trace | [exo](./reference/exo.md) |
 | SharePoint | `sp` | Sites, drives, files, lists, permissions, search | [sp](./reference/sp.md) |
 | Outlook | `outlook` | Mail, calendar, contacts — signed-in user (delegated) or any mailbox (`--as <upn>` app-only) | [outlook](./reference/outlook.md) |
-| Microsoft Teams | `teams` | Signed-in user's chats, messages, presence (delegated-only) | [teams](./reference/teams.md) |
+| Microsoft Teams | `teams` | Signed-in user's chats: read, send (Markdown, links, mentions, cards, images), edit, react, delete; presence (delegated-only) | [teams](./reference/teams.md) |
 | Dokploy | `dokploy` | Apps, projects, databases, domains, env vars, deployments | [dokploy](./reference/dokploy.md) |
 | Bitwarden | `bw` | Vault search, item/password/TOTP retrieval, password audits | [bw](./reference/bw.md) |
 | UniFi Network | `unifi` | Devices, clients, WLANs, firewall, PoE, alarms, guests | [unifi](./reference/unifi.md) |
@@ -132,12 +133,12 @@ For a command you can already name, prefer **live help** — `its <provider> <re
 | Power Platform | `pa` | Environments, apps, flows | [pa](./reference/pa.md) |
 | PeopleHR | `hr` | Employee directory, starters, leavers, timesheets, holiday, sickness, other leave, lateness, PeopleHR → Entra sync | [hr](./reference/hr.md) |
 | Factory attendance | `attendance` | Read-only clocking terminals — punches, per-person summaries, exceptions, aggregate department headcount | [attendance](./reference/attendance.md) |
-| Business Central | `bc` | Companies, OData entity queries | [bc](./reference/bc.md) |
+| Business Central | `bc` | Companies, query + write records (standard or custom API), environments, apps, users/permissions | [bc](./reference/bc.md) |
 | GitHub | `gh` | Branch protection, webhooks (via local `gh`) | [gh](./reference/gh.md) |
 | M365 Service Health | `m365` | Service health, incidents, message centre | [m365](./reference/m365.md) |
 | Docs UI | `docs` | Browser-based command explorer | [docs](./reference/docs.md) |
 
-**Microsoft providers share one Entra app registration.** Entra, Intune, SharePoint, Power BI and Business Central reuse `TENANT_ID` / `CLIENT_ID` / `CLIENT_SECRET`. Set up once, several providers light up.
+**Microsoft providers share one Entra app registration.** Entra, Intune, SharePoint and Power BI reuse `TENANT_ID` / `CLIENT_ID` / `CLIENT_SECRET`. Set up once, several providers light up. Business Central prefers its own dedicated app (`BC_CLIENT_ID` / `BC_CLIENT_SECRET`) with its own BC user and permissions.
 
 **Auth profiles — run some providers as one identity, others as another.** `its auth login --profile <name>` signs into a named slot (browser picker = pick a different account each time); `its auth use <profile> --default | --provider a,b,c` maps providers to it (stored in `~/.its/auth-map.json`). Resolution: `--profile` flag > per-provider map > default > the unnamed slot. Typical setup: an admin account as `default` for tenant tools (entra/intune/sp), your own user for `teams`/`outlook`. `its auth status` lists every profile + the map. No map set = single-identity behaviour, unchanged.
 
@@ -234,9 +235,25 @@ Always run `detect` and read it before `apply`. Built-in holdbacks, reported wit
 
 A blank PeopleHR value never blanks an Entra field. A manager whose `ReportsToEmailAddress` matches no paired account is skipped rather than guessed. Anything specific to your organisation goes in the env file, not the code. `PHR_COMPANY_MAP` is a JSON object mapping each PeopleHR company to its Entra name. `PHR_SYNC_EXCLUDE` is a comma list of `upn` or `upn:field` to leave alone.
 
+## Setting up the newer features
+
+Each is optional; everything else works without it. `its <provider> setup --check` reports the line that matters ("usable now?").
+
+- **Signatures on drafts** (`outlook drafts create|reply`, `mail draft` with `--signature` / `--sign-as <upn>`):
+  1. `its config set SIGNATURE_API_URL=<signature service URL> SIGNATURE_API_BW_ITEM=<bitwarden item id>` — the item's **password** is the API key (`its bw search signature` finds it). Or keep the key itself in the keychain: `its config set SIGNATURE_API_KEY --from-stdin`. `its outlook setup` asks for the same values interactively.
+  2. With the Bitwarden route the vault must be unlocked (`its bw session unlock`, human terminal, 8 h).
+  3. `its outlook signature test` fetches it without making a draft (size only, never the key). Then add `--signature` to any draft command — it fails before creating anything if the signature can't be fetched, so an unsigned draft never appears.
+- **Removing a user's sign-in method** (`its entra authmethods user <upn>` → `authmethods remove <upn> --method-id <id> --confirm`): nothing to set up. Signed-in admin tokens usually only read methods; on a 403 it retries once as the app (which holds `UserAuthenticationMethod.ReadWrite.All`) and reports `ranAs: "app"`. An explicit `--auth` is respected.
+- **Azure role assignments** (`its az role-assignments list|create|delete`, `its az role-definitions list`): runs as the Azure CLI identity — `az login` once; `its auth doctor` shows the "az broker" line. Create/delete plan without `--confirm`.
+- **Bitwarden passkeys**: `its bw items shape <item>` is the transcript-safe audit (yes/no and counts, passkey sites, personal vs org). `items passkeys` lists them; `items remove-passkey <item> --credential-id <id> --confirm` removes one. Passkeys can't be created from the CLI (needs a browser WebAuthn ceremony). Edits keep existing passkeys.
+- **Business Central** runs app-only as a dedicated app. Besides the Entra app and its BC API roles, it must be listed in BC's *Microsoft Entra Applications* page **in every environment** (production and each sandbox — no API for this; `its bc users get <app-user> --env <env> --auth az` shows whether it took), with `D365 AUTOMATION` + `D365 READ`. `its bc environments` and `its bc apps` also need the app under the Admin Centre's *Authorized Microsoft Entra apps*. A `403 … _Exclude_APIV2_` means the app's BC user is missing a permission set; a `401 … rejected the client credentials` on one environment means it isn't registered there.
+- **Teams messages** (`its teams chats send|edit-message|react`): URLs in the text become real links; `--markdown` converts headings, bold/italic/strike, code, links, lists, quotes and tables; plus `--importance`, `--card file.json` (Adaptive Card — links work, submit buttons don't) and `--image`. `edit-message` and `delete-message` only touch your own messages, and Teams keeps one reaction per person per message.
+- **HR drift nicknames**: optional `PHR_NAME_ALIASES=mike:michael,…` (`its config set PHR_NAME_ALIASES=…`) or `--alias-map <file>`; a built-in English nickname list is always on.
+
 ## Safety rules
 
 - **Destructive actions** (delete, remove, disable, block, reboot, purge) — confirm with the user before executing. Most accept `--confirm`; preview mutations with `--dry-run` first.
+- **Business Central writes** (`bc record create|update|delete|call`, `bc environments copy|delete`, `bc apps install|uninstall|update`) need an explicit `--env <name>` (never the default) and `--confirm`; without `--confirm` they only preview. The app's BC user is read-only unless a write permission set was added — try writes in a sandbox first. `environments copy|delete` are sandbox-only.
 - **Secret redaction is on by default.** Any key that looks like a credential (`password`, `clientSecret`, `privateKey`, `refresh_token`, `apiKey`, `token`, `secret`, …) and any value shaped like a PEM key or JWT is replaced with `***REDACTED***` in output. Bitwarden **hidden custom fields** are also masked in every mode, and **live TOTP codes** are masked whenever output isn't an interactive terminal (piped / `--ai` / captured) — so nothing secret lands in an AI transcript by default. `its secrets` only reports `SET`/`NOT SET`, never values.
 - `--include-secrets` / `--unsafe` reveals plaintext only in interactive human output and is audit-logged to `~/.its/audit.log`; machine formats and redirected stdout reject it. Never paste revealed output into chat, tickets, or AI tools. Bitwarden `--copy` is the secure human hand-off, but it also requires an interactive terminal.
 - To hand a secret to another command, use the file sink, not stdout: `its bw items get <id> --to-file <path>` / `its bw password <q> --to-file <path>` write a 0600 file and print only the byte count (no TTY needed), and `its dokploy env set <app> KEY --from-file <path>` / `--from-stdin` reads one back. Never `KEY=$SECRET` on the command line — argv is world-readable via `/proc/<pid>/cmdline` and lands in shell history.

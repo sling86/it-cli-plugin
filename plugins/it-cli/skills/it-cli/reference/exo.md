@@ -157,6 +157,14 @@ its exo mailboxes set-forwarding jo@example.com manager@example.com --confirm
 its exo mailboxes set-forwarding jane.smith@example.com external@vendor.com --confirm --keep-copy
 ```
 
+### `its exo mailboxes clear-forwarding <mailbox>`
+Remove the mailbox's own forward: clears ForwardingAddress and ForwardingSmtpAddress and sets DeliverToMailboxAndForward false. Shows the current forward without --confirm; reads it back after. (The outbound spam policy exception is `exo forwarding remove-mailbox`.).
+Flags: `--confirm` Required to clear forwarding
+```bash
+its exo mailboxes clear-forwarding jo@example.com
+its exo mailboxes clear-forwarding jo@example.com --confirm
+```
+
 ### `its exo mailboxes set-type <mailbox> <type>`
 Convert a mailbox between user and shared (Set-Mailbox -Type). Common at offboarding — flip a leaver's mailbox to Shared.
 Flags: `--confirm` Required to change the mailbox type

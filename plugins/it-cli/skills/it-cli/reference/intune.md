@@ -15,7 +15,7 @@ its intune devices --top 50
 its intune devices --filter compliance=noncompliant
 ```
 
-### `its intune devices get <id>`
+### `its intune devices get <device>`
 Get managed device details. Pass the id (or any natural identifier) as the positional arg.
 ```bash
 its intune devices get <serial>
@@ -63,10 +63,11 @@ its intune devices recovery-keys
 
 ### `its intune devices rotate-bitlocker <device>`
 Rotate a device's BitLocker recovery key (requires --confirm). The device rotates at its next check-in and escrows the new key; anyone holding the printed or copied old key loses access at that point. Needs DeviceManagementManagedDevices.PrivilegedOperations.All.
-Flags: `--confirm` Apply the rotation
+Flags: `--confirm` Apply the rotation · `--wait` Poll the device's action results until the rotation is done or failed · `--timeout` With --wait: seconds to wait (default 600)
 ```bash
 its intune devices rotate-bitlocker -UD-MP27XZ31
 its intune devices rotate-bitlocker -UD-MP27XZ31 --confirm
+its intune devices rotate-bitlocker -UD-MP27XZ31 --confirm --wait --timeout 900
 ```
 
 ### `its intune devices wipe <device>`
@@ -241,11 +242,12 @@ its intune autopilot devices
 ```
 
 ### `its intune autopilot sync`
-Trigger the Autopilot device sync (the portal's Sync button). Intune allows one manual sync per 10 minutes. Pass --status to read the last sync without triggering one.
-Flags: `--status` Report the last sync without triggering a new one
+Trigger the Autopilot device sync (the portal's Sync button). Intune allows one manual sync per 10 minutes. Pass --status to read the last sync without triggering one, or --wait to poll until it completes or fails.
+Flags: `--status` Report the last sync without triggering a new one · `--wait` Poll until the sync completes or fails (also waits on one already running) · `--timeout` With --wait: seconds to wait (default 600)
 ```bash
 its intune autopilot sync
 its intune autopilot sync --status
+its intune autopilot sync --wait --timeout 900
 ```
 
 ### `its intune autopilot tag <serial> [tag]`

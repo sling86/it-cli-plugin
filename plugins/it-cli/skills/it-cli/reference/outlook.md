@@ -100,7 +100,7 @@ its outlook mail --filter "from/emailAddress/address eq 'spammer@x'" --json | it
 
 ### `its outlook mail draft`
 Create a draft instead of sending. Nothing leaves the mailbox until `its outlook drafts send <id>`. Alias of `drafts create` / `drafts reply` — it lives here because `mail send` is where people look during an incident, and only finding `send` means firing straight at a third party (ctxc #11845 item 6).
-Flags: `--reply-to` Message ID to reply to (omit for a new message) · `--all` With --reply-to: reply to all recipients · `--to` Comma-separated recipients (new message) · `--cc` Comma-separated CC recipients · `--bcc` Comma-separated BCC recipients · `--subject` Subject line (new message) · `--body` Body content · `--body-file` Read body from a UTF-8 file · `--html` Treat --body / --body-file as HTML (default text) · `--importance <low|normal|high>` low|normal|high · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+Flags: `--reply-to` Message ID to reply to (omit for a new message) · `--all` With --reply-to: reply to all recipients · `--to` Comma-separated recipients (new message) · `--cc` Comma-separated CC recipients · `--bcc` Comma-separated BCC recipients · `--subject` Subject line (new message) · `--body` Body content · `--body-file` Read body from a UTF-8 file · `--html` Treat --body / --body-file as HTML (default text) · `--importance <low|normal|high>` low|normal|high · `--signature` Append the canonical signature for the mailbox (set up once: `its outlook setup`; check: `its outlook signature test`) · `--sign-as` Append the signature for this send-as address (implies --signature) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
 ```bash
 its outlook mail draft --reply-to AAMkAGI1AAAt0M0AAA= --body "Looking into it now."
 its outlook mail draft --reply-to AAMkAGI1AAAt0M0AAA= --all --body "Adding IT."
@@ -120,7 +120,7 @@ its outlook mail send --to user@example.com --subject "Welcome" --html --body-fi
 
 ### `its outlook drafts create`
 Create a draft email (does not send).
-Flags: `--to` Comma-separated recipients · `--cc` CC recipients · `--bcc` BCC recipients · `--subject` Subject line · `--body` Body content · `--body-file` Read body from a UTF-8 file (use this for bodies > ~15KB — Windows command-line cap) · `--html` Treat --body / --body-file as HTML (default text) · `--importance <low|normal|high>` low|normal|high · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
+Flags: `--to` Comma-separated recipients · `--cc` CC recipients · `--bcc` BCC recipients · `--subject` Subject line · `--body` Body content · `--body-file` Read body from a UTF-8 file (use this for bodies > ~15KB — Windows command-line cap) · `--html` Treat --body / --body-file as HTML (default text) · `--importance <low|normal|high>` low|normal|high · `--signature` Append the canonical signature for the mailbox (set up once: `its outlook setup`; check: `its outlook signature test`) · `--sign-as` Append the signature for this send-as address (implies --signature) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
 ```bash
 its outlook drafts create --to jane.smith@example.com --subject "Laptop ready" --body "Come and collect when convenient." --user jane.smith@example.com
 its outlook drafts create --to jane.smith@example.com --subject "Change notice" --body-file ./notice.html --html --user jane.smith@example.com
@@ -128,7 +128,7 @@ its outlook drafts create --to jane.smith@example.com --subject "Change notice" 
 
 ### `its outlook drafts reply <message_id>`
 Create a reply draft. By default replies to the sender only; use --all to Reply-All. Does not send — use `drafts send <id>` after edits.
-Flags: `--comment` Inline comment prepended to the reply body · `--comment-file` Read --comment from a UTF-8 file (bypasses Windows ~32K command-line cap) · `--all` Reply to all recipients · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
+Flags: `--comment` Inline comment prepended to the reply body · `--comment-file` Read --comment from a UTF-8 file (bypasses Windows ~32K command-line cap) · `--all` Reply to all recipients · `--html` With --signature: treat --comment as HTML (default text) · `--signature` Append the canonical signature for the mailbox (set up once: `its outlook setup`; check: `its outlook signature test`) · `--sign-as` Append the signature for this send-as address (implies --signature) · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me. · `--var` Template substitution — `--var k1=v1,k2=v2`. Substitutes `${key}` in body/comment after --body-file read.
 ```bash
 its outlook drafts reply AAMkAGI1AAAt0M0AAA= --comment "On it now." --user jane.smith@example.com
 its outlook drafts reply AAMkAGI1AAAt0M0AAA= --all --comment "Adding IT." --user jane.smith@example.com
@@ -363,4 +363,14 @@ Flags: `--top` Max unread messages to scan (default 25, max 50) · `--include-re
 ```bash
 its outlook triage
 its outlook triage --top 50
+```
+
+## signature
+
+### `its outlook signature test`
+Check --signature is set up: says where the key comes from, then fetches the signature for the mailbox (or --sign-as) without creating a draft. Prints its size, never the key.
+Flags: `--sign-as` Send-as address to fetch the signature for (default: the mailbox) · `--save` Also write the signature HTML to this file to look at · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook signature test
+its outlook signature test --sign-as sales@example.com
 ```
