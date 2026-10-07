@@ -270,6 +270,9 @@ its entra licences remove jane.smith@example.com --sku SPB --confirm
 its entra onboarding convert-mailbox jane.smith@example.com --confirm
 ```
 
+### `its entra licences user <user_id>`
+How one user got each licence: assigned directly or by a group (and which group), its state, and any licence assigned more than once. Needed before removing a licence: a group-assigned one cannot be removed from the user, only by changing the group.
+
 ### `its entra licences users <sku>`
 List users assigned a specific licence SKU, named by GUID, part number or friendly name. List by resource membership; use --json for the raw shape.
 ```bash
@@ -498,6 +501,15 @@ Flags: `--method-id` Method id from `authmethods user` · `--confirm` Actually d
 ```bash
 its entra authmethods remove jane.smith@example.com --method-id 3f2b1c94-...
 its entra authmethods remove jane.smith@example.com --method-id 3f2b1c94-... --confirm
+```
+
+### `its entra authmethods report`
+Tenant-wide report of which sign-in methods every user has registered (Graph userRegistrationDetails). Answers 'who can still be reached with a text or call?' and 'which admins have no phishing-resistant method (FIDO2, passkey, Windows Hello)?'. Needs AuditLog.Read.All. Read-only.
+Flags: `--phone` Only users with a phone method (mobile, alternate mobile or office phone: SMS or voice) · `--no-mfa` Only users with no MFA registered · `--admins` Only users who hold an admin role · `--no-strong` Only users with no phishing-resistant method (FIDO2 key, passkey, Windows Hello for Business)
+```bash
+its entra authmethods report --phone
+its entra authmethods report --admins --no-strong
+its entra authmethods report --no-mfa
 ```
 
 ### `its entra authmethods policy`

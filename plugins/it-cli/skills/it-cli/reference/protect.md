@@ -21,6 +21,13 @@ Flags: `--site` Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan 
 its protect cameras get <camera-id>
 ```
 
+### `its protect cameras stats`
+Storage, recording and health for EVERY camera from one login and one download: state, recording or paused (and why), uptime, last seen, GB per day (high and low quality) and retention when the controller reports them (many do not: the summary says how many cameras have no figure), firmware update state, wifi signal, and a list of problems. Use this instead of looping `cameras get`, which logs in and downloads everything once per camera and gets rate-limited. --problems shows only cameras that need a look.
+Flags: `--problems` Only cameras with a problem · `--site` Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site
+```bash
+its protect cameras stats --problems
+```
+
 ### `its protect cameras offline`
 List disconnected/offline cameras — those whose state is not CONNECTED.
 Flags: `--site` Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site

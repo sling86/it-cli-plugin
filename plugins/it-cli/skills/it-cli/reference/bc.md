@@ -125,6 +125,13 @@ Flags: `--company` Company (name or id) whose API endpoint to use · `--env` BC 
 Every permission set that can be assigned (system and extension-supplied).
 Flags: `--company` Company (name or id) whose API endpoint to use · `--env` BC environment name (default: BC_ENVIRONMENT)
 
+### `its bc users update <user>`
+Enable or disable a BC user and/or set their expiry date (the Automation API's only user write — it cannot create users; they arrive from Entra). Needs an explicit --env. Previews without --confirm; reads the user back.
+Flags: `--state <Enabled|Disabled>` Enabled or Disabled · `--expiry` Expiry date (ISO, e.g. 2027-01-01), or 'none' to clear · `--confirm` Apply the change · `--company` Company (name or id) whose API endpoint to use · `--env` BC environment name (default: BC_ENVIRONMENT)
+```bash
+its bc users update jo.bloggs@example.com --state Disabled --env Support --confirm
+```
+
 ### `its bc users add-permission <user>`
 Give a BC user a permission set — in one company (--in-company) or all (default). Previews without --confirm; reads the user's permissions back.
 Flags: `--set` Permission set id, e.g. D365 BUS FULL ACCESS · `--in-company` Company NAME the set applies in (omit = all companies) · `--confirm` Apply the change · `--company` Company (name or id) whose API endpoint to use · `--env` BC environment name (default: BC_ENVIRONMENT)

@@ -187,6 +187,12 @@ Flags: `--confirm` Required to perform this destructive deletion · `--delete-ac
 its exo mailboxes delete old-project@example.com --confirm
 ```
 
+### `its exo mailboxes archive <mailbox>`
+Archive status, quota, size and auto-expanding setting for one mailbox (read-only).
+```bash
+its exo mailboxes archive jo@example.com
+```
+
 ## rules
 
 ### `its exo rules`
@@ -458,3 +464,44 @@ Flags: `--mailbox` Mailbox email, name or alias · `--confirm` Required — chan
 ```bash
 its exo sharing-policies assign "Jo - contoso" --mailbox jo@example.com --confirm
 ```
+
+## quarantine
+
+### `its exo quarantine`
+List quarantined messages (read-only). Default last 7 days, max 30.
+Flags: `--days` How many days back (1-30, default 7) · `--type <Bulk|HighConfPhish|Malware|Phish|Spam|SPOMalware|TransportRule>` Quarantine reason: Bulk|HighConfPhish|Malware|Phish|Spam|SPOMalware|TransportRule · `--recipient` Only mail to this address · `--sender` Only mail from this address
+
+### `its exo quarantine get <identity>`
+One quarantined message in full (read-only).
+
+### `its exo quarantine release <identity>`
+Release a quarantined message to one recipient (--user) or all original recipients (--all). Shows the message without --confirm. Malware and high-confidence phish need --allow-dangerous as well.
+Flags: `--user` Recipient to release to · `--all` Release to every original recipient · `--allow-dangerous` Needed for Malware, HighConfPhish, SPOMalware · `--confirm` Required to release
+```bash
+its exo quarantine release <id> --user jo@example.com --confirm
+```
+
+## allowblock
+
+### `its exo allowblock`
+Tenant Allow/Block List entries of one type (read-only).
+Flags: `--type <Sender|Url|FileHash|IP>` List type: Sender|Url|FileHash|IP
+
+### `its exo allowblock add <entry>`
+Add a Tenant Allow/Block List entry. Expires in 30 days unless --days or --no-expiry. Preview without --confirm.
+Flags: `--type <Sender|Url|FileHash|IP>` List type: Sender|Url|FileHash|IP · `--action <allow|block>` allow or block · `--days` Days until it expires (1-90, default 30) · `--no-expiry` Never expires (block entries only) · `--notes` Free-text note (500 chars) · `--confirm` Required to add
+```bash
+its exo allowblock add bad@evil.example --type Sender --action block --confirm
+```
+
+### `its exo allowblock remove <id>`
+Remove a Tenant Allow/Block List entry by id (from `allowblock list`). Preview without --confirm.
+Flags: `--type <Sender|Url|FileHash|IP>` List type: Sender|Url|FileHash|IP · `--confirm` Required to remove
+```bash
+its exo allowblock remove <id> --type Sender --confirm
+```
+
+## remote-domains
+
+### `its exo remote-domains`
+Remote domain settings (auto-forward, auto-reply, OOF types). Read-only.
