@@ -255,6 +255,22 @@ Flags: `--confirm` Confirm handing the organisation key to the member · `--vaul
 its bw organisations confirm "" jane@example.com --confirm
 ```
 
+### `its bw organisations invite <organisation> <email>`
+Invite someone to an organisation by e-mail. Bitwarden e-mails them; they then accept, and you run `organisations confirm`. Starts them with the role you give and access to the --collection(s) (can edit; comma-separate several). Without --confirm it only shows what it would send. Reads the member list back afterwards. Needs an admin/owner account.
+Flags: `--type <User|Manager|Admin>` Role: User (default), Manager or Admin · `--collection` Collection name or id to grant; comma-separate several · `--confirm` Confirm sending the invite · `--vault` Named vault profile (omit for default)
+```bash
+its bw organisations invite "" jane@example.com --collection "IT/Servers" --dry-run
+its bw organisations invite "" jane@example.com --type Manager --collection "IT/Servers" --confirm
+```
+
+### `its bw organisations revoke <organisation> <member>`
+Revoke a member's access to an organisation. They stay in the list as revoked and can be restored later; their own personal vault is untouched. Without --confirm it only shows who it would revoke. Reads the member back afterwards. Needs an admin/owner account.
+Flags: `--confirm` Confirm revoking the member · `--vault` Named vault profile (omit for default)
+```bash
+its bw organisations revoke "" jane@example.com --dry-run
+its bw organisations revoke "" jane@example.com --confirm
+```
+
 ## collections
 
 ### `its bw collections`

@@ -300,6 +300,30 @@ its sp permissions remove example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7
 its sp permissions remove <site-id> --drive <drive-id> --item <item-id> --permission <permission-id> --confirm
 ```
 
+### `its sp permissions inheritance <site> <target>`
+Does a list, library, folder or file have its own permissions (inheritance broken) or inherit from its parent? Give a list or library title, or a server-relative path starting with / for a folder or file. A library's root folder has no item of its own, so use the library title for the whole library.
+```bash
+its sp permissions inheritance https://example.sharepoint.com/sites/Finance "Documents"
+its sp permissions inheritance https://example.sharepoint.com/sites/Finance "/sites/Finance/Shared Documents/Payroll"
+```
+
+### `its sp permissions break-inheritance <site> <target>`
+Stop a list, library, folder or file inheriting permissions from its parent. By default the current grants are copied across first, so nobody loses access; --no-copy starts it empty (only the person running this keeps access). Items below it that already had their own permissions are left alone. Without --confirm, shows the current state only. Reads it back.
+Flags: `--no-copy` Start with no grants instead of copying the inherited ones · `--confirm` Break inheritance
+```bash
+its sp permissions break-inheritance https://example.sharepoint.com/sites/Finance "/sites/Finance/Shared Documents/Payroll" --dry-run
+its sp permissions break-inheritance https://example.sharepoint.com/sites/Finance "/sites/Finance/Shared Documents/Payroll" --confirm
+its sp permissions break-inheritance https://example.sharepoint.com/sites/Finance "Payroll" --no-copy --confirm
+```
+
+### `its sp permissions restore-inheritance <site> <target>`
+Make a list, library, folder or file inherit from its parent again. This THROWS AWAY its own permissions, including any sharing links made on it, so people who only had access through them lose it. Without --confirm, shows the current state only. Reads it back.
+Flags: `--confirm` Restore inheritance
+```bash
+its sp permissions restore-inheritance https://example.sharepoint.com/sites/Finance "Payroll" --dry-run
+its sp permissions restore-inheritance https://example.sharepoint.com/sites/Finance "Payroll" --confirm
+```
+
 ## groups
 
 ### `its sp groups <site>`

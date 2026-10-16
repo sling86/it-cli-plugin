@@ -334,6 +334,13 @@ its rmm software search "chrome"
 its rmm software search "Adobe"
 ```
 
+### `its rmm software uninstall <agent> <name>`
+Uninstall one program from an agent by exact name, using the uninstall string in its inventory (MSI strings run silent; others run as written, so some may need a person at the screen). Refuses no match, several entries with that name, or an empty uninstall string. Then refreshes the inventory: says verified only if the entry is gone, otherwise not confirmed (uninstallers can finish late). Without --confirm, previews.
+Flags: `--confirm` Run the uninstaller · `--timeout` Seconds to let the uninstaller run (default 300)
+```bash
+its rmm software uninstall WKS-9 "Zoom Workplace" --confirm
+```
+
 ## alerts
 
 ### `its rmm alerts`
@@ -664,6 +671,27 @@ its rmm printers clear-queue WKS-9 --printer "Zebra ZD420" --confirm
 its rmm printers clear-queue WKS-9 --all --restart-spooler --confirm
 ```
 
+### `its rmm printers drivers <agent>`
+Printer drivers installed on an agent. Use a Name from here as --driver for `printers add`.
+```bash
+its rmm printers drivers WKS-9
+```
+
+### `its rmm printers add <agent>`
+Add a printer to an agent. --port as an IPv4 address creates a TCP/IP port of that name first (Add-PrinterPort); anything else must be an existing port name. The driver must already be installed (see `printers drivers`). Reads the printer back with Get-Printer. Without --confirm, previews.
+Flags: `--name` Printer name · `--driver` Exact installed driver name · `--port` IPv4 address, or an existing port name · `--confirm` Add the printer
+```bash
+its rmm printers add WKS-9 --name "Front Office" --driver "HP Universal Printing PCL 6" --port 10.0.4.50 --confirm
+its rmm printers add WKS-9 --name "Zebra ZD420" --driver "ZDesigner ZD420-203dpi ZPL" --port USB001 --confirm
+```
+
+### `its rmm printers remove <agent> <name>`
+Remove a printer from an agent by exact name (the port and driver stay). Reads back with Get-Printer. Without --confirm, previews.
+Flags: `--confirm` Remove the printer
+```bash
+its rmm printers remove WKS-9 "Front Office" --confirm
+```
+
 ## dell
 
 ### `its rmm dell updates <agent>`
@@ -672,4 +700,29 @@ Flags: `--type <bios|firmware|driver|application|all>` Update types (comma-separ
 ```bash
 its rmm dell updates WKS-9 --type firmware
 its rmm dell updates WKS-9 --type firmware --apply --confirm
+```
+
+## firewall
+
+### `its rmm firewall <agent>`
+Enabled Windows firewall rules on an agent: name, direction, action, protocol, ports, profile. Disabled rules are left out.
+Flags: `--direction <Inbound|Outbound>` Only this direction · `--match` Only rules whose name contains this text
+```bash
+its rmm firewall list WKS-9
+its rmm firewall list WKS-9 --direction Inbound --match remote
+```
+
+### `its rmm firewall add <agent>`
+Add a firewall rule. --port is a number, a range (8000-8100) or a comma list; it is the local port for Inbound and the remote port for Outbound. Refuses a rule name that already exists. Reads the rule back. Without --confirm, previews.
+Flags: `--name` Rule DisplayName · `--port` Port, range or comma list · `--protocol <TCP|UDP>` TCP or UDP · `--direction <Inbound|Outbound>` Inbound or Outbound · `--action <Allow|Block>` Allow (default) or Block · `--confirm` Create the rule
+```bash
+its rmm firewall add WKS-9 --name "Label printer" --port 9100 --protocol TCP --direction Inbound --confirm
+its rmm firewall add WKS-9 --name "Block telnet out" --port 23 --protocol TCP --direction Outbound --action Block --confirm
+```
+
+### `its rmm firewall remove <agent> <name>`
+Remove one firewall rule by exact DisplayName. Refuses wildcards, no match, and more than one rule with that name. Reads back. Without --confirm, previews.
+Flags: `--confirm` Remove the rule
+```bash
+its rmm firewall remove WKS-9 "Label printer" --confirm
 ```

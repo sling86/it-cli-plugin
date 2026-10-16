@@ -80,3 +80,19 @@ Your current Teams presence (availability + activity).
 ```bash
 its teams presence
 ```
+
+## teams
+
+### `its teams teams`
+Teams you are a member of. Needs delegated Team.ReadBasic.All.
+```bash
+its teams teams list
+```
+
+### `its teams teams create <name>`
+Create a team (the standard template). Graph does this in the background, so this waits for it to finish (up to --timeout) and reads the team back. Without --confirm it only shows what it would create. You become the owner unless --owner says otherwise. Needs delegated Team.Create.
+Flags: `--description` Team description · `--owner` Owner's UPN (default: you) · `--visibility <private|public>` private (default) or public · `--timeout` Seconds to wait for creation (default 120) · `--confirm` Create it
+```bash
+its teams teams create "Store Ops" --description "Store ops" --visibility private --dry-run
+its teams teams create "Store Ops" --owner tony@example.com --confirm
+```
