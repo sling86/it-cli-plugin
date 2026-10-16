@@ -513,6 +513,15 @@ its bw sends receive https://send.bitwarden.com/#abc/def
 its bw sends receive https://send.bitwarden.com/#abc/def --output ./downloads/
 ```
 
+## sync
+
+### `its bw sync`
+Re-download the vault from the server now, ignoring the 15-minute snapshot. Same as `bw sync`.
+Flags: `--vault` Named vault profile (omit for default)
+```bash
+its bw sync
+```
+
 ## compat
 
 ### `its bw compat status`

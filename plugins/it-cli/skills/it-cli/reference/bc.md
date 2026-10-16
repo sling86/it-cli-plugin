@@ -85,28 +85,28 @@ its bc record get items <item-id>
 
 ### `its bc record create <entity>`
 Create a record. Needs --env <name> spelled out (never the default) and --body '{…}' or @file.json. Previews without --confirm.
-Flags: `--company` Company name/id (default: first company) · `--env` BC environment name — REQUIRED for writes, never defaulted · `--api` Custom API route <publisher>/<group>/<version> (default: standard v2.0 API) · `--body` JSON body — inline or @path/to/file.json · `--confirm` Apply the change
+Flags: `--company` Company name or id, exact (REQUIRED when the environment has more than one company) · `--env` BC environment name — REQUIRED for writes, never defaulted · `--api` Custom API route <publisher>/<group>/<version> (default: standard v2.0 API) · `--body` JSON body — inline or @path/to/file.json · `--confirm` Apply the change
 ```bash
 its bc record create customers --env Support --body '{"displayName":"Test Ltd"}' --confirm
 ```
 
 ### `its bc record update <entity> <id>`
 Change fields on a record (PATCH). Reads the record first and sends its etag, so a record changed since fails instead of being overwritten. Previews the changed fields without --confirm.
-Flags: `--company` Company name/id (default: first company) · `--env` BC environment name — REQUIRED for writes, never defaulted · `--api` Custom API route <publisher>/<group>/<version> (default: standard v2.0 API) · `--body` JSON body — inline or @path/to/file.json · `--confirm` Apply the change
+Flags: `--company` Company name or id, exact (REQUIRED when the environment has more than one company) · `--env` BC environment name — REQUIRED for writes, never defaulted · `--api` Custom API route <publisher>/<group>/<version> (default: standard v2.0 API) · `--body` JSON body — inline or @path/to/file.json · `--confirm` Apply the change
 ```bash
 its bc record update customers <id> --env Support --body '{"phoneNumber":"01234"}' --confirm
 ```
 
 ### `its bc record delete <entity> <id>`
 Delete a record. Reads it first and shows what would go; sends its etag. Previews without --confirm.
-Flags: `--company` Company name/id (default: first company) · `--env` BC environment name — REQUIRED for writes, never defaulted · `--api` Custom API route <publisher>/<group>/<version> (default: standard v2.0 API) · `--confirm` Apply the change
+Flags: `--company` Company name or id, exact (REQUIRED when the environment has more than one company) · `--env` BC environment name — REQUIRED for writes, never defaulted · `--api` Custom API route <publisher>/<group>/<version> (default: standard v2.0 API) · `--confirm` Apply the change
 ```bash
 its bc record delete customers <id> --env Support --confirm
 ```
 
 ### `its bc record call <entity> <id> <action>`
 Run a bound action on a record (POST …/Microsoft.NAV.<action>), e.g. post or release. The action name must match the AL page's [ServiceEnabled] procedure. Previews without --confirm.
-Flags: `--company` Company name/id (default: first company) · `--env` BC environment name — REQUIRED for writes, never defaulted · `--api` Custom API route <publisher>/<group>/<version> (default: standard v2.0 API) · `--body` Optional JSON body for the action — inline or @file.json · `--confirm` Apply the change
+Flags: `--company` Company name or id, exact (REQUIRED when the environment has more than one company) · `--env` BC environment name — REQUIRED for writes, never defaulted · `--api` Custom API route <publisher>/<group>/<version> (default: standard v2.0 API) · `--body` Optional JSON body for the action — inline or @file.json · `--confirm` Apply the change
 ```bash
 its bc record call salesInvoices <id> post --env Support --confirm
 ```

@@ -20,7 +20,7 @@ its entra users --fields displayName,upn,jobTitle
 
 ### `its entra users update <id>`
 Update user properties. Use named flags for common fields, --set k=v,k=v for any other Graph user property.
-Flags: `--displayName` Display name · `--jobTitle` Job title · `--department` Department · `--company` Company name · `--office` Office location · `--phone` Mobile phone · `--employeeId` Employee ID (PeopleHR EmployeeId) · `--streetAddress` Street address · `--city` City · `--state` State/county · `--postalCode` Postal code · `--country` Country · `--usage` Usage location (e.g. GB) · `--manager` Set manager (UPN or GUID) · `--clear-manager` Remove the manager assignment (top of org) · `--set` Freeform Graph property passthrough, comma-separated key=value pairs (e.g. --set extensionAttribute1=foo,givenName=Bar)
+Flags: `--displayName` Display name · `--jobTitle` Job title · `--department` Department · `--company` Company name · `--office` Office location · `--phone` Mobile phone · `--business-phone` Business (desk) phone — replaces the current number; Graph holds at most one · `--employeeId` Employee ID (PeopleHR EmployeeId) · `--streetAddress` Street address · `--city` City · `--state` State/county · `--postalCode` Postal code · `--country` Country · `--usage` Usage location (e.g. GB) · `--manager` Set manager (UPN or GUID) · `--clear-manager` Remove the manager assignment (top of org) · `--set` Freeform Graph property passthrough, comma-separated key=value pairs (e.g. --set extensionAttribute1=foo,givenName=Bar)
 ```bash
 its entra users update jane.smith@example.com --jobTitle "Finance Manager" --department Finance
 its entra users update jane.smith@example.com --manager john.doe@example.com
@@ -196,12 +196,29 @@ its entra groups members <group-id> --all
 ```
 
 ### `its entra groups create`
-Create a new security group. Idempotent on duplicate names — use update/edit to mutate an existing record.
-Flags: `--displayName` Group display name · `--description` Group description · `--mail` Mail-enabled
+Create a group: a security group (default) or a Microsoft 365 group (--type m365: shared mailbox, calendar and Teams-capable). Optionally set owners at creation. Idempotent on duplicate names — use update/edit to mutate an existing record.
+Flags: `--type <security|m365>` security (default) or m365 · `--owner` Owner(s) — UPN or GUID, comma-separated · `--displayName` Group display name · `--description` Group description · `--mail` Mail-enabled
 ```bash
 its entra groups create --displayName "IT Admins" --description "IT team"
 its entra groups create --displayName "All Staff" --mail
 its entra groups create --displayName "Marketing"
+```
+
+### `its entra groups owners <group_id>`
+List a group's owners.
+
+### `its entra groups add-owner <group_id>`
+Make a user an owner of a group. Reads the owners back to confirm.
+Flags: `--user` User UPN or GUID
+```bash
+its entra groups add-owner <group-id> --user jane.smith@example.com
+```
+
+### `its entra groups remove-owner <group_id>`
+Take a user off the owners of a group. Reads the owners back to confirm.
+Flags: `--user` User UPN or GUID
+```bash
+its entra groups remove-owner <group-id> --user jane.smith@example.com
 ```
 
 ### `its entra groups add-member <group_id>`
@@ -487,6 +504,13 @@ List trusted/named locations referenced by CA policies.
 its entra ca named-locations
 ```
 
+### `its entra ca create-named-location <name>`
+Create a Conditional Access named location: an IP range list (--ip, CIDR, comma-separated) or countries (--countries, two-letter codes). Previews without --confirm. Creating one changes nothing until a policy uses it.
+Flags: `--ip` IP ranges in CIDR form, comma-separated (e.g. 203.0.113.0/24) · `--countries` Two-letter country codes, comma-separated (e.g. GB,IE) · `--trusted` Mark an IP location as trusted · `--confirm` Create it
+```bash
+its entra ca create-named-location "Chi office" --ip 203.0.113.0/24 --trusted --confirm
+```
+
 ## authmethods
 
 ### `its entra authmethods user <user_id>`
@@ -737,6 +761,14 @@ its entra devices get -UD-MP27XZ31
 its entra devices get 12345678-90ab-cdef-1234-567890abcdef
 ```
 
+### `its entra devices delete <device>`
+Delete an Entra device RECORD (not the PC, not its Intune record). Previews without --confirm. Refuses Intune-managed devices unless --force: deleting their Entra record breaks sign-in trust and compliance until the PC re-registers. Checks the record is gone afterwards.
+Flags: `--force` Allow deleting the record of an Intune-managed device · `--confirm` Delete the record
+```bash
+its entra devices delete OLD-PC-01
+its entra devices delete OLD-PC-01 --confirm
+```
+
 ## onboarding
 
 ### `its entra onboarding summary <user_id>`
@@ -902,7 +934,7 @@ its entra sync provision Wrike --user jane.doe@example.com
 
 ### `its entra graph get <path>`
 Raw Graph GET — pass any /v1.0 or /beta path (use --beta for beta).
-Flags: `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal) · `--raw` Return the response body as raw bytes (no JSON decode). Required for binary endpoints like /content. Currently honoured by the `sp` provider. · `--out` Write the response to this file path instead of stdout. Implies --raw.
+Flags: `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal) · `--all` Follow @odata.nextLink and merge every page's value (stops at 50 pages) · `--raw` Return the response body as raw bytes (no JSON decode). Required for binary endpoints like /content. Currently honoured by the `sp` provider. · `--out` Write the response to this file path instead of stdout. Implies --raw.
 ```bash
 its entra graph get /users
 its entra graph get /administrativeUnits --beta

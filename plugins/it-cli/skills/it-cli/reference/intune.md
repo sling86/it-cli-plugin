@@ -285,7 +285,7 @@ its intune group find "All Devices"
 
 ### `its intune assignments audit`
 Audit Intune assignments — per-target matrix (which configs/compliance/apps hit each group) plus orphan resources with no assignment. Group GUIDs are resolved to display names.
-Flags: `--top` Number of each resource type to fetch (default 100) · `--all` Fetch up to 1000 of each resource type (overrides --top)
+Flags: `--top` Number of each resource type to fetch (default 1000; a warning says if the list was cut short) · `--all` Fetch up to 1000 of each resource type (overrides --top)
 ```bash
 its intune assignments audit
 its intune assignments audit --all
@@ -443,7 +443,7 @@ its intune enrolment set-restriction "All users and all devices" --platform andr
 
 ### `its intune graph get <path>`
 Raw Graph GET — pass any /v1.0 or /beta path (use --beta for beta).
-Flags: `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal) · `--raw` Return the response body as raw bytes (no JSON decode). Required for binary endpoints like /content. Currently honoured by the `sp` provider. · `--out` Write the response to this file path instead of stdout. Implies --raw.
+Flags: `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal) · `--all` Follow @odata.nextLink and merge every page's value (stops at 50 pages) · `--raw` Return the response body as raw bytes (no JSON decode). Required for binary endpoints like /content. Currently honoured by the `sp` provider. · `--out` Write the response to this file path instead of stdout. Implies --raw.
 ```bash
 its intune graph get /users
 its intune graph get /administrativeUnits --beta

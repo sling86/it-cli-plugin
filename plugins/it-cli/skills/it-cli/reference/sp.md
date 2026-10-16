@@ -378,7 +378,7 @@ its sp dashboard --watch
 
 ### `its sp graph get <path>`
 Raw Graph GET — pass any /v1.0 or /beta path (use --beta for beta).
-Flags: `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal) · `--raw` Return the response body as raw bytes (no JSON decode). Required for binary endpoints like /content. Currently honoured by the `sp` provider. · `--out` Write the response to this file path instead of stdout. Implies --raw.
+Flags: `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal) · `--all` Follow @odata.nextLink and merge every page's value (stops at 50 pages) · `--raw` Return the response body as raw bytes (no JSON decode). Required for binary endpoints like /content. Currently honoured by the `sp` provider. · `--out` Write the response to this file path instead of stdout. Implies --raw.
 ```bash
 its sp graph get /users
 its sp graph get /administrativeUnits --beta

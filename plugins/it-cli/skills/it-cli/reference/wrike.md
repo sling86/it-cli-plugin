@@ -57,12 +57,19 @@ its wrike tickets search "printer"
 ```
 
 ### `its wrike tickets create`
-Create a new IT support ticket. Idempotent on duplicate names — use update/edit to mutate an existing record.
-Flags: `--title` Ticket title (required) · `--description` Ticket description (inline plain text) · `--description-file` Read description body from a file path · `--description-stdin` Read description body from stdin · `--markdown` Treat description as Markdown (converts to Wrike-safe HTML). Mutually exclusive with --html. · `--html` Description is raw Wrike-safe HTML. Mutually exclusive with --markdown. · `--assignee` Comma-separated user IDs or names (e.g. 'KUAABCDE,Jane Smith') · `--due` Due date (YYYY-MM-DD) · `--importance <High|Normal|Low>` Importance (High, Normal, Low)
+Create a new IT support ticket. If an open (Active or Deferred) ticket in the folder already has this exact title (whitespace ignored), nothing is created unless --allow-duplicate is given: the existing ticket is returned unchanged, the result lists which of --description, --assignee, --due and --importance were ignored, says whether the requested --item-type and --custom-field values differ from it, and exits 1 if they do. --item-type and --custom-field take an id or an exact title (never guessed; a wrong-type value is rejected before anything is sent) and are read back after creation. The duplicate check has no lock: two runs at the same moment can still both create.
+Flags: `--title` Ticket title (required) · `--description` Ticket description (inline plain text) · `--description-file` Read description body from a file path · `--description-stdin` Read description body from stdin · `--markdown` Treat description as Markdown (converts to Wrike-safe HTML). Mutually exclusive with --html. · `--html` Description is raw Wrike-safe HTML. Mutually exclusive with --markdown. · `--assignee` Comma-separated user IDs or names (e.g. 'KUAABCDE,Jane Smith') · `--due` Due date (YYYY-MM-DD) · `--importance <High|Normal|Low>` Importance (High, Normal, Low) · `--item-type` Request type (custom item type): id or exact title. Default is the standard support ticket type. · `--custom-field` <id|title>=<value>, repeatable. Contacts fields take a user id, exact name or exact email. · `--allow-duplicate` Create even if an open ticket already has this title (skips the duplicate check).
 ```bash
 its wrike tickets create --title "Printer offline in Finance" --description "Label printer not responding"
 its wrike tickets create --title "Server migration plan" --description-file ./plan.md --markdown --importance High
+its wrike tickets create --title "Leaver: Jane Smith" --item-type "<request type>" --custom-field "<field>=<value>" --custom-field "<contacts field>=jane.smith@example.com" --dry-run
 its wrike tickets create --title "Outlook crashes" --description "Repro: open shared mailbox"
+```
+
+### `its wrike tickets set-custom-field <taskId> <field> <value>`
+Set one custom field on a ticket. The field is an id or exact title (never guessed) and the value is checked against the field type before it is sent. The ticket is read back for up to 30 seconds and the command fails if the value did not stick.
+```bash
+its wrike tickets set-custom-field IEACW7BXKQ2R4KMT "<field>" "<value>"
 ```
 
 ### `its wrike tickets set-due <taskId> <dueDate>`
@@ -97,6 +104,7 @@ its wrike tickets update-importance <task-id> High
 Change ticket status. Move the task to a different workflow stage.
 ```bash
 its wrike tickets update-status IEACW7BXKQ2R4KMT Completed
+its wrike tickets update-status IEACW7BXKQ2R4KMT "Waiting"
 its wrike tickets update-status <task-id> "Completed"
 ```
 

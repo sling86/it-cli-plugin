@@ -261,6 +261,14 @@ Read Traefik acme.json for the app's domains — surfaces certificate state, exp
 its dokploy apps cert-status storefront
 ```
 
+### `its dokploy apps deploy-url <app>`
+Print the deploy webhook URL (<DOKPLOY_URL>/api/deploy/<refreshToken>) for an app, for CI. It is a secret: piped stdout or --to-file only, never a terminal.
+Flags: `--to-file` Write the URL to this path (created 0600 / owner-only)
+```bash
+its dokploy apps deploy-url my-app | gh secret set DOKPLOY_DEPLOY_URL -R org/repo
+its dokploy apps deploy-url my-app --to-file /dev/shm/deploy-url
+```
+
 ## databases
 
 ### `its dokploy databases`

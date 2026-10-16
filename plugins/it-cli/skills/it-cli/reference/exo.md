@@ -144,9 +144,17 @@ its exo mailboxes add-alias jo@example.com jo.bloggs@example.com
 ```
 
 ### `its exo mailboxes remove-alias <mailbox> <address>`
-Remove ONE secondary SMTP address from a mailbox, keeping the rest. Refuses the primary address.
+Remove ONE secondary SMTP address from a mailbox, keeping the rest. Refuses the primary address. If Exchange says the address is used as WindowsLiveId, it is also the sign-in name: run `its entra users update <id> --set userPrincipalName=<onmicrosoft address>` first, wait about 20 seconds, then remove-alias (the UPN change also makes that address primary).
 ```bash
 its exo mailboxes remove-alias jo@example.com jo.bloggs@example.com
+```
+
+### `its exo mailboxes set-primary <mailbox> <address>`
+Make an address the PRIMARY SMTP address of a mailbox. The old primary stays as a secondary (or is dropped with --remove-old); every other address is kept. The address is added if the mailbox lacks it, and must be on an accepted domain. Cloud-only mailboxes; synced ones are refused (change them on-prem). Re-reads the mailbox and fails if the change is not there. If the old address is the account's sign-in name (WindowsLiveId), change the UPN first with `its entra users update <id> --set userPrincipalName=<onmicrosoft address>`, wait about 20 seconds, then remove the old alias with remove-alias. --remove-old does nothing when the address is already primary.
+Flags: `--remove-old` Drop the old primary instead of keeping it as a secondary
+```bash
+its exo mailboxes set-primary jo@example.com jo@example.onmicrosoft.com
+its exo mailboxes set-primary jo@example.com jo@example.onmicrosoft.com --remove-old
 ```
 
 ### `its exo mailboxes set-forwarding <mailbox> <target>`

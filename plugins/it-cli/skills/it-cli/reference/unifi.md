@@ -245,11 +245,11 @@ its unifi wlans --watch
 ```
 
 ### `its unifi wlans toggle <wlan_id>`
-Enable or disable a WiFi SSID. Toggle a boolean state; idempotent.
-Flags: `--enable` Enable (true) or disable (false) the SSID · `--site` Site name override
+Enable or disable a WiFi SSID. Pass exactly one of --enable or --disable. Idempotent; reads the SSID back to confirm.
+Flags: `--enable` Enable the SSID · `--disable` Disable the SSID · `--site` Site name override
 ```bash
 its unifi wlans toggle 6f2a9c14 --enable
-its unifi wlans toggle 6f2a9c14
+its unifi wlans toggle 6f2a9c14 --disable
 its unifi wlans toggle <wlan-id>
 its unifi wlans toggle <wlan-id> --enable
 ```
