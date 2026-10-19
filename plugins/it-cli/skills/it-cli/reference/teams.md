@@ -96,3 +96,18 @@ Flags: `--description` Team description · `--owner` Owner's UPN (default: you) 
 its teams teams create "Store Ops" --description "Store ops" --visibility private --dry-run
 its teams teams create "Store Ops" --owner tony@example.com --confirm
 ```
+
+## files
+
+### `its teams files <chat_id> <message_id>`
+Files shared in one chat message, with size and name (resolved from the SharePoint/OneDrive link). Use the attachment id with `files download`.
+```bash
+its teams files <chatId> <messageId> --json
+```
+
+### `its teams files download <chat_id> <message_id> <attachment_id>`
+Download one file shared in a chat message (SharePoint/OneDrive-hosted) to a local path. Never overwrites; file is written mode 600. Delegated, as you.
+Flags: `--to` Destination file path, or an existing directory · `--max-mb` Refuse files larger than this (default 50)
+```bash
+its teams files download <chatId> <messageId> <attachmentId> --to ./report.xlsx
+```
