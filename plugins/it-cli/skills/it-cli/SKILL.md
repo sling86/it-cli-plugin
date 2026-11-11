@@ -190,7 +190,7 @@ Commands with no positional arguments reject record fan-out. Mutations validate 
 | `dokploy app list` / `app deploy` | `its dokploy apps` / `apps deploy` | Name resolution, unified output, caching |
 | `bw list items` / `bw get` | `its bw items` / `its bw items get` | Speaks the vault REST API directly — no `bw` binary dependency, PIN-encrypted session, 2FA device-remember, TOTP, audits |
 | `az vm list` / `az account` | `its az vm` / `its az account` | Same flags/filters/exports as every other provider |
-| `az ad app permission grant --scope X` | `its entra consent add-scope <appId> "X"` | `az` **replaces** the whole scope list (destructive); `its consent` does a read-modify-write UNION |
+| `az ad app permission grant --scope X` | `its entra consent add-scope <appId> "X" --confirm` | `az` **replaces** the whole scope list (destructive); `its consent` does a read-modify-write UNION |
 | `az rest --url https://graph.microsoft.com/...` | `its entra graph get /...` (or `intune graph`, `sp graph`) | Uses the provider's Graph token with the correct scopes |
 | `Get-Mailbox` / `Get-TransportRule` | `its exo mailboxes` / `its exo rules` | No manual Connect-ExchangeOnline; same output pipeline |
 
@@ -252,7 +252,7 @@ Each is optional; everything else works without it. `its <provider> setup --chec
 
 ## Safety rules
 
-- **Destructive actions** (delete, remove, disable, block, reboot, purge) — confirm with the user before executing. Most accept `--confirm`; preview mutations with `--dry-run` first.
+- **Destructive actions** (delete, remove, disable, block, reboot, purge) — confirm with the user before executing. Any command that changes state is **refused without `--confirm`** (nothing changes, exit 1); add `--dry-run` instead to preview. Wrike comment, status, assign and due-date writes, and local-only session/login commands (`bw session unlock`, `wrike auth login`, …), are exempt.
 - **Business Central writes** (`bc record create|update|delete|call`, `bc environments copy|delete`, `bc apps install|uninstall|update`) need an explicit `--env <name>` (never the default) and `--confirm`; without `--confirm` they only preview. The app's BC user is read-only unless a write permission set was added — try writes in a sandbox first. `environments copy|delete` are sandbox-only.
 - **Secret redaction is on by default.** Any key that looks like a credential (`password`, `clientSecret`, `privateKey`, `refresh_token`, `apiKey`, `token`, `secret`, …) and any value shaped like a PEM key or JWT is replaced with `***REDACTED***` in output. Bitwarden **hidden custom fields** are also masked in every mode, and **live TOTP codes** are masked whenever output isn't an interactive terminal (piped / `--ai` / captured) — so nothing secret lands in an AI transcript by default. `its secrets` only reports `SET`/`NOT SET`, never values.
 - `--include-secrets` / `--unsafe` reveals plaintext only in interactive human output and is audit-logged to `~/.its/audit.log`; machine formats and redirected stdout reject it. Never paste revealed output into chat, tickets, or AI tools. Bitwarden `--copy` is the secure human hand-off, but it also requires an interactive terminal.

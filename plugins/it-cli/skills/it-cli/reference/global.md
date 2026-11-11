@@ -26,7 +26,7 @@ Microsoft delegated sign-in — profiles, provider mapping, token diagnostics. *
 Runs the OAuth authorisation-code flow with PKCE against the `CLIENT_ID` app and a localhost callback. The refresh token persists to `~/.its/tokens/delegated.json` and is swapped to per-resource scopes without re-login. Named profiles let e.g. `entra`/`intune`/`sp` run as an admin account while `teams`/`outlook` run as your own user, with no flags at call time. `auth doctor` is the fastest way to see which providers will run as the user and which as the service principal.
 
 ```bash
-its auth login [--profile <name>] [--device-code]
+its auth login [--profile <name>] [--client-id <guid>] [--device-code]
 its auth use <profile> [--default | --provider <a,b>]
 its auth logout [--profile <name>]
 its auth status
@@ -37,6 +37,7 @@ its auth setup [provider]
 
 its auth login
 its auth login --profile admin
+its auth login --profile admin --client-id 11111111-2222-3333-4444-555555555555
 its auth use admin --provider entra,intune,sp
 its auth doctor
 ```

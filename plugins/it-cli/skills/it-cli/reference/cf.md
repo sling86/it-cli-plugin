@@ -61,18 +61,19 @@ its cf dns get <record-id> --zone example.com
 Create a DNS record. Idempotent on duplicate names — use update/edit to mutate an existing record.
 Flags: `--zone` Zone domain or id · `--type <A|AAAA|CNAME|TXT|MX|NS|SRV|CAA>` Record type · `--name` Record name (e.g. www or www.example.com) · `--content` Record content/value · `--ttl` TTL in seconds (1=auto, default 1) · `--proxied` Proxy through Cloudflare · `--priority` Priority (MX records) · `--comment` Record comment
 ```bash
-its cf dns create --zone example.com --type A --name shop --content 203.0.113.10 --proxied
-its cf dns create --zone example.com --type CNAME --name www --content example.com --ttl 300
-its cf dns create --zone example.com --type A --name www --content 1.2.3.4
-its cf dns create --zone example.com --type CNAME --name app --content app.example.dokploy.com --proxied false
+its cf dns create --zone example.com --type A --name shop --content 203.0.113.10 --proxied --confirm
+its cf dns create --zone example.com --type CNAME --name www --content example.com --ttl 300 --confirm
+its cf dns create --zone example.com --type A --name www --content 1.2.3.4 --confirm
+its cf dns create --zone example.com --type CNAME --name app --content app.example.dokploy.com --proxied false --confirm
 ```
 
 ### `its cf dns update <record_id>`
 Patch fields on an existing DNS record. PATCH semantics — only the supplied fields change.
 Flags: `--zone` Zone domain or id · `--type` New type · `--name` New name · `--content` New content · `--ttl` New TTL (1=auto) · `--proxied` Proxy through Cloudflare · `--priority` New priority · `--comment` New comment
 ```bash
-its cf dns update 372e67954025e0ba6aaa6d586b9e0b59 --zone example.com --content 203.0.113.20
-its cf dns update <record-id> --zone example.com --content 5.6.7.8
+its cf dns update 372e67954025e0ba6aaa6d586b9e0b59 --zone example.com --content 203.0.113.20 --confirm
+its cf dns update <record-id> --zone example.com --content 5.6.7.8 --confirm
+its cf dns update <record-id> --zone example.com --content 5.6.7.8 --json --confirm
 ```
 
 ### `its cf dns delete <record_id>`
@@ -112,9 +113,9 @@ its cf tunnels connections <tunnel-id>
 Delete a Cloudflare tunnel (destructive — prompts for confirmation unless --yes). Use --cascade to drop active connections first.
 Flags: `--account` Account id · `--cascade` Force-delete even if connections are still active · `--yes` Skip the confirmation prompt
 ```bash
-its cf tunnels delete my-tunnel --account 1a2b3c4d --yes
-its cf tunnels delete my-tunnel --account 1a2b3c4d --cascade --yes
-its cf tunnels delete <tunnel-id> --yes
+its cf tunnels delete my-tunnel --account 1a2b3c4d --yes --confirm
+its cf tunnels delete my-tunnel --account 1a2b3c4d --cascade --yes --confirm
+its cf tunnels delete <tunnel-id> --yes --confirm
 ```
 
 ### `its cf tunnels routes <tunnel>`
@@ -137,6 +138,6 @@ its cf token url
 Open the prefilled Cloudflare token page in the browser, then prompt for the new token and save it (keychain + .env). Captures the account id automatically.
 Flags: `--name` Token name shown on the Cloudflare dashboard · `--no-open` Just print the URL, don't launch the browser
 ```bash
-its cf token request
-its cf token request --no-open
+its cf token request --confirm
+its cf token request --no-open --confirm
 ```

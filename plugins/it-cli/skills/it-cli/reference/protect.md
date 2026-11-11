@@ -49,6 +49,23 @@ its protect nvr
 its protect nvr --watch
 ```
 
+## retention
+
+### `its protect retention`
+Show how long the NVR keeps recordings (one NVR-wide setting; Protect has no per-camera override), plus storage used and free.
+Flags: `--site` Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site
+```bash
+its protect retention
+```
+
+### `its protect retention set`
+Set how many days the NVR keeps recordings. Previews without --confirm. Lowering it deletes older footage, so it also needs --allow-shorter. Reads the NVR back to verify.
+Flags: `--days` Days to keep recordings (whole number, 1-3650) · `--confirm` Apply the change · `--allow-shorter` Allow a lower value — footage older than the new limit is deleted · `--site` Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site
+```bash
+its protect retention set --days 30 --confirm
+its protect retention set --days 14 --confirm --allow-shorter
+```
+
 ## events
 
 ### `its protect events`

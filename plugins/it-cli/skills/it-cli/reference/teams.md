@@ -28,20 +28,20 @@ its teams chats messages --all-chats --since -2d --from mark
 Download pasted and attached images from a chat using delegated Graph auth. Pages to the time boundary, checks image signatures and never overwrites an existing file.
 Flags: `--since` Oldest message time (default -1d) · `--until` Newest message time · `--from` Sender display-name substring · `--output` Directory to write images (default current directory)
 ```bash
-its teams chats images 19:abc...@thread.v2 --since -1d --output ./teams-images
+its teams chats images 19:abc...@thread.v2 --since -1d --output ./teams-images --confirm
 ```
 
 ### `its teams chats send <chat_id>`
 Send a message to one of your chats, as you. Pass a chat ID from `its teams chats`. Delegated-only, and needs the ChatMessage.Send scope — after granting it, run `its auth login` again or the cached token still won't carry it.
 Flags: `--message` Message text · `--message-file` Read the message from a UTF-8 file (use for long bodies — Windows command-line cap) · `--html` Treat the message as HTML, sent as-is. Without it, a multi-line message is converted for you: blank lines make paragraphs, '- ' lines make a bulleted list · `--mention` @mention chat members, comma-separated: email, full name or first name. Replaces '@Name' in the message, or goes at the start · `--reply-to` Reply with a quote of this message (its id from `chats messages`), like Teams' 'Reply with quote'. Your Notes chat (self) shows the quote as an empty box — Teams limitation · `--file` Attach a local file (up to 4 MB): uploaded to your OneDrive 'Microsoft Teams Chat Files' and shared read-only with the chat's members. Needs Files.ReadWrite · `--markdown` Treat the message as Markdown: # headings (h1-h3), **bold**, *italic*, ~~strike~~, `code`, ``` code blocks, [links](https://…), - and 1. lists (flat), > quotes, --- rules, | tables | · `--importance <normal|high|urgent>` Mark the message important — Teams shows a banner · `--subject` Subject line (Graph accepts it; Teams may not show it in chats) · `--card` Send an Adaptive Card from this JSON file. Buttons that open a URL work; Action.Submit does not (no bot to receive it). The message text, if any, goes above the card · `--image` Inline image(s) in the message body: a .png/.jpg/.gif path, comma-separated for several (4 MB each)
 ```bash
-its teams chats send self --markdown --importance high --message-file update.md
-its teams chats send 19:abc...@thread.v2 --card card.json --message 'Approval needed'
-its teams chats send self --file evidence.pdf --message "for the file"
-its teams chats send 19:abc...@thread.v2 --message "on my way"
-its teams chats send 19:abc...@thread.v2 --mention enrique --message-file update.txt
-its teams chats send 19:abc...@thread.v2 --reply-to 1790767448630 --message "agreed"
-its teams chats send 19:abc...@thread.v2 --html --message-file note.html
+its teams chats send self --markdown --importance high --message-file update.md --confirm
+its teams chats send 19:abc...@thread.v2 --card card.json --message 'Approval needed' --confirm
+its teams chats send self --file evidence.pdf --message "for the file" --confirm
+its teams chats send 19:abc...@thread.v2 --message "on my way" --confirm
+its teams chats send 19:abc...@thread.v2 --mention enrique --message-file update.txt --confirm
+its teams chats send 19:abc...@thread.v2 --reply-to 1790767448630 --message "agreed" --confirm
+its teams chats send 19:abc...@thread.v2 --html --message-file note.html --confirm
 ```
 
 ### `its teams chats delete-message <chat_id> <message_id>`
@@ -63,14 +63,14 @@ its teams chats edit-message 19:abc...@thread.v2 1775589175306 --markdown --mess
 React to a message with an emoji, as you (default 👍). Also takes like, heart, laugh, surprised, sad, angry. Teams keeps ONE reaction per person per message, so a new one replaces yours. Needs Chat.ReadWrite.
 Flags: `--emoji` Emoji or name (default 👍)
 ```bash
-its teams chats react self 1775589175306 --emoji 👍
+its teams chats react self 1775589175306 --emoji 👍 --confirm
 ```
 
 ### `its teams chats unreact <chat_id> <message_id>`
 Take your reaction off a message. Give the same emoji you reacted with (default 👍).
 Flags: `--emoji` Emoji or name (default 👍)
 ```bash
-its teams chats unreact self 1775589175306 --emoji 👍
+its teams chats unreact self 1775589175306 --emoji 👍 --confirm
 ```
 
 ## presence
@@ -95,6 +95,14 @@ Flags: `--description` Team description · `--owner` Owner's UPN (default: you) 
 ```bash
 its teams teams create "Store Ops" --description "Store ops" --visibility private --dry-run
 its teams teams create "Store Ops" --owner tony@example.com --confirm
+```
+
+### `its teams teams delete <teamId>`
+Delete a team by its id (this deletes the Microsoft 365 group behind it: chats, files and the mailbox go with it). Without --confirm it only shows which team it would delete. Reads back to check it is gone. Entra keeps a deleted group for 30 days, so it can be restored in that time. Needs delegated Group.ReadWrite.All.
+Flags: `--confirm` Delete it
+```bash
+its teams teams delete 8d8854a9-1cc2-40d9-b895-ba082fc5ad94 --dry-run
+its teams teams delete 8d8854a9-1cc2-40d9-b895-ba082fc5ad94 --confirm
 ```
 
 ## files

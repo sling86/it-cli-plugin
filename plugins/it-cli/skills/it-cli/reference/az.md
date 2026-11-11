@@ -22,8 +22,8 @@ its az account get
 ### `its az account set <subscription>`
 Switch active subscription. Single-value write; idempotent on no-op.
 ```bash
-its az account set "Production"
-its az account set <sub-id>
+its az account set "Production" --confirm
+its az account set <sub-id> --confirm
 ```
 
 ## groups

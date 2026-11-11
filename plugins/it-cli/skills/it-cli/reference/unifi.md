@@ -67,9 +67,10 @@ its unifi devices restart <mac> --confirm
 Toggle locate LED on a device. Flash the device's locate LED.
 Flags: `--enable` Enable locate LED (default true, pass --no-enable to disable) · `--site` Site name override
 ```bash
-its unifi devices locate 78:45:58:aa:bb:cc --enable
-its unifi devices locate 78:45:58:aa:bb:cc
-its unifi devices locate <mac>
+its unifi devices locate 78:45:58:aa:bb:cc --enable --confirm
+its unifi devices locate 78:45:58:aa:bb:cc --confirm
+its unifi devices locate <mac> --confirm
+its unifi devices locate <mac> --json --confirm
 ```
 
 ### `its unifi devices upgrade <mac>`
@@ -84,8 +85,9 @@ its unifi devices upgrade <mac> --confirm
 Force re-provision a device. Force the device to re-pull its provisioning.
 Flags: `--site` Site name override
 ```bash
-its unifi devices provision 78:45:58:aa:bb:cc
-its unifi devices provision <mac>
+its unifi devices provision 78:45:58:aa:bb:cc --confirm
+its unifi devices provision <mac> --confirm
+its unifi devices provision <mac> --json --confirm
 ```
 
 ### `its unifi devices power-cycle`
@@ -100,9 +102,10 @@ its unifi devices power-cycle --mac <mac> --port 5
 Toggle all site LEDs on or off. Toggle the controller's status LEDs.
 Flags: `--enable` Enable LEDs (true/false) · `--site` Site name override
 ```bash
-its unifi devices leds --enable
-its unifi devices leds
-its unifi devices leds off
+its unifi devices leds --enable --confirm
+its unifi devices leds --confirm
+its unifi devices leds off --confirm
+its unifi devices leds off --json --confirm
 ```
 
 ### `its unifi devices poe`
@@ -186,16 +189,18 @@ its unifi clients block <mac>
 Unblock a client by MAC address. Re-allows a previously blocked client.
 Flags: `--site` Site name override
 ```bash
-its unifi clients unblock a4:83:e7:11:22:33
-its unifi clients unblock <mac>
+its unifi clients unblock a4:83:e7:11:22:33 --confirm
+its unifi clients unblock <mac> --confirm
+its unifi clients unblock <mac> --json --confirm
 ```
 
 ### `its unifi clients reconnect <mac>`
 Force reconnect a client. Force a client to disassociate + re-auth.
 Flags: `--site` Site name override
 ```bash
-its unifi clients reconnect a4:83:e7:11:22:33
-its unifi clients reconnect <mac>
+its unifi clients reconnect a4:83:e7:11:22:33 --confirm
+its unifi clients reconnect <mac> --confirm
+its unifi clients reconnect <mac> --json --confirm
 ```
 
 ### `its unifi clients offline`
@@ -211,17 +216,19 @@ its unifi clients offline
 Authorise a guest WiFi client. Permits a guest network device.
 Flags: `--minutes` Duration in minutes · `--up` Upload speed limit (Kbps) · `--down` Download speed limit (Kbps) · `--megabytes` Data transfer limit (MB) · `--site` Site name override
 ```bash
-its unifi guests authorise a4:83:e7:11:22:33 --minutes 1440
-its unifi guests authorise a4:83:e7:11:22:33 --minutes 480 --down 5000 --up 1000
-its unifi guests authorise <mac> --minutes 1440
+its unifi guests authorise a4:83:e7:11:22:33 --minutes 1440 --confirm
+its unifi guests authorise a4:83:e7:11:22:33 --minutes 480 --down 5000 --up 1000 --confirm
+its unifi guests authorise <mac> --minutes 1440 --confirm
+its unifi guests authorise <mac> --minutes 1440 --json --confirm
 ```
 
 ### `its unifi guests unauthorise <mac>`
 Revoke guest WiFi authorisation. Revokes a guest authorisation.
 Flags: `--site` Site name override
 ```bash
-its unifi guests unauthorise a4:83:e7:11:22:33
-its unifi guests unauthorise <mac>
+its unifi guests unauthorise a4:83:e7:11:22:33 --confirm
+its unifi guests unauthorise <mac> --confirm
+its unifi guests unauthorise <mac> --json --confirm
 ```
 
 ## networks
@@ -244,14 +251,29 @@ its unifi wlans
 its unifi wlans --watch
 ```
 
+### `its unifi wlans get <wlan>`
+Wi-Fi radio settings for one SSID: minimum data rate per band, 802.11r fast roaming, BSS transition, DTIM, U-APSD. Band steering is per AP, not per WLAN — see `devices get`.
+Flags: `--site` Site name override
+```bash
+its unifi wlans get 6f2a9c14
+```
+
+### `its unifi wlans set <wlan_id>`
+Change Wi-Fi radio settings on an SSID. Applying WLAN changes re-provisions the access points and drops Wi-Fi clients briefly. Previews without --confirm.
+Flags: `--min-rate-2g` 2.4 GHz minimum data rate, kbps (1000|2000|5500|6000|9000|11000|12000|18000|24000|36000|48000|54000) · `--min-rate-5g` 5 GHz minimum data rate, kbps (6000|9000|12000|18000|24000|36000|48000|54000) · `--fast-roaming <on|off>` 802.11r fast roaming · `--bss-transition <on|off>` BSS transition (802.11v) · `--dtim-2g` 2.4 GHz DTIM period, 1-255 · `--dtim-5g` 5 GHz DTIM period, 1-255 · `--site` Site name override · `--confirm` Apply the change
+```bash
+its unifi wlans set 6f2a9c14 --min-rate-2g 6000 --confirm
+its unifi wlans set 6f2a9c14 --fast-roaming on --dry-run
+```
+
 ### `its unifi wlans toggle <wlan_id>`
 Enable or disable a WiFi SSID. Pass exactly one of --enable or --disable. Idempotent; reads the SSID back to confirm.
 Flags: `--enable` Enable the SSID · `--disable` Disable the SSID · `--site` Site name override
 ```bash
-its unifi wlans toggle 6f2a9c14 --enable
-its unifi wlans toggle 6f2a9c14 --disable
-its unifi wlans toggle <wlan-id>
-its unifi wlans toggle <wlan-id> --enable
+its unifi wlans toggle 6f2a9c14 --enable --confirm
+its unifi wlans toggle 6f2a9c14 --disable --confirm
+its unifi wlans toggle <wlan-id> --confirm
+its unifi wlans toggle <wlan-id> --enable --confirm
 ```
 
 ### `its unifi wlans password <wlan_id>`
@@ -397,8 +419,9 @@ its unifi vouchers --watch
 Create guest WiFi vouchers. Idempotent on duplicate names — use update/edit to mutate an existing record.
 Flags: `--minutes` Voucher duration in minutes · `--count` Number of vouchers to create (default 1) · `--quota` Number of uses per voucher (0 = unlimited, default 0) · `--note` Note to attach to the vouchers · `--site` Site name override
 ```bash
-its unifi vouchers create --count 10 --minutes 1440 --note "Reception"
-its unifi vouchers create --minutes 1440 --count 5
+its unifi vouchers create --count 10 --minutes 1440 --note "Reception" --confirm
+its unifi vouchers create --minutes 1440 --count 5 --confirm
+its unifi vouchers create --minutes 1440 --count 5 --json --confirm
 ```
 
 ### `its unifi vouchers revoke <id>`

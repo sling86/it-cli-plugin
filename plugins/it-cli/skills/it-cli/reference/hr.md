@@ -37,7 +37,7 @@ Flags: `--year` Calendar year; defaults to current year
 
 ### `its hr absences team`
 Rank a manager's direct reports or a department by Bradford factor for one year. Contains special-category health data. Refuses teams larger than 25.
-Flags: `--manager` Manager email, EmployeeId, or exact full name · `--department` Exact department name · `--year` Calendar year; defaults to current year
+Flags: `--manager` Manager email, EmployeeId, full name, or a unique part of a name or email · `--department` Exact department name · `--year` Calendar year; defaults to current year
 
 ## org
 
@@ -76,14 +76,36 @@ Flags: `--from` Start date (YYYY-MM-DD); defaults to 30 days ago · `--to` End d
 ## holidays
 
 ### `its hr holidays get <employee>`
-Get one employee's booked holiday. Read-only. Cancelled, declined and rejected requests are not counted as time off.
-Flags: `--from` Start date (YYYY-MM-DD); defaults to 30 days ago · `--to` End date (YYYY-MM-DD); defaults to today
+Get one employee's holiday, pending and approved by default (--status to filter), from 30 days ago to 180 days ahead. Read-only. Cancelled, declined and rejected requests are not counted as time off.
+Flags: `--from` Start date (YYYY-MM-DD); defaults to 30 days ago · `--to` End date (YYYY-MM-DD); defaults to 180 days ahead · `--status <pending|approved|all>` Which requests to show; default is approved and pending, all adds rejected
+
+### `its hr holidays balance <employee>`
+One employee's holiday balance for a year: allowance, taken, booked (approved, not yet taken), pending, and what is left. Read-only. The allowance is the figure on the employee record; carry-over and bought leave are only in it if PeopleHR has put them there.
+Flags: `--year` Calendar year; defaults to this year
+```bash
+its hr holidays balance smith
+```
+
+### `its hr holidays team [manager]`
+A manager's direct reports: pending and booked holiday in a window, and the working days when two or more are off. Holiday only (no sickness or other leave). Read-only: approve in PeopleHR. One API call per person, about two seconds each.
+Flags: `--manager` Same as the argument · `--from` Start date (YYYY-MM-DD); defaults to today · `--to` End date (YYYY-MM-DD); defaults to 90 days ahead
+```bash
+its hr holidays team
+```
 
 ## otherleave
 
 ### `its hr otherleave get <employee>`
 Get one employee's non-sickness authorised absence — unpaid leave, parental, compassionate, birthday leave. Read-only. The reason is a leave-type picklist, but it can still be somebody's bereavement; treat it as personal data.
 Flags: `--from` Start date (YYYY-MM-DD); defaults to 30 days ago · `--to` End date (YYYY-MM-DD); defaults to today
+
+## query
+
+### `its hr query <name>`
+Run a saved PeopleHR Query Builder query by its exact name and return its rows. Read-only. Columns are whatever the query defines.
+```bash
+its hr query "Attendance Export"
+```
 
 ## employees
 

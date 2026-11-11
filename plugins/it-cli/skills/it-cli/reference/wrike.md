@@ -60,16 +60,17 @@ its wrike tickets search "printer"
 Create a new IT support ticket. If an open (Active or Deferred) ticket in the folder already has this exact title (whitespace ignored), nothing is created unless --allow-duplicate is given: the existing ticket is returned unchanged, the result lists which of --description, --assignee, --due and --importance were ignored, says whether the requested --item-type and --custom-field values differ from it, and exits 1 if they do. --item-type and --custom-field take an id or an exact title (never guessed; a wrong-type value is rejected before anything is sent) and are read back after creation. The duplicate check has no lock: two runs at the same moment can still both create.
 Flags: `--title` Ticket title (required) · `--description` Ticket description (inline plain text) · `--description-file` Read description body from a file path · `--description-stdin` Read description body from stdin · `--markdown` Treat description as Markdown (converts to Wrike-safe HTML). Mutually exclusive with --html. · `--html` Description is raw Wrike-safe HTML. Mutually exclusive with --markdown. · `--assignee` Comma-separated user IDs or names (e.g. 'KUAABCDE,Jane Smith') · `--due` Due date (YYYY-MM-DD) · `--importance <High|Normal|Low>` Importance (High, Normal, Low) · `--item-type` Request type (custom item type): id or exact title. Default is the standard support ticket type. · `--custom-field` <id|title>=<value>, repeatable. Contacts fields take a user id, exact name or exact email. · `--allow-duplicate` Create even if an open ticket already has this title (skips the duplicate check).
 ```bash
-its wrike tickets create --title "Printer offline in Finance" --description "Label printer not responding"
-its wrike tickets create --title "Server migration plan" --description-file ./plan.md --markdown --importance High
+its wrike tickets create --title "Printer offline in Finance" --description "Label printer not responding" --confirm
+its wrike tickets create --title "Server migration plan" --description-file ./plan.md --markdown --importance High --confirm
 its wrike tickets create --title "Leaver: Jane Smith" --item-type "<request type>" --custom-field "<field>=<value>" --custom-field "<contacts field>=jane.smith@example.com" --dry-run
-its wrike tickets create --title "Outlook crashes" --description "Repro: open shared mailbox"
+its wrike tickets create --title "Outlook crashes" --description "Repro: open shared mailbox" --confirm
+its wrike tickets create --title "Outlook crashes" --description "Repro: open shared mailbox" --json --confirm
 ```
 
 ### `its wrike tickets set-custom-field <taskId> <field> <value>`
 Set one custom field on a ticket. The field is an id or exact title (never guessed) and the value is checked against the field type before it is sent. The ticket is read back for up to 30 seconds and the command fails if the value did not stick.
 ```bash
-its wrike tickets set-custom-field IEACW7BXKQ2R4KMT "<field>" "<value>"
+its wrike tickets set-custom-field IEACW7BXKQ2R4KMT "<field>" "<value>" --confirm
 ```
 
 ### `its wrike tickets set-due <taskId> <dueDate>`
@@ -86,18 +87,27 @@ its wrike tickets assign IEACW7BXKQ2R4KMT KUAEXAMP
 its wrike tickets assign <task-id> <user-id>
 ```
 
+### `its wrike tickets unassign <taskId> <userId>`
+Remove an assignee from a ticket. Previews without --confirm; with it, removes then reads the ticket back to check the user is gone. Does nothing if they were not assigned.
+Flags: `--confirm` Actually remove the assignee
+```bash
+its wrike tickets unassign IEACW7BXKQ2R4KMT KUAEXAMP --confirm
+```
+
 ### `its wrike tickets update-title <taskId> <title>`
 Change a ticket's title. Rename the task — keeps the same ID.
 ```bash
-its wrike tickets update-title IEACW7BXKQ2R4KMT "Printer offline — Finance, resolved"
-its wrike tickets update-title <task-id> "New title"
+its wrike tickets update-title IEACW7BXKQ2R4KMT "Printer offline — Finance, resolved" --confirm
+its wrike tickets update-title <task-id> "New title" --confirm
+its wrike tickets update-title <task-id> "New title" --json --confirm
 ```
 
 ### `its wrike tickets update-importance <taskId> <importance>`
 Change ticket importance (High, Normal, Low). Set Low / Normal / High importance.
 ```bash
-its wrike tickets update-importance IEACW7BXKQ2R4KMT High
-its wrike tickets update-importance <task-id> High
+its wrike tickets update-importance IEACW7BXKQ2R4KMT High --confirm
+its wrike tickets update-importance <task-id> High --confirm
+its wrike tickets update-importance <task-id> High --json --confirm
 ```
 
 ### `its wrike tickets update-status <taskId> <status>`
@@ -112,9 +122,10 @@ its wrike tickets update-status <task-id> "Completed"
 Replace a ticket's description. Same formatting rules as add-comment: plain text by default (\n → <br>, @Name auto-mentions), --markdown for bold/italic/links/bullets, --html for raw. Wrike renders <br>, <a>, <b>, <i>, and mention anchors only.
 Flags: `--file` Read comment body from a file path · `--stdin` Read comment body from stdin · `--html` Send body as raw HTML. Wrike only renders <br>, <a>, <b>, <i>, and mention anchors — other tags are ignored. Use --markdown for richer formatting. · `--markdown` Convert Markdown to Wrike-safe HTML. Supported: **bold**, _italic_, `code` (rendered italic), # headings (rendered bold), [text](url), - bullets (flattened to •). In this mode, mention users with plain @Name (auto-resolves). Mutually exclusive with --html. Recommended over --html. · `--skip-mention-check` Bypass the @mention markup guard Use only when posting a literal string that happens to contain mention-like markup.
 ```bash
-its wrike tickets update-description IEACW7BXKQ2R4KMT "**Root cause:** stale spooler" --markdown
-cat notes.md | its wrike tickets update-description IEACW7BXKQ2R4KMT --stdin --markdown
-its wrike tickets update-description <task-id> --markdown "**Repro:** open Outlook → file → ..."
+its wrike tickets update-description IEACW7BXKQ2R4KMT "**Root cause:** stale spooler" --markdown --confirm
+cat notes.md | its wrike tickets update-description IEACW7BXKQ2R4KMT --stdin --markdown --confirm
+its wrike tickets update-description <task-id> --markdown "**Repro:** open Outlook → file → ..." --confirm
+its wrike tickets update-description <task-id> --markdown "**Repro:** open Outlook → file → ..." --json --confirm
 ```
 
 ### `its wrike tickets add-comment <taskId> [text]`
@@ -167,8 +178,9 @@ its wrike tickets download <task-id> <attachment-id> --output ./screenshot.png
 ### `its wrike tickets attach <taskId> <filePath>`
 Attach a file to a ticket. Upload a local file as an attachment.
 ```bash
-its wrike tickets attach IEACW7BXKQ2R4KMT ./screenshot.png
-its wrike tickets attach <task-id> ./screenshot.png
+its wrike tickets attach IEACW7BXKQ2R4KMT ./screenshot.png --confirm
+its wrike tickets attach <task-id> ./screenshot.png --confirm
+its wrike tickets attach <task-id> ./screenshot.png --json --confirm
 ```
 
 ## tasks
@@ -198,8 +210,9 @@ its wrike tasks get https://www.wrike.com/open.htm?id=...
 Create a new task in a folder or project (accepts name or ID).
 Flags: `--title` Task title · `--description` Task description · `--description-file` Read description from a UTF-8 file (use for descriptions > ~15KB — Windows command-line cap) · `--status` Task status · `--importance` Task importance (High, Normal, Low)
 ```bash
-its wrike tasks create "IT Projects" --title "Roll out FIDO2 keys" --importance High
-its wrike tasks create "My folder" --title "New task"
+its wrike tasks create "IT Projects" --title "Roll out FIDO2 keys" --importance High --confirm
+its wrike tasks create "My folder" --title "New task" --confirm
+its wrike tasks create "My folder" --title "New task" --json --confirm
 ```
 
 ### `its wrike tasks set-due <taskId> <dueDate>`
@@ -212,15 +225,17 @@ its wrike tasks set-due <task-id> 2026-06-01
 ### `its wrike tasks update-title <taskId> <title>`
 Change a task's title. Rename the task — keeps the same ID.
 ```bash
-its wrike tasks update-title IEACW7BXKQ2R4KMT "Roll out FIDO2 keys — phase 2"
-its wrike tasks update-title <task-id> "New title"
+its wrike tasks update-title IEACW7BXKQ2R4KMT "Roll out FIDO2 keys — phase 2" --confirm
+its wrike tasks update-title <task-id> "New title" --confirm
+its wrike tasks update-title <task-id> "New title" --json --confirm
 ```
 
 ### `its wrike tasks update-importance <taskId> <importance>`
 Change task importance (High, Normal, Low). Set Low / Normal / High importance.
 ```bash
-its wrike tasks update-importance IEACW7BXKQ2R4KMT Low
-its wrike tasks update-importance <task-id> Low
+its wrike tasks update-importance IEACW7BXKQ2R4KMT Low --confirm
+its wrike tasks update-importance <task-id> Low --confirm
+its wrike tasks update-importance <task-id> Low --json --confirm
 ```
 
 ### `its wrike tasks update-status <taskId> <status>`
@@ -234,8 +249,9 @@ its wrike tasks update-status <task-id> "In Progress"
 Replace a task's description. Same formatting rules as add-comment: plain text by default (\n → <br>, @Name auto-mentions), --markdown for bold/italic/links/bullets, --html for raw. Wrike renders <br>, <a>, <b>, <i>, and mention anchors only.
 Flags: `--file` Read comment body from a file path · `--stdin` Read comment body from stdin · `--html` Send body as raw HTML. Wrike only renders <br>, <a>, <b>, <i>, and mention anchors — other tags are ignored. Use --markdown for richer formatting. · `--markdown` Convert Markdown to Wrike-safe HTML. Supported: **bold**, _italic_, `code` (rendered italic), # headings (rendered bold), [text](url), - bullets (flattened to •). In this mode, mention users with plain @Name (auto-resolves). Mutually exclusive with --html. Recommended over --html. · `--skip-mention-check` Bypass the @mention markup guard Use only when posting a literal string that happens to contain mention-like markup.
 ```bash
-its wrike tasks update-description IEACW7BXKQ2R4KMT "## Plan\n- Order keys" --markdown
-its wrike tasks update-description <task-id> --markdown "## Plan\n- step 1"
+its wrike tasks update-description IEACW7BXKQ2R4KMT "## Plan\n- Order keys" --markdown --confirm
+its wrike tasks update-description <task-id> --markdown "## Plan\n- step 1" --confirm
+its wrike tasks update-description <task-id> --markdown "## Plan\n- step 1" --json --confirm
 ```
 
 ### `its wrike tasks add-comment <taskId> [text]`
@@ -249,8 +265,9 @@ its wrike tasks add-comment <task-id> --markdown "**done** — pushed to main"
 ### `its wrike tasks attach <taskId> <filePath>`
 Attach a file to a task. Upload a local file as an attachment.
 ```bash
-its wrike tasks attach IEACW7BXKQ2R4KMT ./quote.pdf
-its wrike tasks attach <task-id> ./diagram.png
+its wrike tasks attach IEACW7BXKQ2R4KMT ./quote.pdf --confirm
+its wrike tasks attach <task-id> ./diagram.png --confirm
+its wrike tasks attach <task-id> ./diagram.png --json --confirm
 ```
 
 ### `its wrike tasks delete <taskId>`

@@ -11,7 +11,7 @@ Apply the standard branch-protection block to <owner/repo> on the named branch (
 Flags: `--branch` Branch to protect · `--dry-run` Print the planned PUT body without sending
 ```bash
 its gh branch-protect apply acme/storefront --dry-run
-its gh branch-protect apply acme/storefront --branch main
+its gh branch-protect apply acme/storefront --branch main --confirm
 ```
 
 ### `its gh branch-protect show <repo>`
@@ -31,7 +31,7 @@ its gh branch-protect remove acme/storefront --confirm
 Create a push-event webhook on <owner/repo> pointing at <url>. Idempotent — bails if a hook with the same URL already exists.
 Flags: `--secret` Webhook secret (defaults to a random secret, printed once - save it) · `--events` Comma-separated events (default: push)
 ```bash
-its gh webhook setup acme/storefront https://dok.example.com/api/deploy --events push
+its gh webhook setup acme/storefront https://dok.example.com/api/deploy --events push --confirm
 ```
 
 ### `its gh webhook <repo>`

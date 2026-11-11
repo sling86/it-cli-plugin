@@ -30,8 +30,9 @@ its intune devices search "jane"
 ### `its intune devices sync <id>`
 Trigger a device sync. Force the device to sync with Intune.
 ```bash
-its intune devices sync 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f
-its intune devices sync <device-id>
+its intune devices sync 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --confirm
+its intune devices sync <device-id> --confirm
+its intune devices sync <device-id> --json --confirm
 ```
 
 ### `its intune devices primary-user <device>`
@@ -89,7 +90,7 @@ its intune devices retire LEAVER-IPHONE --confirm "LEAVER-IPHONE"
 ### `its intune devices rename <device> <new_name>`
 Rename a managed device (Intune setDeviceName). Exact device name, serial or id only. Windows names are checked (1-15 chars, letters/digits/hyphens); the new name lands at the device's next check-in and needs a restart on Windows.
 ```bash
-its intune devices rename DESKTOP-8H2K1 CCD-LAP-042
+its intune devices rename DESKTOP-8H2K1 CCD-LAP-042 --confirm
 ```
 
 ## compliance
@@ -129,7 +130,7 @@ its intune apps required
 Add ONE group assignment to an Intune app (--intent required|available|uninstall, --exclude for an exclusion). Additive: existing assignments are kept. Refuses a group the app already targets.
 Flags: `--group` Group id or exact name · `--intent <required|available|uninstall>` Assignment intent · `--exclude` Exclude the group instead
 ```bash
-its intune apps assign "Company Portal" --group "All Shop Tablets" --intent required
+its intune apps assign "Company Portal" --group "All Shop Tablets" --intent required --confirm
 ```
 
 ## win32-apps
@@ -137,6 +138,14 @@ its intune apps assign "Company Portal" --group "All Shop Tablets" --intent requ
 ### `its intune win32-apps`
 List Win32 (.intunewin) apps with version and install command. For detection and requirement rules and return codes, run `apps get <id>`.
 Flags: `--top` Number of results (default 100)
+
+### `its intune win32-apps upload <file>`
+Upload a packaged .intunewin as a new Win32 app. Detection: --detect-msi <product code> and/or --detect-file <full path> (file exists); at least one. Previews the package without --confirm (no Graph calls). Does not assign the app. If it fails part-way, the app exists with no content and the error gives its id. Reads the app back and reports verified.
+Flags: `--name` App display name · `--install-cmd` Install command line · `--uninstall-cmd` Uninstall command line · `--publisher` Publisher (default: Unknown) · `--description` Description (default: the name) · `--detect-msi` Detect by MSI product code, e.g. {GUID} · `--detect-file` Detect by file existing, full Windows path · `--arch <x64|x86|x64,x86>` Architectures (default x64) · `--min-windows` Minimum Windows release (default 1607) · `--confirm` Create the app and upload
+```bash
+its intune win32-apps upload ./7zip.intunewin --name "7-Zip" --install-cmd "msiexec /i 7z.msi /qn" --uninstall-cmd "msiexec /x {23170F69-40C1-2702-2501-000001000000} /qn" --detect-msi "{23170F69-40C1-2702-2501-000001000000}" --dry-run
+its intune win32-apps upload ./app.intunewin --name "App" --install-cmd "setup.exe /s" --uninstall-cmd "uninstall.exe /s" --detect-file "C:\Program Files\App\app.exe" --confirm
+```
 
 ## scripts
 
@@ -226,9 +235,10 @@ its intune esp get <profile-id>
 Update ESP profile settings (timeout, tracked apps). PATCH semantics — only the supplied fields change.
 Flags: `--timeout` Timeout in minutes · `--track-app` Add app ID to tracked apps · `--untrack-app` Remove app ID from tracked apps · `--show-progress` Show installation progress (true/false) · `--allow-use-on-failure` Allow device use on failure (true/false)
 ```bash
-its intune esp update 8f1c2d3e-... --timeout 3600
-its intune esp update 8f1c2d3e-... --track-app 9a8b7c6d-...
-its intune esp update <profile-id> --timeout 120
+its intune esp update 8f1c2d3e-... --timeout 3600 --confirm
+its intune esp update 8f1c2d3e-... --track-app 9a8b7c6d-... --confirm
+its intune esp update <profile-id> --timeout 120 --confirm
+its intune esp update <profile-id> --timeout 120 --json --confirm
 ```
 
 ## autopilot
@@ -251,25 +261,26 @@ its intune autopilot devices
 Trigger the Autopilot device sync (the portal's Sync button). Intune allows one manual sync per 10 minutes. Pass --status to read the last sync without triggering one, or --wait to poll until it completes or fails.
 Flags: `--status` Report the last sync without triggering a new one · `--wait` Poll until the sync completes or fails (also waits on one already running) · `--timeout` With --wait: seconds to wait (default 600)
 ```bash
-its intune autopilot sync
-its intune autopilot sync --status
-its intune autopilot sync --wait --timeout 900
+its intune autopilot sync --confirm
+its intune autopilot sync --status --confirm
+its intune autopilot sync --wait --timeout 900 --confirm
 ```
 
 ### `its intune autopilot tag <serial> [tag]`
 Set group tag on an Autopilot device. Set or clear a tag value.
 Flags: `--clear` Remove the group tag
 ```bash
-its intune autopilot tag ABC1234 "Finance-Laptops"
-its intune autopilot tag ABC1234 --clear
-its intune autopilot tag <serial> "Office-Standard"
+its intune autopilot tag ABC1234 "Finance-Laptops" --confirm
+its intune autopilot tag ABC1234 --clear --confirm
+its intune autopilot tag <serial> "Office-Standard" --confirm
+its intune autopilot tag <serial> "Office-Standard" --json --confirm
 ```
 
 ### `its intune autopilot import`
 Register devices with Autopilot from a hardware-hash CSV (Get-WindowsAutopilotInfo -OutputFile). --group-tag sets or overrides the tag. Waits for Autopilot to accept or reject each one (up to --wait seconds, default 180) and reports per device.
 Flags: `--csv` The hardware-hash CSV · `--group-tag` Group tag for every device (overrides the CSV column) · `--wait` Seconds to wait for the import to settle (0 = don't wait)
 ```bash
-its intune autopilot import --csv AutopilotHWID.csv --group-tag Office
+its intune autopilot import --csv AutopilotHWID.csv --group-tag Office --confirm
 ```
 
 ### `its intune autopilot deregister <serial>`
@@ -423,14 +434,14 @@ Managed-device app configuration policies (e.g. Android managed Google Play app 
 Create an app configuration policy from a JSON body (--file) — the Graph mobileAppConfiguration shape, which differs per platform, so it is passed through as-is. Needs @odata.type, displayName and targetedMobileApps.
 Flags: `--file` JSON body
 ```bash
-its intune app-configs create --file chrome-kiosk.json
+its intune app-configs create --file chrome-kiosk.json --confirm
 ```
 
 ### `its intune app-configs assign <config_id>`
 Add ONE group to an app configuration policy (--exclude to exclude it). Additive — existing assignments are kept.
 Flags: `--group` Group id or exact name · `--exclude` Exclude the group instead
 ```bash
-its intune app-configs assign 3f5944e1-9e4a-4b02-9929-ca0bb290fdb4 --group "Facilities Tablets"
+its intune app-configs assign 3f5944e1-9e4a-4b02-9929-ca0bb290fdb4 --group "Facilities Tablets" --confirm
 ```
 
 ## enrolment
@@ -491,38 +502,41 @@ its intune graph get "/deviceManagement/managedDevices?$top=5"
 Raw Graph POST — pass any /v1.0 or /beta path (use --beta for beta).
 Flags: `--body` Request body — inline JSON string or @file.json to read from disk · `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
-its intune graph post /users --body '{"displayName":"Jane Smith"}'
-its intune graph post /administrativeUnits --beta
-its intune graph post /users --header ConsistencyLevel=eventual
-its intune graph post "/deviceManagement/managedDevices/<id>/syncDevice"
+its intune graph post /users --body '{"displayName":"Jane Smith"}' --confirm
+its intune graph post /administrativeUnits --beta --confirm
+its intune graph post /users --header ConsistencyLevel=eventual --confirm
+its intune graph post "/deviceManagement/managedDevices/<id>/syncDevice" --confirm
+its intune graph post "/deviceManagement/managedDevices/<id>/syncDevice" --json --confirm
 ```
 
 ### `its intune graph patch <path>`
 Raw Graph PATCH — pass any /v1.0 or /beta path (use --beta for beta).
 Flags: `--body` Request body — inline JSON string or @file.json to read from disk · `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
-its intune graph patch /users --body '{"displayName":"Jane Smith"}'
-its intune graph patch /administrativeUnits --beta
-its intune graph patch /users --header ConsistencyLevel=eventual
-its intune graph patch "/deviceManagement/deviceCompliancePolicies/<id>" --body @./patch.json
+its intune graph patch /users --body '{"displayName":"Jane Smith"}' --confirm
+its intune graph patch /administrativeUnits --beta --confirm
+its intune graph patch /users --header ConsistencyLevel=eventual --confirm
+its intune graph patch "/deviceManagement/deviceCompliancePolicies/<id>" --body @./patch.json --confirm
+its intune graph patch "/deviceManagement/deviceCompliancePolicies/<id>" --body @./patch.json --json --confirm
 ```
 
 ### `its intune graph put <path>`
 Raw Graph PUT — pass any /v1.0 or /beta path (use --beta for beta).
 Flags: `--body` Request body — inline JSON string or @file.json to read from disk · `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
-its intune graph put /users --body '{"displayName":"Jane Smith"}'
-its intune graph put /administrativeUnits --beta
-its intune graph put /users --header ConsistencyLevel=eventual
-its intune graph put "/deviceManagement/managedDevices/<id>" --body @./body.json
+its intune graph put /users --body '{"displayName":"Jane Smith"}' --confirm
+its intune graph put /administrativeUnits --beta --confirm
+its intune graph put /users --header ConsistencyLevel=eventual --confirm
+its intune graph put "/deviceManagement/managedDevices/<id>" --body @./body.json --confirm
+its intune graph put "/deviceManagement/managedDevices/<id>" --body @./body.json --json --confirm
 ```
 
 ### `its intune graph delete <path>`
 Raw Graph DELETE — pass any /v1.0 or /beta path (use --beta for beta).
 Flags: `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
-its intune graph delete /groups/8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f
-its intune graph delete /administrativeUnits --beta
-its intune graph delete /users --header ConsistencyLevel=eventual
-its intune graph delete "/deviceManagement/managedDevices/<id>"
+its intune graph delete /groups/8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --confirm
+its intune graph delete /administrativeUnits --beta --confirm
+its intune graph delete /users --header ConsistencyLevel=eventual --confirm
+its intune graph delete "/deviceManagement/managedDevices/<id>" --confirm
 ```

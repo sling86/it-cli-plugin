@@ -116,18 +116,18 @@ its sp lists items <site-id> --list <list-id>
 Create a list item. Idempotent on natural-key collision; use update-item to mutate.
 Flags: `--list` List ID · `--fields` JSON string of field values
 ```bash
-its sp lists create-item example.sharepoint.com,1a2b3c4d,5e6f7a8b --list "IT Assets" --fields '{"Title":"Dell 5540","Serial":"ABC123"}'
-its sp lists create-item <site-id> --list <list-id> --json '{"Title":"New row"}'
-its sp lists create-item <site-id> --list <list-id> --json '{"Title":"New ticket","Priority":"High","Assignee":"jane.smith@example.com"}'
+its sp lists create-item example.sharepoint.com,1a2b3c4d,5e6f7a8b --list "IT Assets" --fields '{"Title":"Dell 5540","Serial":"ABC123"}' --confirm
+its sp lists create-item <site-id> --list <list-id> --json '{"Title":"New row"}' --confirm
+its sp lists create-item <site-id> --list <list-id> --json '{"Title":"New ticket","Priority":"High","Assignee":"jane.smith@example.com"}' --confirm
 ```
 
 ### `its sp lists update-item <siteId>`
 Update a list item. PATCH — only supplied fields change.
 Flags: `--list` List ID · `--item` Item ID · `--fields` JSON string of field values to update
 ```bash
-its sp lists update-item example.sharepoint.com,1a2b3c4d,5e6f7a8b --list "IT Assets" --item 42 --fields '{"Status":"Retired"}'
-its sp lists update-item <site-id> --list <list-id> --item <item-id> --json '{"Title":"Updated"}'
-its sp lists update-item <site-id> --list <list-id> --item <item-id> --json '{"Status":"Closed","ResolvedBy":"jane.smith@example.com"}'
+its sp lists update-item example.sharepoint.com,1a2b3c4d,5e6f7a8b --list "IT Assets" --item 42 --fields '{"Status":"Retired"}' --confirm
+its sp lists update-item <site-id> --list <list-id> --item <item-id> --json '{"Title":"Updated"}' --confirm
+its sp lists update-item <site-id> --list <list-id> --item <item-id> --json '{"Status":"Closed","ResolvedBy":"jane.smith@example.com"}' --confirm
 ```
 
 ### `its sp lists delete-item <siteId>`
@@ -154,16 +154,18 @@ its sp files download --user jane.smith@example.com --item <id> | sha256sum
 Upload a text file. Stream a local file to the resource.
 Flags: `--drive` Drive ID · `--path` Parent path (default /) · `--name` File name · `--content` Text content to upload · `--content-file` Read --content from a local UTF-8 file (use for content > ~15KB — Windows command-line cap)
 ```bash
-its sp files upload example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --path /Policies --content-file ./policy.md
-its sp files upload <site-id> --drive <drive-id> --path "Shared Documents" --name report.pdf --content-file ./report.pdf
+its sp files upload example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --path /Policies --content-file ./policy.md --confirm
+its sp files upload <site-id> --drive <drive-id> --path "Shared Documents" --name report.pdf --content-file ./report.pdf --confirm
+its sp files upload <site-id> --drive <drive-id> --path "Shared Documents" --name report.pdf --content-file ./report.pdf --json --confirm
 ```
 
 ### `its sp files folder <siteId>`
 Create a folder under a parent item.
 Flags: `--drive` Drive ID · `--parent` Parent item ID · `--name` Folder name
 ```bash
-its sp files folder example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --parent root --name "2026 Audits"
-its sp files folder <site-id> --drive <drive-id> --parent <parent-id> --name "New Folder"
+its sp files folder example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --parent root --name "2026 Audits" --confirm
+its sp files folder <site-id> --drive <drive-id> --parent <parent-id> --name "New Folder" --confirm
+its sp files folder <site-id> --drive <drive-id> --parent <parent-id> --name "New Folder" --json --confirm
 ```
 
 ### `its sp files delete <siteId>`
@@ -178,33 +180,36 @@ its sp files delete <site-id> --drive <drive-id> --item <item-id> --confirm
 Create a sharing link for a file/folder (Graph createLink) and return its URL. --type view|edit, --scope organisation|anonymous (anonymous may be tenant-blocked). --to a@x,b@y makes a specific-people link only they can open.
 Flags: `--drive` Drive ID · `--item` Item ID · `--type <view|edit>` Link type · `--scope <organization|anonymous|users>` Link scope · `--to` Comma-separated emails — makes a specific-people link only they can open · `--notify` With --to: email the link to the recipients
 ```bash
-its sp files share example.sharepoint.com,1a2b,3c4d --drive b!xY7 --item 01Q3JEFH --type view --scope organization
-its sp files share example.sharepoint.com,1a2b,3c4d --drive b!xY7 --item 01Q3JEFH --type view --scope anonymous
+its sp files share example.sharepoint.com,1a2b,3c4d --drive b!xY7 --item 01Q3JEFH --type view --scope organization --confirm
+its sp files share example.sharepoint.com,1a2b,3c4d --drive b!xY7 --item 01Q3JEFH --type view --scope anonymous --confirm
 ```
 
 ### `its sp files move <siteId>`
 Move or rename a file. Move an item between folders (reversible).
 Flags: `--drive` Drive ID · `--item` Item ID · `--name` New file name · `--parent` New parent folder ID
 ```bash
-its sp files move example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --item 01Q3JEFH --name "policy-v2.docx"
-its sp files move example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --item 01Q3JEFH --parent 01ARCHIVE
-its sp files move <site-id> --drive <drive-id> --item <item-id> --name "new.docx" --parent <parent-id>
+its sp files move example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --item 01Q3JEFH --name "policy-v2.docx" --confirm
+its sp files move example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --item 01Q3JEFH --parent 01ARCHIVE --confirm
+its sp files move <site-id> --drive <drive-id> --item <item-id> --name "new.docx" --parent <parent-id> --confirm
+its sp files move <site-id> --drive <drive-id> --item <item-id> --name "new.docx" --parent <parent-id> --json --confirm
 ```
 
 ### `its sp files checkout <siteId>`
 Check out a file for editing. Locks the item against concurrent edits.
 Flags: `--drive` Drive ID · `--item` Item ID
 ```bash
-its sp files checkout example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --item 01Q3JEFH
-its sp files checkout <site-id> --drive <drive-id> --item <item-id>
+its sp files checkout example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --item 01Q3JEFH --confirm
+its sp files checkout <site-id> --drive <drive-id> --item <item-id> --confirm
+its sp files checkout <site-id> --drive <drive-id> --item <item-id> --json --confirm
 ```
 
 ### `its sp files checkin <siteId>`
 Check in a file. Releases the lock after editing.
 Flags: `--drive` Drive ID · `--item` Item ID · `--comment` Check-in comment · `--type` Check-in type: minor, major, or overwrite
 ```bash
-its sp files checkin example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --item 01Q3JEFH --comment "Updated section 4"
-its sp files checkin <site-id> --drive <drive-id> --item <item-id> --comment "v2"
+its sp files checkin example.sharepoint.com,1a2b3c4d,5e6f7a8b --drive b!xY7 --item 01Q3JEFH --comment "Updated section 4" --confirm
+its sp files checkin <site-id> --drive <drive-id> --item <item-id> --comment "v2" --confirm
+its sp files checkin <site-id> --drive <drive-id> --item <item-id> --comment "v2" --json --confirm
 ```
 
 ### `its sp files versions <siteId>`
@@ -273,8 +278,9 @@ its sp permissions item <site-id> --item <item-id>
 Create a sharing link. Creates a sharing link / direct grant.
 Flags: `--drive` Drive ID · `--item` Item ID · `--type` Link type: view, edit, or embed · `--scope` Link scope: anonymous, organization, or users (with --to) · `--to` Comma-separated emails — makes a specific-people link only they can open · `--notify` With --to: email the link to the recipients
 ```bash
-its sp permissions share example.sharepoint.com,1a2b,3c4d --drive b!xY7 --item 01Q3JEFH --type view --scope users
-its sp permissions share <site-id> --item <item-id> --type view --scope organization
+its sp permissions share example.sharepoint.com,1a2b,3c4d --drive b!xY7 --item 01Q3JEFH --type view --scope users --confirm
+its sp permissions share <site-id> --item <item-id> --type view --scope organization --confirm
+its sp permissions share <site-id> --item <item-id> --type view --scope organization --json --confirm
 ```
 
 ### `its sp permissions links <siteId>`
@@ -289,7 +295,7 @@ its sp permissions links <site> --filter scope=anonymous
 Grant the it-cli app (or another app via --app) a Sites.Selected role on one site. Useful for bootstrapping the role needed by `its sp groups *`. Requires Sites.FullControl.All on the CALLING credentials — typically via a separate admin app (SP_ADMIN_CLIENT_ID/SP_ADMIN_CLIENT_SECRET) or a one-off elevation.
 Flags: `--role <read|write|fullcontrol>` Role to grant: read, write, or fullcontrol · `--app` Client (object) id of the app to grant. Defaults to the current SP_CLIENT_ID / CLIENT_ID. · `--name` Display name to store with the grant. Defaults to 'its-cli'.
 ```bash
-its sp permissions grant-app example.sharepoint.com,1a2b,3c4d --app 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --role write --name "its CLI"
+its sp permissions grant-app example.sharepoint.com,1a2b,3c4d --app 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --role write --name "its CLI" --confirm
 ```
 
 ### `its sp permissions remove <siteId>`
@@ -335,8 +341,8 @@ List members of an SP site group. Accept group id or title.
 ### `its sp groups add-member <site> <group> <principal>`
 Add a UPN, Entra security-group object id, or pre-formed claim LoginName to an SP site group. Idempotent.
 ```bash
-its sp groups add-member example.sharepoint.com,1a2b3c4d,5e6f7a8b "IT Owners" jane.smith@example.com
-its sp groups add-member example.sharepoint.com,1a2b3c4d,5e6f7a8b "IT Owners" 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f
+its sp groups add-member example.sharepoint.com,1a2b3c4d,5e6f7a8b "IT Owners" jane.smith@example.com --confirm
+its sp groups add-member example.sharepoint.com,1a2b3c4d,5e6f7a8b "IT Owners" 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --confirm
 ```
 
 ### `its sp groups remove-member <site> <group> <principal>`
@@ -414,39 +420,41 @@ its sp graph get "/sites/<site-id>/lists"
 Raw Graph POST — pass any /v1.0 or /beta path (use --beta for beta).
 Flags: `--body` Request body — inline JSON string or @file.json to read from disk · `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
-its sp graph post /users --body '{"displayName":"Jane Smith"}'
-its sp graph post /administrativeUnits --beta
-its sp graph post /users --header ConsistencyLevel=eventual
-its sp graph post "/sites/<site-id>/lists" --body @./new-list.json
+its sp graph post /users --body '{"displayName":"Jane Smith"}' --confirm
+its sp graph post /administrativeUnits --beta --confirm
+its sp graph post /users --header ConsistencyLevel=eventual --confirm
+its sp graph post "/sites/<site-id>/lists" --body @./new-list.json --confirm
+its sp graph post "/sites/<site-id>/lists" --body @./new-list.json --json --confirm
 ```
 
 ### `its sp graph patch <path>`
 Raw Graph PATCH — pass any /v1.0 or /beta path (use --beta for beta).
 Flags: `--body` Request body — inline JSON string or @file.json to read from disk · `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
-its sp graph patch /users --body '{"displayName":"Jane Smith"}'
-its sp graph patch /administrativeUnits --beta
-its sp graph patch /users --header ConsistencyLevel=eventual
-its sp graph patch "/sites/<site-id>/lists/<list-id>" --body '{"displayName":"Renamed"}'
-its sp graph patch "/sites/<site-id>/lists/<list-id>" --body --json
+its sp graph patch /users --body '{"displayName":"Jane Smith"}' --confirm
+its sp graph patch /administrativeUnits --beta --confirm
+its sp graph patch /users --header ConsistencyLevel=eventual --confirm
+its sp graph patch "/sites/<site-id>/lists/<list-id>" --body '{"displayName":"Renamed"}' --confirm
+its sp graph patch "/sites/<site-id>/lists/<list-id>" --body @./patch.json --json --confirm
 ```
 
 ### `its sp graph put <path>`
 Raw Graph PUT — pass any /v1.0 or /beta path (use --beta for beta).
 Flags: `--body` Request body — inline JSON string or @file.json to read from disk · `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
-its sp graph put /users --body '{"displayName":"Jane Smith"}'
-its sp graph put /administrativeUnits --beta
-its sp graph put /users --header ConsistencyLevel=eventual
-its sp graph put "/sites/<site-id>/drive/items/<item-id>/content" --body @./file.bin
+its sp graph put /users --body '{"displayName":"Jane Smith"}' --confirm
+its sp graph put /administrativeUnits --beta --confirm
+its sp graph put /users --header ConsistencyLevel=eventual --confirm
+its sp graph put "/sites/<site-id>/drive/items/<item-id>/content" --body @./file.bin --confirm
+its sp graph put "/sites/<site-id>/drive/items/<item-id>/content" --body @./file.bin --json --confirm
 ```
 
 ### `its sp graph delete <path>`
 Raw Graph DELETE — pass any /v1.0 or /beta path (use --beta for beta).
 Flags: `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
-its sp graph delete /groups/8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f
-its sp graph delete /administrativeUnits --beta
-its sp graph delete /users --header ConsistencyLevel=eventual
-its sp graph delete "/sites/<site-id>/lists/<list-id>"
+its sp graph delete /groups/8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --confirm
+its sp graph delete /administrativeUnits --beta --confirm
+its sp graph delete /users --header ConsistencyLevel=eventual --confirm
+its sp graph delete "/sites/<site-id>/lists/<list-id>" --confirm
 ```

@@ -45,16 +45,17 @@ Flags: `--environment` Environment id (required)
 Turn a flow off (admin). Stop the resource. Use --confirm if the action is destructive.
 Flags: `--environment` Environment id (required)
 ```bash
-its pa flows stop 8f1c2d3e-... --environment Default-1a2b3c4d
-its pa flows stop <flow-id> --environment <env-id>
+its pa flows stop 8f1c2d3e-... --environment Default-1a2b3c4d --confirm
+its pa flows stop <flow-id> --environment <env-id> --confirm
 ```
 
 ### `its pa flows start <flow_id>`
 Turn a flow on (admin). Start the resource. Idempotent.
 Flags: `--environment` Environment id (required)
 ```bash
-its pa flows start 8f1c2d3e-... --environment Default-1a2b3c4d
-its pa flows start <flow-id> --environment <env-id>
+its pa flows start 8f1c2d3e-... --environment Default-1a2b3c4d --confirm
+its pa flows start <flow-id> --environment <env-id> --confirm
+its pa flows start <flow-id> --environment <env-id> --json --confirm
 ```
 
 ### `its pa flows delete <flow_id>`

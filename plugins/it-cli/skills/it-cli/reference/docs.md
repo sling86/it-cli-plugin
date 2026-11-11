@@ -10,8 +10,8 @@ Interactive help UI for the `its` CLI. `docs serve` launches a browser-based com
 Compile the interactive help UI browser assets (Vite build + embedded-assets manifest).
 Flags: `--force` Rebuild even if up-to-date assets already exist
 ```bash
-its docs build
-its docs build --force
+its docs build --confirm
+its docs build --force --confirm
 ```
 
 ## serve

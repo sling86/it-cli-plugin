@@ -22,12 +22,12 @@ its entra users --fields displayName,upn,jobTitle
 Update user properties. Use named flags for common fields, --set k=v,k=v for any other Graph user property.
 Flags: `--displayName` Display name · `--jobTitle` Job title · `--department` Department · `--company` Company name · `--office` Office location · `--phone` Mobile phone · `--business-phone` Business (desk) phone — replaces the current number; Graph holds at most one · `--employeeId` Employee ID (PeopleHR EmployeeId) · `--streetAddress` Street address · `--city` City · `--state` State/county · `--postalCode` Postal code · `--country` Country · `--usage` Usage location (e.g. GB) · `--manager` Set manager (UPN or GUID) · `--clear-manager` Remove the manager assignment (top of org) · `--set` Freeform Graph property passthrough, comma-separated key=value pairs (e.g. --set extensionAttribute1=foo,givenName=Bar)
 ```bash
-its entra users update jane.smith@example.com --jobTitle "Finance Manager" --department Finance
-its entra users update jane.smith@example.com --manager john.doe@example.com
-its entra users update jane.smith@example.com --set extensionAttribute13=Leaver
-its entra users update jane.smith@example.com --department "Marketing"
-its entra users update jane.smith@example.com --manager boss@example.com
-its entra users update jane.smith@example.com --set "officeLocation=London,jobTitle=Lead"
+its entra users update jane.smith@example.com --jobTitle "Finance Manager" --department Finance --confirm
+its entra users update jane.smith@example.com --manager john.doe@example.com --confirm
+its entra users update jane.smith@example.com --set extensionAttribute13=Leaver --confirm
+its entra users update jane.smith@example.com --department "Marketing" --confirm
+its entra users update jane.smith@example.com --manager boss@example.com --confirm
+its entra users update jane.smith@example.com --set "officeLocation=London,jobTitle=Lead" --confirm
 ```
 
 ### `its entra users photo <user>`
@@ -41,7 +41,7 @@ its entra users photo jane.smith@example.com --out jane.jpg
 Upload a user's profile photo from a JPEG or PNG file (max 4 MB). Replaces any existing photo; reads it back to confirm.
 Flags: `--file` JPEG or PNG to upload
 ```bash
-its entra users set-photo jane.smith@example.com --file jane.jpg
+its entra users set-photo jane.smith@example.com --file jane.jpg --confirm
 ```
 
 ### `its entra users search <query>`
@@ -81,24 +81,26 @@ its entra users licences jane.smith@example.com
 Send a B2B guest invitation to an external user. Send an invitation; the recipient takes the action.
 Flags: `--email` External email address (required) · `--name` Display name (defaults to email prefix) · `--redirect` Post-redemption redirect URL · `--message` Custom invitation message body · `--no-email` Create guest without sending the invitation email · `--usage` ISO country code — also sets usageLocation on the created user
 ```bash
-its entra users invite --email contractor@partner.com --name "Alex Cole"
-its entra users invite --email contractor@partner.com --name "Alex Cole" --no-email
-its entra users invite contractor@vendor.com --redirect "https://myapps.microsoft.com"
-its entra users invite contractor@vendor.com --no-email --redirect "https://myapps.microsoft.com"
+its entra users invite --email contractor@partner.com --name "Alex Cole" --confirm
+its entra users invite --email contractor@partner.com --name "Alex Cole" --no-email --confirm
+its entra users invite contractor@vendor.com --redirect "https://myapps.microsoft.com" --confirm
+its entra users invite contractor@vendor.com --no-email --redirect "https://myapps.microsoft.com" --confirm
 ```
 
 ### `its entra users create`
 Create a new user. Idempotent on duplicate names — use update/edit to mutate an existing record.
 Flags: `--displayName` Display name · `--upn` User principal name · `--password` Initial password · `--jobTitle` Job title · `--department` Department · `--company` Company name · `--office` Office location · `--usage` Usage location (e.g. GB)
 ```bash
-its entra users create --displayName "Jane Smith" --upn jane.smith@example.com --department Finance
-its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!"
+its entra users create --displayName "Jane Smith" --upn jane.smith@example.com --department Finance --confirm
+its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!" --confirm
+its entra users create --upn jane.smith@example.com --displayName "Jane Smith" --password "TempP@ss!" --json --confirm
 ```
 
 ### `its entra users enable <id>`
 Enable a user account. Switch to active state. Idempotent.
 ```bash
-its entra users enable jane.smith@example.com
+its entra users enable jane.smith@example.com --confirm
+its entra users enable jane.smith@example.com --json --confirm
 ```
 
 ### `its entra users bootstrap-admin <id>`
@@ -106,8 +108,9 @@ Macro: create a TAP for the user, then optionally exclude them from CA policies 
 Flags: `--ttl` TAP lifetime (e.g. 1h, 4h, 1d). Default 1h · `--one-time` TAP usable only once · `--no-tap` Skip TAP creation (only run policy exclusions) · `--exclude-policies` Comma-separated CA policy IDs or displayNames to exclude the user from. Default empty — pass the Microsoft-managed phishing-resistant admin policy ID if you need it. · `--dry-run` Print actions without applying
 ```bash
 its entra users bootstrap-admin jane.smith@example.com --dry-run
-its entra users bootstrap-admin jane.smith@example.com --ttl 60 --one-time
-its entra users bootstrap-admin newadmin@example.com
+its entra users bootstrap-admin jane.smith@example.com --ttl 60 --one-time --confirm
+its entra users bootstrap-admin newadmin@example.com --confirm
+its entra users bootstrap-admin newadmin@example.com --json --confirm
 ```
 
 ### `its entra users stale`
@@ -199,9 +202,10 @@ its entra groups members <group-id> --all
 Create a group: a security group (default) or a Microsoft 365 group (--type m365: shared mailbox, calendar and Teams-capable). Optionally set owners at creation. Idempotent on duplicate names — use update/edit to mutate an existing record.
 Flags: `--type <security|m365>` security (default) or m365 · `--owner` Owner(s) — UPN or GUID, comma-separated · `--displayName` Group display name · `--description` Group description · `--mail` Mail-enabled
 ```bash
-its entra groups create --displayName "IT Admins" --description "IT team"
-its entra groups create --displayName "All Staff" --mail
-its entra groups create --displayName "Marketing"
+its entra groups create --displayName "IT Admins" --description "IT team" --confirm
+its entra groups create --displayName "All Staff" --mail --confirm
+its entra groups create --displayName "Marketing" --confirm
+its entra groups create --displayName "Marketing" --json --confirm
 ```
 
 ### `its entra groups owners <group_id>`
@@ -211,22 +215,23 @@ List a group's owners.
 Make a user an owner of a group. Reads the owners back to confirm.
 Flags: `--user` User UPN or GUID
 ```bash
-its entra groups add-owner <group-id> --user jane.smith@example.com
+its entra groups add-owner <group-id> --user jane.smith@example.com --confirm
 ```
 
 ### `its entra groups remove-owner <group_id>`
 Take a user off the owners of a group. Reads the owners back to confirm.
 Flags: `--user` User UPN or GUID
 ```bash
-its entra groups remove-owner <group-id> --user jane.smith@example.com
+its entra groups remove-owner <group-id> --user jane.smith@example.com --confirm
 ```
 
 ### `its entra groups add-member <group_id>`
 Add a user to a group. Refuses dynamic-membership groups — Graph accepts the call but the dynamic engine immediately overrides. Also refuses if the candidate is disabled / a leaver / has an active namesake (lesson 326 — Adam picked the wrong Steve/Colette/Nick). Pass --force to override either guard.
 Flags: `--user` User ID or UPN to add · `--force` Override the dynamic-group guard AND the leaver / disabled / namesake guard · `--skip-leaver-check` Skip just the leaver/disabled/namesake guard (still enforces the dynamic-group guard)
 ```bash
-its entra groups add-member 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --user jane.smith@example.com
-its entra groups add-member <group-id> --user jane.smith@example.com
+its entra groups add-member 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --user jane.smith@example.com --confirm
+its entra groups add-member <group-id> --user jane.smith@example.com --confirm
+its entra groups add-member <group-id> --user jane.smith@example.com --json --confirm
 ```
 
 ### `its entra groups remove-member <group_id>`
@@ -271,10 +276,10 @@ its entra licences --watch
 Assign one or more licences to a user. Pass --sku as a comma-separated list to assign several atomically in a single Graph call (parallel single-assigns trip 409 Directory_ConcurrencyViolation). Idempotent.
 Flags: `--sku` SKU GUID, part number (ENTERPRISEPACK) or friendly name ("Office 365 E3") — comma-separate several
 ```bash
-its entra licences assign jane@x.com --sku ENTERPRISEPACK
-its entra licences assign jane@x.com --sku SPE_E3,EMS,POWER_BI_PRO
-its entra licences assign jane.smith@example.com --sku SPB
-its entra licences assign jane.smith@example.com --sku SPB,ENTERPRISEPACK
+its entra licences assign jane@x.com --sku ENTERPRISEPACK --confirm
+its entra licences assign jane@x.com --sku SPE_E3,EMS,POWER_BI_PRO --confirm
+its entra licences assign jane.smith@example.com --sku SPB --confirm
+its entra licences assign jane.smith@example.com --sku SPB,ENTERPRISEPACK --confirm
 ```
 
 ### `its entra licences remove <user_id>`
@@ -330,17 +335,19 @@ List members of a directory role. Returns direct members; nested groups aren't e
 its entra roles members <role-id>
 ```
 
-### `its entra roles assign <user_id>`
-Assign a directory role to a user. Idempotent — assigning twice is a no-op.
-Flags: `--role` Role definition ID
+### `its entra roles assign <user>`
+Assign a directory role to a user, permanently (always on). For a role they switch on when needed, use `its entra pim assign`. The user can be a UPN, email or ID; the role a display name or ID. --dry-run shows the resolved IDs.
+Flags: `--role` Role display name or role definition ID
 ```bash
-its entra roles assign jane.smith@example.com --role "User Administrator"
-its entra roles assign jane.smith@example.com --role <role-def-id>
+its entra roles assign jane.smith@example.com --role "User Administrator" --confirm
+its entra roles assign jane.smith@example.com --role "User Administrator" --dry-run
+its entra roles assign jane.smith@example.com --role <role-def-id> --confirm
+its entra roles assign jane.smith@example.com --role <role-def-id> --json --confirm
 ```
 
-### `its entra roles remove <user_id>`
-Remove a directory role from a user (requires --confirm). Permanent — use --confirm.
-Flags: `--role` Role definition ID · `--confirm` Confirm the removal
+### `its entra roles remove <user>`
+Remove a directory role from a user (requires --confirm, or --dry-run to preview with resolved IDs). The user can be a UPN, email or ID; the role a display name or ID. Permanent.
+Flags: `--role` Role display name or role definition ID · `--confirm` Confirm the removal
 ```bash
 its entra roles remove jane.smith@example.com --role "User Administrator" --confirm
 its entra roles remove jane.smith@example.com --role <role-def-id> --confirm
@@ -390,9 +397,9 @@ its entra signin suspicious --days 7
 Create a Temporary Access Pass for a user (does not work for B2B guests).
 Flags: `--ttl` Lifetime (e.g. 30m, 1h, 8h, 1d). Default 1h · `--one-time` Pass is usable only once · `--start-time` ISO 8601 timestamp for scheduled start (e.g. 2026-04-21T09:00:00Z)
 ```bash
-its entra tap create jane.smith@example.com --ttl 60 --one-time
-its entra tap create jane.smith@example.com
-its entra tap create jane.smith@example.com --ttl 8h
+its entra tap create jane.smith@example.com --ttl 60 --one-time --confirm
+its entra tap create jane.smith@example.com --confirm
+its entra tap create jane.smith@example.com --ttl 8h --confirm
 ```
 
 ### `its entra tap <user_id>`
@@ -438,9 +445,9 @@ Patch a CA policy (state or full JSON body). PATCH semantics — only the suppli
 Flags: `--state <enabled|disabled|reportOnly>` New state · `--body` Raw JSON body to PATCH (overrides --state) — inline or @path/to/file.json · `--dry-run` Print the PATCH request without sending
 ```bash
 its entra ca patch "Block legacy auth" --state enabledForReportingButNotEnforced --dry-run
-its entra ca patch "Block legacy auth" --state enabled
-its entra ca patch <policy-id> --state enabled
-its entra ca patch <policy-id> --state enabledForReportingButNotEnforced
+its entra ca patch "Block legacy auth" --state enabled --confirm
+its entra ca patch <policy-id> --state enabled --confirm
+its entra ca patch <policy-id> --state enabledForReportingButNotEnforced --confirm
 ```
 
 ### `its entra ca exclude-guests <id_or_name>`
@@ -448,7 +455,8 @@ Add 'All guest and external users' to excludeGuestsOrExternalUsers on a policy.
 Flags: `--dry-run` Print the PATCH request without sending
 ```bash
 its entra ca exclude-guests "Require compliant device" --dry-run
-its entra ca exclude-guests <policy-id>
+its entra ca exclude-guests <policy-id> --confirm
+its entra ca exclude-guests <policy-id> --json --confirm
 ```
 
 ### `its entra ca create`
@@ -456,7 +464,8 @@ Create a Conditional Access policy from a JSON body or file (@path).
 Flags: `--body` Inline JSON or @path/to/policy.json — the POST body for the new policy · `--dry-run` Print the POST request without sending
 ```bash
 its entra ca create --body @./policy.json --dry-run
-its entra ca create @./policy.json
+its entra ca create @./policy.json --confirm
+its entra ca create @./policy.json --json --confirm
 ```
 
 ### `its entra ca delete <id_or_name>`
@@ -471,17 +480,18 @@ its entra ca delete "Block legacy auth" --confirm
 Add a user to a CA policy's excludeUsers — atomic mutation, no need to rebuild the users object.
 Flags: `--dry-run` Print the PATCH request without sending
 ```bash
-its entra ca exclude-user "Require MFA" jane.smith@example.com
-its entra ca exclude-user <policy-id> jane.smith@example.com
-its entra ca exclude-user "Require MFA for admins" jane.smith@example.com
+its entra ca exclude-user "Require MFA" jane.smith@example.com --confirm
+its entra ca exclude-user <policy-id> jane.smith@example.com --confirm
+its entra ca exclude-user "Require MFA for admins" jane.smith@example.com --confirm
 ```
 
 ### `its entra ca unexclude-user <id_or_name> <user>`
 Remove a user from a CA policy's excludeUsers list. Reverse of `exclude-user`. Idempotent.
 Flags: `--dry-run` Print the PATCH request without sending
 ```bash
-its entra ca unexclude-user "Require MFA" jane.smith@example.com
-its entra ca unexclude-user <policy-id> jane.smith@example.com
+its entra ca unexclude-user "Require MFA" jane.smith@example.com --confirm
+its entra ca unexclude-user <policy-id> jane.smith@example.com --confirm
+its entra ca unexclude-user <policy-id> jane.smith@example.com --json --confirm
 ```
 
 ### `its entra ca why-blocked <user>`
@@ -588,7 +598,8 @@ Safely add delegated scope(s) to an app — UNION with existing scope, never rep
 Flags: `--resource-app-id` Resource appId (default: Microsoft Graph) · `--principal-id` Grant on behalf of a specific user (consentType=Principal). Default: AllPrincipals (tenant-wide) · `--dry-run` Print the request without sending
 ```bash
 its entra consent add-scope 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f User.Read,Mail.Read --dry-run
-its entra consent add-scope <app-id> Mail.Read
+its entra consent add-scope <app-id> Mail.Read --confirm
+its entra consent add-scope <app-id> Mail.Read --json --confirm
 ```
 
 ### `its entra consent remove-scope <client_app_id> <scopes>`
@@ -596,7 +607,8 @@ Remove delegated scope(s) from an existing grant — keeps others intact.
 Flags: `--resource-app-id` Resource appId (default: Microsoft Graph) · `--principal-id` Per-user grant — default AllPrincipals (tenant-wide) · `--dry-run` Print the request without sending
 ```bash
 its entra consent remove-scope 8f1c2d3e-... Mail.Read --dry-run
-its entra consent remove-scope <app-id> Mail.Read
+its entra consent remove-scope <app-id> Mail.Read --confirm
+its entra consent remove-scope <app-id> Mail.Read --json --confirm
 ```
 
 ### `its entra consent app-roles <client_app_id>`
@@ -610,7 +622,8 @@ Grant an application-permission (app-role) to a client app — equivalent to con
 Flags: `--resource-app-id` Resource appId (default: Microsoft Graph) · `--dry-run` Print the request without sending
 ```bash
 its entra consent app-role-grant 8f1c2d3e-... User.Read.All --dry-run
-its entra consent app-role-grant <app-id> User.Read.All
+its entra consent app-role-grant <app-id> User.Read.All --confirm
+its entra consent app-role-grant <app-id> User.Read.All --json --confirm
 ```
 
 ### `its entra consent app-role-revoke <client_app_id> <assignment_id>`
@@ -634,7 +647,8 @@ Toggle inboundTrust.isMfaAccepted on the default policy.
 Flags: `--dry-run` Print the PATCH without sending
 ```bash
 its entra xtenant trust-mfa on --dry-run
-its entra xtenant trust-mfa on
+its entra xtenant trust-mfa on --confirm
+its entra xtenant trust-mfa on --json --confirm
 ```
 
 ### `its entra xtenant trust-device <on_off>`
@@ -642,7 +656,8 @@ Toggle inboundTrust.isCompliantDeviceAccepted on the default policy.
 Flags: `--dry-run` Print the PATCH without sending
 ```bash
 its entra xtenant trust-device off --dry-run
-its entra xtenant trust-device on
+its entra xtenant trust-device on --confirm
+its entra xtenant trust-device on --json --confirm
 ```
 
 ### `its entra xtenant partners`
@@ -654,9 +669,10 @@ its entra xtenant partners
 ### `its entra xtenant partner-add <tenant_id>`
 Start a per-partner cross-tenant access config. Bootstraps a fresh per-partner override record.
 ```bash
-its entra xtenant partner-add 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f
-its entra xtenant list
-its entra xtenant partner-add <partner-tenant-id>
+its entra xtenant partner-add 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --confirm
+its entra xtenant list --confirm
+its entra xtenant partner-add <partner-tenant-id> --confirm
+its entra xtenant partner-add <partner-tenant-id> --json --confirm
 ```
 
 ### `its entra xtenant partner-set <tenant_id>`
@@ -664,7 +680,8 @@ Patch a partner cross-tenant access record. Patches an existing partner record.
 Flags: `--trust-mfa <on|off>` on or off · `--trust-device <on|off>` on or off · `--trust-haadj <on|off>` on or off (Hybrid Azure AD Joined) · `--dry-run` Print the PATCH without sending
 ```bash
 its entra xtenant partner-set 8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --trust-mfa true --dry-run
-its entra xtenant partner-set <partner-tenant-id> --trust-mfa on
+its entra xtenant partner-set <partner-tenant-id> --trust-mfa on --confirm
+its entra xtenant partner-set <partner-tenant-id> --trust-mfa on --json --confirm
 ```
 
 ## audit
@@ -782,8 +799,9 @@ its entra onboarding summary jane.smith@example.com --watch
 Copy group memberships from one user to another. Idempotent — already-shared groups are skipped.
 Flags: `--source` Source user ID or UPN · `--target` Target user ID or UPN
 ```bash
-its entra onboarding copy-groups --source john.doe@example.com --target jane.smith@example.com
-its entra onboarding copy-groups --source peer@example.com --target jane.smith@example.com
+its entra onboarding copy-groups --source john.doe@example.com --target jane.smith@example.com --confirm
+its entra onboarding copy-groups --source peer@example.com --target jane.smith@example.com --confirm
+its entra onboarding copy-groups --source peer@example.com --target jane.smith@example.com --json --confirm
 ```
 
 ### `its entra onboarding convert-mailbox <user_id>`
@@ -842,14 +860,14 @@ its entra doctor --watch
 Bootstrap a new Entra app registration end-to-end — creates the application, its service principal, and a 12-month client secret. Returns the appId, objectId, SP id, and the plaintext secret (only shown once).
 Flags: `--redirect-uri` Web redirect URI. Repeatable — pass multiple --redirect-uri flags or comma-separate. · `--audience <single|multi|consumer|personal>` Sign-in audience · `--secret-name` Display name for the client secret · `--months` Client secret lifetime in months · `--no-secret` Skip generating a client secret
 ```bash
-its entra apps register "its CLI" --redirect-uri http://localhost --months 12
+its entra apps register "its CLI" --redirect-uri http://localhost --months 12 --confirm
 ```
 
 ### `its entra apps add-password <app>`
 Rotate / add a client secret on an existing app registration. The plaintext secretText is only returned once.
 Flags: `--name` Display name for the secret · `--months` Lifetime in months
 ```bash
-its entra apps add-password "its CLI" --name 2026-rotation --months 12
+its entra apps add-password "its CLI" --name 2026-rotation --months 12 --confirm
 ```
 
 ### `its entra apps secrets`
@@ -906,6 +924,61 @@ Flags: `--ttl` TAP lifetime in minutes (default 60) · `--one-time` TAP is singl
 its entra admin-bootstrap run jane.smith@example.com --ttl 60 --one-time --dry-run
 ```
 
+## pim
+
+### `its entra pim`
+My directory roles: the ones I can switch on (eligible) and the ones I hold now (active), with when each ends. Uses your own sign-in.
+```bash
+its entra pim list
+```
+
+### `its entra pim activate <role>`
+Switch on one of my eligible roles for --hours (default 4, max 8). A reason is required.
+Flags: `--hours` Hours to keep it on (1-8) · `--reason` Why you need it (recorded by Entra)
+```bash
+its entra pim activate "User Administrator" --hours 4 --reason "Offboarding ticket 1234" --confirm
+```
+
+### `its entra pim deactivate <role>`
+Switch off a role I switched on earlier. Permanent assignments can't be switched off.
+```bash
+its entra pim deactivate "User Administrator" --confirm
+```
+
+### `its entra pim assign <user>`
+Make a user ELIGIBLE for a directory role: they can switch it on with `pim activate`, it isn't on until they do. Permanent unless --days is given. Needs a reason. Uses your own sign-in (Privileged Role Administrator).
+Flags: `--role` Role display name or role definition ID · `--days` Eligible for this many days, then it ends (default: no end) · `--permanent` Eligible with no end date (the default) · `--reason` Why (recorded by Entra)
+```bash
+its entra pim assign jane@example.com --role "User Administrator" --reason "Helpdesk cover" --confirm
+its entra pim assign jane@example.com --role "User Administrator" --days 90 --reason "Project" --dry-run
+```
+
+### `its entra pim unassign <user>`
+Take away a user's ELIGIBILITY for a directory role. Doesn't touch a role they have switched on right now. Needs a reason.
+Flags: `--role` Role display name or role definition ID · `--reason` Why (recorded by Entra)
+```bash
+its entra pim unassign jane@example.com --role "User Administrator" --reason "Left the team" --confirm
+```
+
+### `its entra pim eligible [user]`
+Who is eligible for which directory role, and when it ends. Give a user to see just theirs. Uses your own sign-in.
+```bash
+its entra pim eligible
+```
+
+### `its entra pim settings <role>`
+What a person has to do to switch a directory role on: longest time, MFA, justification, approval and who gets alerted. Uses your own sign-in.
+```bash
+its entra pim settings "User Administrator"
+```
+
+### `its entra pim set <role>`
+Change what it takes to switch a directory role on. Only the settings you name are touched; --dry-run shows before and after for each. Uses your own sign-in (Privileged Role Administrator).
+Flags: `--max-hours` Longest it can stay on (1-24 hours) · `--mfa <on|off>` Require MFA to switch it on · `--justification <on|off>` Require a reason to switch it on · `--approver` Require approval from these people (UPNs, comma-separated) · `--no-approval` Don't require approval · `--notify` Also email these addresses when it is switched on (comma-separated, or "none")
+```bash
+its entra pim set "User Administrator" --max-hours 4 --mfa on --justification on --dry-run
+```
+
 ## sync
 
 ### `its entra sync status <app>`
@@ -947,39 +1020,41 @@ its entra graph get "/identityGovernance" --beta
 Raw Graph POST — pass any /v1.0 or /beta path (use --beta for beta).
 Flags: `--body` Request body — inline JSON string or @file.json to read from disk · `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
-its entra graph post /users --body '{"displayName":"Jane Smith"}'
-its entra graph post /administrativeUnits --beta
-its entra graph post /users --header ConsistencyLevel=eventual
-its entra graph post "/users/$count" --body @./payload.json
+its entra graph post /users --body '{"displayName":"Jane Smith"}' --confirm
+its entra graph post /administrativeUnits --beta --confirm
+its entra graph post /users --header ConsistencyLevel=eventual --confirm
+its entra graph post "/users/$count" --body @./payload.json --confirm
+its entra graph post "/users/$count" --body @./payload.json --json --confirm
 ```
 
 ### `its entra graph patch <path>`
 Raw Graph PATCH — pass any /v1.0 or /beta path (use --beta for beta).
 Flags: `--body` Request body — inline JSON string or @file.json to read from disk · `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
-its entra graph patch /users --body '{"displayName":"Jane Smith"}'
-its entra graph patch /administrativeUnits --beta
-its entra graph patch /users --header ConsistencyLevel=eventual
-its entra graph patch "/users/<id>" --body '{"jobTitle":"Lead"}'
-its entra graph patch "/users/<id>" --body --json
+its entra graph patch /users --body '{"displayName":"Jane Smith"}' --confirm
+its entra graph patch /administrativeUnits --beta --confirm
+its entra graph patch /users --header ConsistencyLevel=eventual --confirm
+its entra graph patch "/users/<id>" --body '{"jobTitle":"Lead"}' --confirm
+its entra graph patch "/users/<id>" --body @./patch.json --json --confirm
 ```
 
 ### `its entra graph put <path>`
 Raw Graph PUT — pass any /v1.0 or /beta path (use --beta for beta).
 Flags: `--body` Request body — inline JSON string or @file.json to read from disk · `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
-its entra graph put /users --body '{"displayName":"Jane Smith"}'
-its entra graph put /administrativeUnits --beta
-its entra graph put /users --header ConsistencyLevel=eventual
-its entra graph put "/users/<id>/photo/$value" --body @./photo.jpg
+its entra graph put /users --body '{"displayName":"Jane Smith"}' --confirm
+its entra graph put /administrativeUnits --beta --confirm
+its entra graph put /users --header ConsistencyLevel=eventual --confirm
+its entra graph put "/users/<id>/photo/$value" --body @./photo.jpg --confirm
+its entra graph put "/users/<id>/photo/$value" --body @./photo.jpg --json --confirm
 ```
 
 ### `its entra graph delete <path>`
 Raw Graph DELETE — pass any /v1.0 or /beta path (use --beta for beta).
 Flags: `--beta` Use /beta instead of /v1.0 · `--header` Extra headers as comma-separated K=V pairs (e.g. Prefer=return=minimal)
 ```bash
-its entra graph delete /groups/8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f
-its entra graph delete /administrativeUnits --beta
-its entra graph delete /users --header ConsistencyLevel=eventual
-its entra graph delete "/users/<id>"
+its entra graph delete /groups/8f1c2d3e-4a5b-6c7d-8e9f-0a1b2c3d4e5f --confirm
+its entra graph delete /administrativeUnits --beta --confirm
+its entra graph delete /users --header ConsistencyLevel=eventual --confirm
+its entra graph delete "/users/<id>" --confirm
 ```

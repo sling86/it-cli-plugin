@@ -68,8 +68,8 @@ its bw items attachments "Exchange Online cert"
 Attach a local file to a vault item. The file is encrypted locally under its own key before upload — the server never sees the contents or the filename. Additive: existing attachments are untouched.
 Flags: `--name` Store under this filename instead of the file's own · `--vault` Named vault profile (omit for default)
 ```bash
-its bw items attach "Exchange Online cert" ./exo-auth.pfx
-its bw items attach 3f2b1c94-... ./key.pem --name exo-key.pem
+its bw items attach "Exchange Online cert" ./exo-auth.pfx --confirm
+its bw items attach 3f2b1c94-... ./key.pem --name exo-key.pem --confirm
 ```
 
 ### `its bw items download <id> <attachment>`
@@ -121,12 +121,12 @@ its bw items favourites
 Create a new vault item (login, note, card, or identity). Idempotent on duplicate names — use update/edit to mutate an existing record.
 Flags: `--type <login|note|card|identity|ssh-key>` Item type: login (default), note, card, identity, ssh-key · `--username` Login (or identity) username · `--password` Login password · `--password-file` Read the password from a UTF-8 file (keeps the secret out of shell history and the command line) · `--uri` Login URL · `--totp` TOTP secret or otpauth URI · `--notes` Notes · `--notes-file` Read notes from a UTF-8 file (use for notes > ~15KB — Windows command-line cap) · `--folder` Folder name (created if it does not exist) · `--field` Custom text field(s) — comma-separated name=value (e.g. --field lan_ip=10.0.0.1,rack=A3). On update, upserts by name. · `--field-hidden` Custom hidden field(s) — comma-separated name=value. Stored as a secret (masked in the UI like a password). · `--cardholder` Card: name on the card · `--card-number` Card: number · `--card-brand` Card: brand (visa, mastercard, amex …) · `--card-exp` Card: expiry as MM/YYYY · `--card-code` Card: security code · `--first-name` Identity: first name · `--middle-name` Identity: middle name · `--last-name` Identity: last name · `--title` Identity: title (Mr, Ms …) · `--company` Identity: company · `--email` Identity: e-mail · `--phone` Identity: phone · `--address` Identity: address line 1 · `--address2` Identity: address line 2 · `--address3` Identity: address line 3 · `--city` Identity: city · `--county` Identity: county / state · `--postcode` Identity: postcode · `--country` Identity: country · `--ssn` Identity: national insurance / SSN · `--passport` Identity: passport number · `--licence` Identity: driving licence number · `--private-key-file` SSH key: path to the private key (OpenSSH/PEM). Public key + fingerprint are derived · `--public-key` SSH key: public key line, if it cannot be derived · `--fingerprint` SSH key: fingerprint, if it cannot be derived · `--organisation` Organisation name or ID · `--collection` Collection name or ID · `--vault` Named vault profile (omit for default)
 ```bash
-its bw items create "Router" --username admin --password "s3cret"
-its bw items create "Router" --field lan_ip=10.0.0.1 --field-hidden api_token=abc123
-its bw items create "Company Card" --type card --cardholder "A Payer" --card-number 4111111111111111 --card-exp 09/2028 --card-code 123
-its bw items create "deploy@prod" --type ssh-key --private-key-file ~/.ssh/id_ed25519
-its bw items create "Server admin" --username admin --password "P@ssw0rd" --uri https://server.example.com
-its bw items create "API keys" --type note --notes "stuff"
+its bw items create "Router" --username admin --password "s3cret" --confirm
+its bw items create "Router" --field lan_ip=10.0.0.1 --field-hidden api_token=abc123 --confirm
+its bw items create "Company Card" --type card --cardholder "A Payer" --card-number 4111111111111111 --card-exp 09/2028 --card-code 123 --confirm
+its bw items create "deploy@prod" --type ssh-key --private-key-file ~/.ssh/id_ed25519 --confirm
+its bw items create "Server admin" --username admin --password "P@ssw0rd" --uri https://server.example.com --confirm
+its bw items create "API keys" --type note --notes "stuff" --confirm
 ```
 
 ### `its bw items update <id>`
@@ -222,8 +222,9 @@ its bw folders summary --watch
 Create a new folder. Idempotent on duplicate names — use update/edit to mutate an existing record.
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
-its bw folders create "Infrastructure"
-its bw folders create "Servers"
+its bw folders create "Infrastructure" --confirm
+its bw folders create "Servers" --confirm
+its bw folders create "Servers" --json --confirm
 ```
 
 ### `its bw folders delete <name>`
@@ -281,7 +282,7 @@ Flags: `--organisation` Organisation name or ID · `--vault` Named vault profile
 Create a collection in an organisation. Access can be granted to groups by id with --group (repeat via comma).
 Flags: `--group` Group id(s) to grant, comma-separated. Suffix :ro for read-only, :manage for manage · `--external-id` External id (directory sync) · `--vault` Named vault profile (omit for default)
 ```bash
-its bw collections create "" "IT/Servers"
+its bw collections create "" "IT/Servers" --confirm
 ```
 
 ### `its bw collections update <organisation> <collection>`
@@ -337,7 +338,8 @@ its bw dashboard --watch
 Change the PIN used to encrypt the master password. Drop the resource's state — use --confirm.
 Flags: `--vault` Named vault profile (omit for default)
 ```bash
-its bw pin reset
+its bw pin reset --confirm
+its bw pin reset --json --confirm
 ```
 
 ## session
@@ -385,8 +387,9 @@ its bw vaults --watch
 Save a named vault profile — its own host, account and master password (use for a second vault on a different server).
 Flags: `--url` Server URL (defaults to current BW_URL) · `--email` Email (defaults to current BW_EMAIL) · `--client-id` API client ID (for API key auth) · `--client-secret` API client secret (for API key auth)
 ```bash
-its bw vaults create work --url https://vault.example.com --email jane.smith@example.com
-its bw vaults create "personal"
+its bw vaults create work --url https://vault.example.com --email jane.smith@example.com --confirm
+its bw vaults create "personal" --confirm
+its bw vaults create "personal" --json --confirm
 ```
 
 ### `its bw vaults delete <name>`
@@ -496,8 +499,8 @@ its bw sends get "VPN config"
 Create a Send — a self-expiring share link. --text for a snippet, --file for a file. Deletes after --delete-in (default 7d). The link is printed; anyone with it can open the Send until it expires.
 Flags: `--text` Text to share · `--text-file` Read the text from a UTF-8 file · `--file` Path of a file to share (file Send) · `--notes` Private notes (only you see them) · `--hidden` Hide the text by default in the web view · `--password` Require this password to open the Send · `--password-file` Read the Send password from a file · `--emails` Restrict to these recipient e-mails (comma-separated; they get a one-time code) · `--max-access` Maximum number of opens · `--delete-in` Delete after e.g. 1h, 7d (default 7d) or an ISO date · `--expire-in` Stop access after e.g. 24h (optional, must be before delete-in) · `--hide-email` Do not show your e-mail to the recipient · `--vault` Named vault profile (omit for default)
 ```bash
-its bw sends create "WiFi" --text "guest / s3cret" --delete-in 1d
-its bw sends create --file ./cert.pfx --password hunter2 --max-access 1
+its bw sends create "WiFi" --text "guest / s3cret" --delete-in 1d --confirm
+its bw sends create --file ./cert.pfx --password hunter2 --max-access 1 --confirm
 ```
 
 ### `its bw sends update <id>`
@@ -525,8 +528,8 @@ its bw sends remove-password "WiFi" --confirm
 Open someone else's Send link. Text is printed (or sent to --to-file/--copy); a file is saved 0600 to --output. Works without a vault — the key is in the URL.
 Flags: `--password` Send password, if it has one · `--password-file` Read the Send password from a file · `--email` Your e-mail, for recipient-restricted Sends · `--otp` One-time code e-mailed to you (after a first attempt with --email) · `--output` Where to save a file Send (dir or path; default current dir) · `--copy` Copy the secret to the OS clipboard instead of printing it. Auto-clears after --clear-after seconds. · `--clear-after` Seconds before the clipboard is wiped (0 disables). Only meaningful with --copy. · `--to-file` Write the secret to this path (created 0600 / owner-only) instead of printing it. Unlike --copy this needs no terminal or clipboard tool, so it works headless — the sanctioned way to hand a secret to another command. · `--vault` Named vault profile (omit for default)
 ```bash
-its bw sends receive https://send.bitwarden.com/#abc/def
-its bw sends receive https://send.bitwarden.com/#abc/def --output ./downloads/
+its bw sends receive https://send.bitwarden.com/#abc/def --confirm
+its bw sends receive https://send.bitwarden.com/#abc/def --output ./downloads/ --confirm
 ```
 
 ## sync

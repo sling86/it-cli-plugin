@@ -24,16 +24,18 @@ its pbi workspaces members <workspace-id>
 Add a user/group/app to a workspace (admin). Add a primary user; idempotent.
 Flags: `--user` User UPN, group ID, or app ID to grant access · `--principal-type <User|Group|App>` Principal type (default: User) · `--access <Admin|Member|Contributor|Viewer>` Access right (default: Member)
 ```bash
-its pbi workspaces add-user 8f1c2d3e-... --user jane.smith@example.com --principal-type User --access Member
-its pbi workspaces add-user <workspace-id> --user jane.smith@example.com --access Member
+its pbi workspaces add-user 8f1c2d3e-... --user jane.smith@example.com --principal-type User --access Member --confirm
+its pbi workspaces add-user <workspace-id> --user jane.smith@example.com --access Member --confirm
+its pbi workspaces add-user <workspace-id> --user jane.smith@example.com --access Member --json --confirm
 ```
 
 ### `its pbi workspaces update-user <workspace_id>`
 Update a user's access right on a workspace. Change the primary user.
 Flags: `--user` User UPN, group ID, or app ID whose access to update · `--principal-type <User|Group|App>` Principal type (default: User) · `--access <Admin|Member|Contributor|Viewer>` New access right
 ```bash
-its pbi workspaces update-user 8f1c2d3e-... --user jane.smith@example.com --principal-type User --access Admin
-its pbi workspaces update-user <workspace-id> --user jane.smith@example.com --access Admin
+its pbi workspaces update-user 8f1c2d3e-... --user jane.smith@example.com --principal-type User --access Admin --confirm
+its pbi workspaces update-user <workspace-id> --user jane.smith@example.com --access Admin --confirm
+its pbi workspaces update-user <workspace-id> --user jane.smith@example.com --access Admin --json --confirm
 ```
 
 ### `its pbi workspaces remove-user <workspace_id>`
@@ -181,16 +183,18 @@ its pbi my datasets
 Add a user/group/app to a workspace using the signed-in user's permissions (sidesteps SP admin-API restrictions when you're a workspace admin).
 Flags: `--user` User UPN, group ID, or app ID to grant access · `--principal-type <User|Group|App>` Principal type (default: User) · `--access <Admin|Member|Contributor|Viewer>` Access right (default: Viewer)
 ```bash
-its pbi my add-workspace-user 8f1c2d3e-... --user jane.smith@example.com --principal-type User --access Member
-its pbi my add-workspace-user <workspace-id> --user jane.smith@example.com --access Member
+its pbi my add-workspace-user 8f1c2d3e-... --user jane.smith@example.com --principal-type User --access Member --confirm
+its pbi my add-workspace-user <workspace-id> --user jane.smith@example.com --access Member --confirm
+its pbi my add-workspace-user <workspace-id> --user jane.smith@example.com --access Member --json --confirm
 ```
 
 ### `its pbi my update-workspace-user <workspace_id>`
 Update a user's access right on a workspace using the signed-in user's permissions.
 Flags: `--user` User UPN, group ID, or app ID whose access to update · `--principal-type <User|Group|App>` Principal type (default: User) · `--access <Admin|Member|Contributor|Viewer>` New access right
 ```bash
-its pbi my update-workspace-user 8f1c2d3e-... --user jane.smith@example.com --principal-type User --access Contributor
-its pbi my update-workspace-user <workspace-id> --user jane.smith@example.com --access Admin
+its pbi my update-workspace-user 8f1c2d3e-... --user jane.smith@example.com --principal-type User --access Contributor --confirm
+its pbi my update-workspace-user <workspace-id> --user jane.smith@example.com --access Admin --confirm
+its pbi my update-workspace-user <workspace-id> --user jane.smith@example.com --access Admin --json --confirm
 ```
 
 ### `its pbi my remove-workspace-user <workspace_id>`
@@ -205,9 +209,9 @@ its pbi my remove-workspace-user <workspace-id> --user jane.smith@example.com --
 Trigger a refresh of a dataset owned by the signed-in user. Force the provider to re-pull state from the upstream API.
 Flags: `--workspace` Workspace ID containing the dataset (recommended) · `--notify <NoNotification|MailOnCompletion|MailOnFailure>` Email notification policy
 ```bash
-its pbi my refresh 9a8b7c6d-... --workspace 8f1c2d3e-...
-its pbi my refresh <dataset-id>
-its pbi my refresh <dataset-id> --workspace <workspace-id>
+its pbi my refresh 9a8b7c6d-... --workspace 8f1c2d3e-... --confirm
+its pbi my refresh <dataset-id> --confirm
+its pbi my refresh <dataset-id> --workspace <workspace-id> --confirm
 ```
 
 ### `its pbi my refresh-schedule <dataset_id>`

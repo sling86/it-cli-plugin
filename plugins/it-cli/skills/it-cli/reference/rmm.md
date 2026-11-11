@@ -78,13 +78,13 @@ its rmm agents prune --older-than 6w --confirm
 Execute a one-shot shell command on the target agent. Returns stdout + stderr + exit code. Use --shell powershell|cmd|bash; default timeout is 30s.
 Flags: `--shell <powershell|cmd|bash>` Shell type · `--cmd` Command to execute (use --file for multi-line scripts) · `--file` Path to a local script file (overrides --cmd). PowerShell multi-line scripts auto-wrapped via base64 + temp file. · `--raw` Disable auto-wrapping for multi-line PowerShell (sends as-is) · `--timeout` Timeout in seconds · `--as-user` Run in the active user's session instead of SYSTEM (requires a signed-in desktop user)
 ```bash
-its rmm agents run WKS-9 --shell powershell --cmd "Get-Service spooler"
-its rmm agents run WKS-9 --shell powershell --cmd "gpupdate /force" --timeout 300
-its rmm agents run WKS-9 --shell powershell --cmd "whoami" --as-user
-its rmm agents run WKS-9 --shell powershell --file ./fix-printer.ps1
-its rmm agents run OFFICE-PC-01 --shell powershell --cmd "Get-Process"
-its rmm agents run OFFICE-PC-01 --shell cmd --cmd "ipconfig /all"
-its rmm agents run LINUX-WEB-01 --shell bash --cmd "uname -a && uptime"
+its rmm agents run WKS-9 --shell powershell --cmd "Get-Service spooler" --confirm
+its rmm agents run WKS-9 --shell powershell --cmd "gpupdate /force" --timeout 300 --confirm
+its rmm agents run WKS-9 --shell powershell --cmd "whoami" --as-user --confirm
+its rmm agents run WKS-9 --shell powershell --file ./fix-printer.ps1 --confirm
+its rmm agents run OFFICE-PC-01 --shell powershell --cmd "Get-Process" --confirm
+its rmm agents run OFFICE-PC-01 --shell cmd --cmd "ipconfig /all" --confirm
+its rmm agents run LINUX-WEB-01 --shell bash --cmd "uname -a && uptime" --confirm
 ```
 
 ### `its rmm agents history <agent>`
@@ -108,26 +108,27 @@ its rmm agents pending OFFICE-PC-01
 ### `its rmm agents wake <agent>`
 Send a magic packet via another online agent on the same LAN. Doesn't work across VLANs / VPN — agent must be on a network with a reachable RMM peer.
 ```bash
-its rmm agents wake WKS-9
-its rmm agents wake OFFICE-PC-01
-its rmm agents wake c3e5f1a7-...
+its rmm agents wake WKS-9 --confirm
+its rmm agents wake OFFICE-PC-01 --confirm
+its rmm agents wake c3e5f1a7-... --confirm
 ```
 
 ### `its rmm agents edit <agent>`
 Reassign an agent's client/site or update description (PUT /agents/{id}/).
 Flags: `--client` Client name or ID to move the agent into · `--site` Site name or ID to move the agent into (must belong to --client if both given) · `--description` New description text
 ```bash
-its rmm agents edit WKS-9 --client "Acme" --site "Head Office"
-its rmm agents edit WKS-9 --description "Finance workstation"
-its rmm agents edit OFFICE-PC-01 --site <site-id>
-its rmm agents edit OFFICE-PC-01 --description "Marketing — Jane's desk"
+its rmm agents edit WKS-9 --client "Acme" --site "Head Office" --confirm
+its rmm agents edit WKS-9 --description "Finance workstation" --confirm
+its rmm agents edit OFFICE-PC-01 --site <site-id> --confirm
+its rmm agents edit OFFICE-PC-01 --description "Marketing — Jane's desk" --confirm
 ```
 
 ### `its rmm agents refresh <agent>`
 Trigger a WMI/sysinfo refresh on an agent — repopulates hardware fields (serial, model, etc.).
 ```bash
-its rmm agents refresh WKS-9
-its rmm agents refresh OFFICE-PC-01
+its rmm agents refresh WKS-9 --confirm
+its rmm agents refresh OFFICE-PC-01 --confirm
+its rmm agents refresh OFFICE-PC-01 --json --confirm
 ```
 
 ### `its rmm agents eventlog <agent>`
@@ -156,7 +157,7 @@ its rmm clients --watch
 Create a client (POST /clients/). TRMM also creates its first site in the same call — pass --site for its name (default 'Default'). Idempotent — skips if a client of that name already exists.
 Flags: `--name` New client name · `--site` Name of the client's initial site (default 'Default')
 ```bash
-its rmm clients create --name "Acme" --site "Head Office"
+its rmm clients create --name "Acme" --site "Head Office" --confirm
 ```
 
 ### `its rmm clients delete <client>`
@@ -182,7 +183,7 @@ its rmm sites --watch
 Create a site under a client (POST /clients/sites/). Idempotent — skips if a site of that name already exists for the client.
 Flags: `--client` Client name or ID · `--name` New site name
 ```bash
-its rmm sites create --client "Acme" --name "Warehouse"
+its rmm sites create --client "Acme" --name "Warehouse" --confirm
 ```
 
 ### `its rmm sites delete <site_id>`
@@ -252,8 +253,9 @@ its rmm services control OFFICE-PC-01 --name spooler --action start
 Set startup type to Automatic and start the service if stopped. Idempotent.
 Flags: `--name` Service name
 ```bash
-its rmm services enable WKS-9 --name spooler
-its rmm services enable OFFICE-PC-01 --name spooler
+its rmm services enable WKS-9 --name spooler --confirm
+its rmm services enable OFFICE-PC-01 --name spooler --confirm
+its rmm services enable OFFICE-PC-01 --name spooler --json --confirm
 ```
 
 ### `its rmm services disable <agent>`
@@ -412,10 +414,10 @@ its rmm scripts run OFFICE-PC-01 --script "Long Audit" --timeout 600
 Upload a local .ps1/.sh/.py script to TRMM, run it on the agent, capture output, and delete the script afterwards. Use for ad-hoc local maintenance scripts. Pass --keep to leave the script registered.
 Flags: `--shell <powershell|cmd|shell|python|nushell|deno>` Script shell (defaults to auto-detect from extension: ps1=powershell, sh=shell, py=python, nu=nushell, ts=deno) · `--args` Script arguments (comma-separated) · `--timeout` Timeout in seconds (default 120) · `--keep` Leave the uploaded script registered in TRMM after execution · `--category` Category for the uploaded script (default 'Ad-hoc') · `--raw` Print the script's raw stdout (and stderr) directly, instead of JSON-wrapped output with escaped \r\n · `--as-user` Run in the logged-on user's session instead of as SYSTEM. Fails if nobody is signed in.
 ```bash
-its rmm scripts upload-local WKS-9 ./Fix-Printer.ps1 --timeout 300
-its rmm scripts upload-local WKS-9 ./Fix-Profile.ps1 --as-user
-its rmm scripts upload-local ./fix-printers.ps1
-its rmm scripts upload-local ./linux-housekeeping.sh --shell bash
+its rmm scripts upload-local WKS-9 ./Fix-Printer.ps1 --timeout 300 --confirm
+its rmm scripts upload-local WKS-9 ./Fix-Profile.ps1 --as-user --confirm
+its rmm scripts upload-local ./fix-printers.ps1 --confirm
+its rmm scripts upload-local ./linux-housekeeping.sh --shell bash --confirm
 ```
 
 ### `its rmm scripts delete <script_id>`
@@ -431,9 +433,10 @@ its rmm scripts delete <script-id> --confirm
 Idempotently push a local script to TRMM by name — creates if missing, updates if present (PUT). Works around the TRMM POST /scripts/ quirk where the response is a plain string, not the created object — we re-list to resolve the new ID.
 Flags: `--shell` Shell: powershell, cmd, shell, python, nushell, deno (auto from extension) · `--category` Category (default 'Ad-hoc') · `--description` Script description (overwritten on update) · `--timeout` Default timeout seconds (default 120) · `--args` Default args, comma-separated · `--run-as-user` Run in the logged-on user's session instead of as SYSTEM. Needed for anything touching %USERPROFILE%, HKCU or the user PATH — as SYSTEM those hit the SYSTEM profile.
 ```bash
-its rmm scripts upsert 'Check Git Installed' C:/Scripts/Check-Git.ps1 --category 'Compliance Checks' --timeout 30
-its rmm scripts upsert 'Configure User Profile' ./Set-UserProfile.ps1 --run-as-user
-its rmm scripts upsert "Restart Spooler" ./fix-spooler.ps1
+its rmm scripts upsert 'Check Git Installed' C:/Scripts/Check-Git.ps1 --category 'Compliance Checks' --timeout 30 --confirm
+its rmm scripts upsert 'Configure User Profile' ./Set-UserProfile.ps1 --run-as-user --confirm
+its rmm scripts upsert "Restart Spooler" ./fix-spooler.ps1 --confirm
+its rmm scripts upsert "Restart Spooler" ./fix-spooler.ps1 --json --confirm
 ```
 
 ## checks
@@ -463,29 +466,30 @@ its rmm checks results OFFICE-PC --check 7
 ### `its rmm checks run <agent>`
 Force all of an agent's checks to run now (POST /checks/<agent>/run/) instead of waiting for the next scheduled cycle. Returns immediately; fresh results land on the agent's next check-in.
 ```bash
-its rmm checks run OFFICE-PC
+its rmm checks run OFFICE-PC --confirm
 ```
 
 ### `its rmm checks create <agent>`
 Attach a check to an agent. Use --type to pick: diskspace/cpuload/memory/ping/winsvc/script (defaults to script when --script is given). Tune alerting with --severity, --fails, --interval.
 Flags: `--type <diskspace|cpuload|memory|ping|winsvc|script>` Check type · `--severity <error|warning|info>` Alert severity (default error) · `--fails` Failures before alert (default 1) · `--interval` Run interval seconds, 0 = inherit (default 0) · `--disk` diskspace: drive (e.g. C:) · `--error` diskspace/cpuload/memory: error threshold % · `--warning` diskspace/cpuload/memory: warning threshold % · `--ip` ping: host/IP to ping · `--service` winsvc: Windows service name · `--restart-if-stopped` winsvc: restart the service if found stopped · `--pass-if-pending` winsvc: pass when start is pending · `--pass-if-missing` winsvc: pass when the service doesn't exist · `--script` script: script ID · `--timeout` script: timeout seconds (default 120) · `--args` script: arguments (comma-separated) · `--email-alert` Send an email when this check fails · `--text-alert` Send an SMS when this check fails · `--dashboard-alert` Raise a dashboard alert when this check fails · `--alert-template` Alert template ID to attach
 ```bash
-its rmm checks create OFFICE-PC --type diskspace --disk C: --error 10 --warning 25
-its rmm checks create OFFICE-PC --type cpuload --error 90 --warning 75
-its rmm checks create SRV-01 --type winsvc --service Spooler --restart-if-stopped
-its rmm checks create SRV-01 --type ping --ip 10.10.0.1
-its rmm checks create OFFICE-PC --script 42 --timeout 300
-its rmm checks create OFFICE-PC-01 --script <script-id> --interval 600
+its rmm checks create OFFICE-PC --type diskspace --disk C: --error 10 --warning 25 --confirm
+its rmm checks create OFFICE-PC --type cpuload --error 90 --warning 75 --confirm
+its rmm checks create SRV-01 --type winsvc --service Spooler --restart-if-stopped --confirm
+its rmm checks create SRV-01 --type ping --ip 10.10.0.1 --confirm
+its rmm checks create OFFICE-PC --script 42 --timeout 300 --confirm
+its rmm checks create OFFICE-PC-01 --script <script-id> --interval 600 --confirm
+its rmm checks create OFFICE-PC-01 --script <script-id> --interval 600 --json --confirm
 ```
 
 ### `its rmm checks edit [agent]`
 Retune an existing check without delete+recreate — change interval, severity, fail-count, or thresholds. PUT is partial, so only the flags you pass change. Works on POLICY checks too: they are edited by --check id, so the agent is optional (find policy check ids via `its rmm policies checks <id>`).
 Flags: `--check` Check ID to edit · `--severity <error|warning|info>` Alert severity · `--fails` Failures before alert · `--interval` Run interval seconds · `--error` Error threshold % (diskspace/cpuload/memory) · `--warning` Warning threshold % (diskspace/cpuload/memory) · `--timeout` Script check: timeout seconds · `--args` Script check: comma-separated script args (replaces existing) · `--email-alert` Send an email when this check fails · `--text-alert` Send an SMS when this check fails · `--dashboard-alert` Raise a dashboard alert when this check fails · `--alert-template` Alert template ID to attach
 ```bash
-its rmm checks edit OFFICE-PC --check 7 --warning 60 --error 80
-its rmm checks edit OFFICE-PC --check 7 --severity warning --fails 3
-its rmm checks edit OFFICE-PC --check 7 --timeout 300 --args -Verbose,-Force
-its rmm checks edit --check 41 --severity warning
+its rmm checks edit OFFICE-PC --check 7 --warning 60 --error 80 --confirm
+its rmm checks edit OFFICE-PC --check 7 --severity warning --fails 3 --confirm
+its rmm checks edit OFFICE-PC --check 7 --timeout 300 --args -Verbose,-Force --confirm
+its rmm checks edit --check 41 --severity warning --confirm
 ```
 
 ### `its rmm checks delete [agent_id]`
@@ -513,18 +517,19 @@ its rmm tasks OFFICE-PC-01 --watch
 Create an automated task that runs a script. Target an agent, or --policy <id> to apply across every agent under a policy. Default is a manual task (run on demand); --daily-time HH:MM makes it scheduled (+ --weekdays to limit days); --on-check-failure <checkId> makes it a remediation that fires whenever that check fails.
 Flags: `--script` Script ID to run · `--policy` Attach to this automation policy instead of a single agent — applies to every agent under it · `--on-check-failure` Check ID this task remediates. Makes it a checkfailure task: it runs whenever that check fails, rather than on a schedule. This is the check-then-fix pattern. · `--severity <error|warning|info>` Alert severity for the task itself (default info) · `--disabled` Create the task switched off. Use when arming a policy-wide remediation would cause a thundering herd — create it disabled, then enable once you've seen what the check actually reports. · `--name` Task name (default: derived from the script ID) · `--args` Script arguments (comma-separated, e.g. -Mode,Notify) · `--timeout` Per-run timeout in seconds (default 90) · `--daily-time` Run daily at HH:MM (24h) — turns this into a scheduled task · `--weekdays` With --daily-time: restrict to these days (mon,tue,wed,thu,fri,sat,sun); default every day · `--run-asap` Run as soon as possible if a scheduled run was missed
 ```bash
-its rmm tasks create --policy 4 --on-check-failure 41 --script 433 --name 'Auto-install dev runtimes' --timeout 1800
-its rmm tasks create --policy 4 --script 252 --daily-time 06:30
-its rmm tasks create OFFICE-PC --script 12 --name 'Clear cache'
-its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --daily-time "03:00" --weekdays sun
+its rmm tasks create --policy 4 --on-check-failure 41 --script 433 --name 'Auto-install dev runtimes' --timeout 1800 --confirm
+its rmm tasks create --policy 4 --script 252 --daily-time 06:30 --confirm
+its rmm tasks create OFFICE-PC --script 12 --name 'Clear cache' --confirm
+its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --daily-time "03:00" --weekdays sun --confirm
+its rmm tasks create <agent-id> --name "Weekly reboot" --script <script-id> --daily-time "03:00" --weekdays sun --json --confirm
 ```
 
 ### `its rmm tasks edit`
 Enable or disable an existing task without delete+recreate. Recreating a policy checkfailure task would lose its assigned_check wiring, so this is the only safe way to arm or disarm a remediation. Also retunes name, severity and run-asap.
 Flags: `--task` Task ID to edit · `--enable` Switch the task on · `--disable` Switch the task off. Use to disarm a policy-wide remediation, or to retire a superseded deployer without deleting it. · `--name` Rename the task · `--severity <error|warning|info>` Alert severity · `--run-asap` Run as soon as possible after a missed schedule
 ```bash
-its rmm tasks edit --task 243 --enable
-its rmm tasks edit --task 15 --disable
+its rmm tasks edit --task 243 --enable --confirm
+its rmm tasks edit --task 15 --disable --confirm
 ```
 
 ### `its rmm tasks delete`
@@ -561,10 +566,11 @@ its rmm policies checks <policy-id>
 Add a check to a policy (applies to every agent under it). --type: diskspace/cpuload/memory/ping/winsvc/script (defaults to script when --script is given). Uses POST /checks/ with `policy` set and `agent` OMITTED — including agent:null returns 404 because the route resolver hits the agent path first
 Flags: `--type <diskspace|cpuload|memory|ping|winsvc|script>` Check type · `--severity <info|warning|error>` Alert severity (default error; script branch defaults warning) · `--fails` Failures before alert (default 1) · `--interval` Run interval seconds (script defaults 86400 daily, others 0=inherit) · `--disk` diskspace: drive (e.g. C:) · `--error` diskspace/cpuload/memory: error threshold % · `--warning` diskspace/cpuload/memory: warning threshold % · `--ip` ping: host/IP · `--service` winsvc: Windows service name · `--restart-if-stopped` winsvc: restart if stopped · `--pass-if-pending` winsvc: pass when start pending · `--pass-if-missing` winsvc: pass when service absent · `--script` script: Script ID · `--timeout` script: timeout seconds (default 90) · `--email-alert` Send an email when this check fails · `--text-alert` Send an SMS when this check fails · `--dashboard-alert` Raise a dashboard alert when this check fails · `--alert-template` Alert template ID to attach
 ```bash
-its rmm policies add-check 4 --type diskspace --disk C: --error 10 --warning 25
-its rmm policies add-check 4 --type winsvc --service Spooler --restart-if-stopped
-its rmm policies add-check 4 --script 42
-its rmm policies add-check <policy-id> --script <script-id>
+its rmm policies add-check 4 --type diskspace --disk C: --error 10 --warning 25 --confirm
+its rmm policies add-check 4 --type winsvc --service Spooler --restart-if-stopped --confirm
+its rmm policies add-check 4 --script 42 --confirm
+its rmm policies add-check <policy-id> --script <script-id> --confirm
+its rmm policies add-check <policy-id> --script <script-id> --json --confirm
 ```
 
 ### `its rmm policies patch-policy <policy_id>`
@@ -602,8 +608,8 @@ Flags: `--model <agent|client|site>` Filter by model
 ### `its rmm custom-fields set <agent> <field> <value>`
 Set a custom field value on an agent. Accepts the field by numeric id OR by exact name (looked up against /core/customfields/). Writes both `value` and the typed column TRMM actually reads.
 ```bash
-its rmm custom-fields set WKS-9 "RustDesk ID" 123456789
-its rmm custom-fields set WKS-9 4 123456789
+its rmm custom-fields set WKS-9 "RustDesk ID" 123456789 --confirm
+its rmm custom-fields set WKS-9 4 123456789 --confirm
 ```
 
 ## accounts
@@ -623,7 +629,7 @@ Flags: `--reveal` Show full key values. Interactive terminals only; audit-logged
 Create a least-privilege API key end-to-end: a role with only the permissions you name, an API-only user carrying it with dashboard login blocked, and a key bound to that user. Additive — nothing existing is modified. The key is never printed; it goes to Bitwarden and/or the keychain.
 Flags: `--permissions` Comma-separated can_* flags to grant. Default: can_list_agents (read agents only). · `--expires-days` Key lifetime in days (default: no expiry) · `--bw` Upsert a "TRMM - <name>" login item in the Bitwarden Infrastructure folder · `--dry-run` Print the planned objects without creating anything
 ```bash
-its rmm accounts provision shuttle-worker --permissions can_list_agents --bw
+its rmm accounts provision shuttle-worker --permissions can_list_agents --bw --confirm
 ```
 
 ## terminal
@@ -632,11 +638,11 @@ its rmm accounts provision shuttle-worker --permissions can_list_agents --bw
 Open a live interactive shell on an RMM agent over Tactical's terminal WebSocket. Windows automatically tries PowerShell 7, Windows PowerShell, then Command Prompt; use --shell to choose explicitly. Requires can_use_terminal and a real TTY. Ctrl+] disconnects.
 Flags: `--shell <cmd|powershell|bash|zsh>` Choose a shell token or absolute path explicitly; when omitted, Windows tries PowerShell 7, Windows PowerShell, then Command Prompt while Linux/macOS use the agent default · `--as-user` Run as the active desktop user instead of SYSTEM (Windows only)
 ```bash
-its rmm terminal WKS-9
-its rmm terminal WKS-9 --shell 'C:\Program Files\PowerShell\7\pwsh.exe'
-its rmm terminal WKS-9 --shell powershell
-its rmm terminal WKS-9 --shell cmd
-its rmm terminal WKS-9 --shell powershell --as-user
+its rmm terminal WKS-9 --confirm
+its rmm terminal WKS-9 --shell 'C:\Program Files\PowerShell\7\pwsh.exe' --confirm
+its rmm terminal WKS-9 --shell powershell --confirm
+its rmm terminal WKS-9 --shell cmd --confirm
+its rmm terminal WKS-9 --shell powershell --as-user --confirm
 ```
 
 ### `its rmm terminal login`
