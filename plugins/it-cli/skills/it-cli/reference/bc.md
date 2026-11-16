@@ -149,6 +149,14 @@ Flags: `--set` Permission set id, e.g. D365 BUS FULL ACCESS · `--in-company` Co
 its bc users remove-permission jo.bloggs@example.com --set "D365 BUS FULL ACCESS" --in-company "CRONUS UK Ltd." --confirm
 ```
 
+### `its bc users user-setup [user]`
+User Setup: posting date limits, approval and time sheet admin, responsibility centre filters. Reads /mcpDiagnostics/v2.0 (userSetups).
+Flags: `--company` Company name or id, exact (REQUIRED when the environment has more than one company) · `--env` BC environment name (default: BC_ENVIRONMENT) · `--top` Max rows (default 50)
+
+### `its bc users warehouse-employees [user]`
+Which locations a user works at as a warehouse employee, and their default. Reads /mcpDiagnostics/v2.0 (warehouseEmployees).
+Flags: `--company` Company name or id, exact (REQUIRED when the environment has more than one company) · `--env` BC environment name (default: BC_ENVIRONMENT) · `--top` Max rows (default 50)
+
 ## apps
 
 ### `its bc apps`
@@ -203,3 +211,35 @@ Flags: `--env` BC environment name (default: BC_ENVIRONMENT)
 ```bash
 its bc health
 ```
+
+## warehouse
+
+### `its bc warehouse bins`
+Warehouse bins. Reads /platformSync/v2.0 (bins).
+Flags: `--location` Location code · `--bin` Bin code · `--company` Company name or id, exact (REQUIRED when the environment has more than one company) · `--env` BC environment name (default: BC_ENVIRONMENT) · `--top` Max rows (default 50)
+
+### `its bc warehouse bin-contents`
+Which items each bin is set up for, and whether movement is blocked. This route has no on-hand quantity — use `warehouse entries` for movements. Reads /mcp/v2.0 (binContents).
+Flags: `--item` Item number · `--bin` Bin code · `--location` Location code · `--blocked` Only bin contents with movement blocked · `--company` Company name or id, exact (REQUIRED when the environment has more than one company) · `--env` BC environment name (default: BC_ENVIRONMENT) · `--top` Max rows (default 50)
+
+### `its bc warehouse picks`
+Warehouse pick lines (Take and Place). Reads /mcp/v2.0 (warehouseActivityLineDetails, activity type Pick).
+Flags: `--status <open|started|done>` open (nothing handled), started (part handled) or done · `--location` Location code · `--company` Company name or id, exact (REQUIRED when the environment has more than one company) · `--env` BC environment name (default: BC_ENVIRONMENT) · `--top` Max rows (default 50)
+
+### `its bc warehouse entries`
+Registered warehouse entries (movements), oldest first (BC cannot sort this route; narrow with --item, --location, --from). Reads /mcp/v2.0 (warehouseEntries).
+Flags: `--item` Item number · `--from` Registered on or after this date (YYYY-MM-DD) · `--location` Location code · `--company` Company name or id, exact (REQUIRED when the environment has more than one company) · `--env` BC environment name (default: BC_ENVIRONMENT) · `--top` Max rows (default 50)
+
+### `its bc warehouse reservations`
+Reservation entries, oldest first (BC cannot sort this route). --source-doc matches the source document number (sourceId). Reads /platformSync/v2.0 (reservationEntries).
+Flags: `--item` Item number · `--source-doc` Source document number · `--location` Location code · `--company` Company name or id, exact (REQUIRED when the environment has more than one company) · `--env` BC environment name (default: BC_ENVIRONMENT) · `--top` Max rows (default 50)
+
+## jobqueue
+
+### `its bc jobqueue`
+Job queue entries, most recently changed first. Reads standard v2.0 (jobQueueEntries).
+Flags: `--status <error|ready|on-hold|in-process|finished>` Only this status · `--company` Company name or id, exact (REQUIRED when the environment has more than one company) · `--env` BC environment name (default: BC_ENVIRONMENT) · `--top` Max rows (default 50)
+
+### `its bc jobqueue errors`
+Failed job queue runs with the error text, newest first. Default window is the last 24 hours. Reads standard v2.0 (jobQueueLogEntries, status Error).
+Flags: `--since` Window start: -24h, -7d, a date or an ISO time (default -24h) · `--company` Company name or id, exact (REQUIRED when the environment has more than one company) · `--env` BC environment name (default: BC_ENVIRONMENT) · `--top` Max rows (default 50)
