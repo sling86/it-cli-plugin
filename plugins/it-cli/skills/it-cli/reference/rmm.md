@@ -670,6 +670,28 @@ its rmm terminal logout
 
 ## printers
 
+### `its rmm printers set-default <agent> <printer>`
+Set the default printer. It is a per-user setting, so this runs in the logged-on user's session (not SYSTEM) and fails if nobody is logged on. Reads the default back as that user. Without --confirm, previews.
+Flags: `--confirm` Make the change
+```bash
+its rmm printers set-default WKS-9 "Front Office" --confirm
+```
+
+### `its rmm printers set-driver <agent> <printer> <driver>`
+Change a printer's driver. The driver must already be installed (see `printers drivers`). Reads the printer back. Without --confirm, previews.
+Flags: `--confirm` Make the change
+```bash
+its rmm printers set-driver WKS-9 "Front Office" "HP Universal Printing PCL 6" --confirm
+```
+
+### `its rmm printers set-port <agent> <printer> <port>`
+Change a printer's port. An IPv4 address creates a TCP/IP port for it first if there isn't one (--tcp-port to change from 9100); anything else must be an existing port name. Reads the printer back. Without --confirm, previews.
+Flags: `--tcp-port` TCP port for a new IP port (default 9100) · `--confirm` Make the change
+```bash
+its rmm printers set-port WKS-9 "Front Office" 10.0.4.51 --confirm
+its rmm printers set-port WKS-9 "Zebra ZD420" USB001 --confirm
+```
+
 ### `its rmm printers <agent>`
 Printers on an agent: driver, port, shared, status, default, and how many jobs are queued. --jobs lists the queued documents too.
 Flags: `--jobs` Include each printer's queued documents

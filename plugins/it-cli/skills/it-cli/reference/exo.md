@@ -199,10 +199,22 @@ Flags: `--confirm` Required to perform this destructive deletion · `--delete-ac
 its exo mailboxes delete old-project@example.com --confirm
 ```
 
-### `its exo mailboxes archive <mailbox>`
-Archive status, quota, size and auto-expanding setting for one mailbox (read-only).
+### `its exo mailboxes archive <mailbox-or-enable> [mailbox]`
+Read archive status, quota, size and retention policy. Use archive enable <mailbox> to enable it; --auto-expanding also enables auto-expansion (cannot be turned off). Writes preview without --confirm and read back afterwards.
+Flags: `--auto-expanding` Also enable auto-expansion; cannot be turned off · `--confirm` Apply the archive change
 ```bash
-its exo mailboxes archive jo@example.com --confirm
+its exo mailboxes archive jo@example.com
+its exo mailboxes archive enable jo@example.com --confirm
+```
+
+### `its exo mailboxes retention-policy <mailbox>`
+Show the mailbox's assigned MRM retention policy (also shown by mailboxes archive).
+
+### `its exo mailboxes set-retention-policy <mailbox> <policy>`
+Assign an existing MRM retention policy. Previews without --confirm; reads back after the write.
+Flags: `--confirm` Apply the policy
+```bash
+its exo mailboxes set-retention-policy jo@example.com "Default MRM Policy" --confirm
 ```
 
 ## rules

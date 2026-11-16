@@ -96,3 +96,27 @@ Flags: `--site` Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan 
 its protect dashboard
 its protect dashboard --watch
 ```
+
+## users
+
+### `its protect users`
+List the console's users: role, whether the invite was accepted, last sign-in. Read-only. Names and emails are as Protect holds them.
+Flags: `--site` Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site
+
+## liveviews
+
+### `its protect liveviews`
+List saved views (liveviews) with the cameras each one shows.
+Flags: `--site` Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site
+
+## viewports
+
+### `its protect viewports`
+List Viewports (the TV boxes) with their state and which saved view each is set to.
+Flags: `--site` Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site
+
+## backups
+
+### `its protect backups`
+List the controller's own config backups (newest first) and whether automatic backups are on. This is Protect's backup, not ms-backup's protect-bootstrap.json copy, and not footage.
+Flags: `--site` Named Protect profile (UNIFI_PROTECT_*_<SITE>), or `all` to fan out across every configured site

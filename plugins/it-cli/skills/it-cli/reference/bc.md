@@ -125,6 +125,9 @@ Flags: `--company` Company (name or id) whose API endpoint to use · `--env` BC 
 Every permission set that can be assigned (system and extension-supplied).
 Flags: `--company` Company (name or id) whose API endpoint to use · `--env` BC environment name (default: BC_ENVIRONMENT)
 
+### `its bc users create`
+Not possible — explains why. The BC Automation API has no user create (only GET and PATCH state/expiryDate), and a user's default company or profile is not on that entity. BC users come from Entra: license the person in Entra, then use the BC Users page (Update Users from Microsoft 365) and `its bc users add-permission`.
+
 ### `its bc users update <user>`
 Enable or disable a BC user and/or set their expiry date (the Automation API's only user write — it cannot create users; they arrive from Entra). Needs an explicit --env. Previews without --confirm; reads the user back.
 Flags: `--state <Enabled|Disabled>` Enabled or Disabled · `--expiry` Expiry date (ISO, e.g. 2027-01-01), or 'none' to clear · `--confirm` Apply the change · `--company` Company (name or id) whose API endpoint to use · `--env` BC environment name (default: BC_ENVIRONMENT)

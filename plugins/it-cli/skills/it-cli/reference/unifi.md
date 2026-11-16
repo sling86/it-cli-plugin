@@ -29,6 +29,12 @@ Flags: `--site` Site name override
 its unifi sites sysinfo
 ```
 
+## aps
+
+### `its unifi aps`
+AP radio stats across a site: channel, transmit power, utilisation, clients, retries and satisfaction. One row per radio; unavailable stats stay unknown.
+Flags: `--site` Site code, ID or friendly name · `--all-sites` Read every site
+
 ## devices
 
 ### `its unifi devices`

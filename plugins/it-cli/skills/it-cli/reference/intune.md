@@ -71,6 +71,14 @@ its intune devices rotate-bitlocker -UD-MP27XZ31 --confirm
 its intune devices rotate-bitlocker -UD-MP27XZ31 --confirm --wait --timeout 900
 ```
 
+### `its intune devices delete <device>`
+Delete a device's record from Intune. Takes an EXACT device name, serial or id. Without --confirm, previews the name, serial, user and last sync and changes nothing; with it, deletes and reads back (a 404 proves it went). Does not wipe the device.
+Flags: `--confirm` Carry out the delete (without it, only a preview)
+```bash
+its intune devices delete -UD-MP27XZ31
+its intune devices delete -UD-MP27XZ31 --confirm
+```
+
 ### `its intune devices wipe <device>`
 Factory-reset a device. Everything on it is erased and it has to be re-enrolled — cannot be undone. Takes an EXACT device name, serial or id (never a user or partial name), and --confirm must repeat the device name. Without it, shows the target and does nothing.
 Flags: `--confirm` The device's name, repeated, to carry out the wipe · `--keep-user-data` Windows: reset but keep user files · `--keep-enrollment` Keep enrolment state and Entra account · `--protected` Windows: protected wipe — cannot be bypassed by a power cycle, but can leave the device unbootable if interrupted
@@ -484,6 +492,20 @@ Flags: `--group` Group id or exact name · `--exclude` Exclude the group instead
 ```bash
 its intune update-rings assign "Pilot ring" --group "Pilot PCs" --confirm
 its intune update-rings assign "Pilot ring" --group "Finance PCs" --exclude --confirm
+```
+
+## filters
+
+### `its intune filters`
+List Intune assignment filters (the include/exclude rules used on app and policy assignments): name, platform, rule. Beta Graph endpoint. Read-only.
+```bash
+its intune filters list
+```
+
+### `its intune filters get <filter>`
+Show one assignment filter by id or exact name, including its rule. Read-only.
+```bash
+its intune filters get "Windows - Autopilot"
 ```
 
 ## graph

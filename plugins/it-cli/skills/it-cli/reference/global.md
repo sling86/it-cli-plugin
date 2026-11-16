@@ -42,6 +42,18 @@ its auth use admin --provider entra,intune,sp
 its auth doctor
 ```
 
+## `its backups`
+Backup health across Dokploy databases and Protect config, stale ones flagged.
+
+One row per backup its can read: Dokploy database backups (judged on the last successful run) and each Protect controller's own config backup. A row is flagged when its last good backup is older than `--max-age-hours` (default 36), the latest run failed, the backup is switched off, or it has never run. Exits 1 when anything is flagged. It also lists the systems its cannot see (Proxmox, ms-backup, Wasabi, Bitwarden export, Dokploy compose and web-server backups). It cannot see backup sizes, so a backup that ran but saved almost nothing still shows `ok`. Read-only.
+
+```bash
+its backups report [--max-age-hours <n>]
+
+its backups report
+its backups report --max-age-hours 26 --ai
+```
+
 ## `its config`
 Per-provider configuration status — what is set, what is in the keychain, secrets redacted.
 

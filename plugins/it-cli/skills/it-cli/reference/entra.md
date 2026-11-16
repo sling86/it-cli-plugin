@@ -537,6 +537,26 @@ its entra authmethods remove jane.smith@example.com --method-id 3f2b1c94-...
 its entra authmethods remove jane.smith@example.com --method-id 3f2b1c94-... --confirm
 ```
 
+### `its entra authmethods mfa-state <user_id>`
+One user's legacy per-user MFA state (disabled, enabled or enforced) from beta /authentication/requirements, next to whether they have an MFA method registered. This is the old per-user MFA setting, not Conditional Access. Read-only; always live.
+```bash
+its entra authmethods mfa-state jane.smith@example.com
+```
+
+### `its entra authmethods set-mfa-state <user_id>`
+Set a user's legacy per-user MFA state: disabled, enabled or enforced (beta, PATCH /authentication/requirements). Previews current → new unless --confirm, then reads back. Needs Policy.ReadWrite.AuthenticationMethod. Setting `enabled` on someone who already has an MFA method becomes `enforced` by itself — that counts as success. Don't set `enforced` for a user with no method registered: they get locked into registration at next sign-in.
+Flags: `--state <disabled|enabled|enforced>` New state · `--confirm` Apply the change (without it, only a preview)
+```bash
+its entra authmethods set-mfa-state jane.smith@example.com --state disabled
+its entra authmethods set-mfa-state jane.smith@example.com --state disabled --confirm
+```
+
+### `its entra authmethods sspr <user_id>`
+One user's self-service password reset (SSPR) status from Graph userRegistrationDetails: registered, enabled by policy, capable, plus MFA readiness and methods. The report can lag up to 36 hours. Needs AuditLog.Read.All. Read-only.
+```bash
+its entra authmethods sspr jane.smith@example.com
+```
+
 ### `its entra authmethods report`
 Tenant-wide report of which sign-in methods every user has registered (Graph userRegistrationDetails). Answers 'who can still be reached with a text or call?' and 'which admins have no phishing-resistant method (FIDO2, passkey, Windows Hello)?'. Needs AuditLog.Read.All. Read-only.
 Flags: `--phone` Only users with a phone method (mobile, alternate mobile or office phone: SMS or voice) · `--no-mfa` Only users with no MFA registered · `--admins` Only users who hold an admin role · `--no-strong` Only users with no phishing-resistant method (FIDO2 key, passkey, Windows Hello for Business)

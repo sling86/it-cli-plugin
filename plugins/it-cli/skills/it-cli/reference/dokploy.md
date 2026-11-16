@@ -389,6 +389,13 @@ its dokploy deployments <app-id>
 its dokploy deployments <app-id> --watch
 ```
 
+### `its dokploy deployments logs <deploymentId>`
+Show the build log of one deployment by ID (read over SSH from the logPath on the deployment record). Default last 100 lines.
+Flags: `--tail` Lines from the end of the log (default 100)
+```bash
+its dokploy deployments logs dep_8f1c2d3e --tail 200
+```
+
 ### `its dokploy deployments queue`
 Show pending/active deployments across the whole Dokploy server (not scoped to one app). Useful when a deploy seems stuck — empty queue means the worker is idle.
 ```bash
