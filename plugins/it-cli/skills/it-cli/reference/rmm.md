@@ -671,21 +671,21 @@ its rmm terminal logout
 ## printers
 
 ### `its rmm printers set-default <agent> <printer>`
-Set the default printer. It is a per-user setting, so this runs in the logged-on user's session (not SYSTEM) and fails if nobody is logged on. Reads the default back as that user. Without --confirm, previews.
+Set the default printer. It is a per-user setting, so this runs in the logged-on user's session (not SYSTEM) and fails if nobody is logged on. Reads the default back as that user. Without --confirm, previews. Requires an online agent; offline or overdue agents fail before any script is sent.
 Flags: `--confirm` Make the change
 ```bash
 its rmm printers set-default WKS-9 "Front Office" --confirm
 ```
 
 ### `its rmm printers set-driver <agent> <printer> <driver>`
-Change a printer's driver. The driver must already be installed (see `printers drivers`). Reads the printer back. Without --confirm, previews.
+Change a printer's driver. The driver must already be installed (see `printers drivers`). Reads the printer back. Without --confirm, previews. Requires an online agent; offline or overdue agents fail before any script is sent.
 Flags: `--confirm` Make the change
 ```bash
 its rmm printers set-driver WKS-9 "Front Office" "HP Universal Printing PCL 6" --confirm
 ```
 
 ### `its rmm printers set-port <agent> <printer> <port>`
-Change a printer's port. An IPv4 address creates a TCP/IP port for it first if there isn't one (--tcp-port to change from 9100); anything else must be an existing port name. Reads the printer back. Without --confirm, previews.
+Change a printer's port. An IPv4 address creates a TCP/IP port for it first if there isn't one (--tcp-port to change from 9100); anything else must be an existing port name. Reads the printer back. Without --confirm, previews. Requires an online agent; offline or overdue agents fail before any script is sent.
 Flags: `--tcp-port` TCP port for a new IP port (default 9100) · `--confirm` Make the change
 ```bash
 its rmm printers set-port WKS-9 "Front Office" 10.0.4.51 --confirm
@@ -714,7 +714,7 @@ its rmm printers drivers WKS-9
 ```
 
 ### `its rmm printers add <agent>`
-Add a printer to an agent. --port as an IPv4 address creates a TCP/IP port of that name first (Add-PrinterPort); anything else must be an existing port name. The driver must already be installed (see `printers drivers`). Reads the printer back with Get-Printer. Without --confirm, previews.
+Add a printer to an agent. --port as an IPv4 address creates a TCP/IP port of that name first (Add-PrinterPort); anything else must be an existing port name. The driver must already be installed (see `printers drivers`). Reads the printer back with Get-Printer. Without --confirm, previews. Requires an online agent; offline or overdue agents fail before any script is sent.
 Flags: `--name` Printer name · `--driver` Exact installed driver name · `--port` IPv4 address, or an existing port name · `--confirm` Add the printer
 ```bash
 its rmm printers add WKS-9 --name "Front Office" --driver "HP Universal Printing PCL 6" --port 10.0.4.50 --confirm
@@ -722,7 +722,7 @@ its rmm printers add WKS-9 --name "Zebra ZD420" --driver "ZDesigner ZD420-203dpi
 ```
 
 ### `its rmm printers remove <agent> <name>`
-Remove a printer from an agent by exact name (the port and driver stay). Reads back with Get-Printer. Without --confirm, previews.
+Remove a printer from an agent by exact name (the port and driver stay). Reads back with Get-Printer. Without --confirm, previews. Requires an online agent; offline or overdue agents fail before any script is sent.
 Flags: `--confirm` Remove the printer
 ```bash
 its rmm printers remove WKS-9 "Front Office" --confirm

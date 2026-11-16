@@ -73,12 +73,44 @@ Flags: `--emoji` Emoji or name (default 👍)
 its teams chats unreact self 1775589175306 --emoji 👍 --confirm
 ```
 
+### `its teams chats create`
+Start a Teams chat as you. One person: a 1:1 (an existing one is returned, no duplicate). Several: a group, with --topic. People by UPN, email or object id. Previews without --confirm. Needs Chat.Create (or Chat.ReadWrite); a first --message also needs ChatMessage.Send.
+Flags: `--with` Who to chat with: UPN, email or object id, comma-separated · `--topic` Group chat name (ignored for a 1:1) · `--message` First message to send after the chat exists · `--message-file` Read the first message from a UTF-8 file · `--markdown` Treat the first message as Markdown (same subset as send) · `--confirm` Create it
+```bash
+its teams chats create --with sam@example.com
+its teams chats create --with sam@example.com,jo@example.com --topic "Rollout" --message "Kick-off" --confirm
+```
+
 ## presence
 
 ### `its teams presence get`
 Your current Teams presence (availability + activity).
 ```bash
 its teams presence
+```
+
+## meetings
+
+### `its teams meetings`
+Your Teams online meetings from your calendar (default: the last 7 days). Needs Calendars.Read. Whether a transcript exists is not shown: it takes a call per meeting, use `meetings transcripts`.
+Flags: `--since` Start of the window, e.g. -7d, -12h or 2026-11-01 (default -7d) · `--until` End of the window (default: now)
+```bash
+its teams meetings
+its teams meetings --since -30d
+```
+
+### `its teams meetings transcripts <meeting>`
+List the transcripts of one online meeting (id, created). Needs the delegated scopes OnlineMeetings.Read and OnlineMeetingTranscript.Read.All, and you must be the organiser.
+```bash
+its teams meetings transcripts 'https://teams.microsoft.com/l/meetup-join/...'
+```
+
+### `its teams meetings transcript <meeting>`
+Read a meeting transcript (the newest unless --id): as 'Speaker: line' text or raw WebVTT. Meeting content, so --to-file keeps it off the screen, and --max-chars caps what is printed. Needs OnlineMeetings.Read and OnlineMeetingTranscript.Read.All.
+Flags: `--id` Transcript id from `meetings transcripts` (default: the newest) · `--format <text|vtt>` text = 'Speaker: line'; vtt = raw WebVTT with timings · `--to-file` Write the transcript to this file (mode 0600) instead of printing it
+```bash
+its teams meetings transcript <eventId> --max-chars 20000
+its teams meetings transcript <joinUrl> --format vtt --to-file meeting.vtt
 ```
 
 ## teams

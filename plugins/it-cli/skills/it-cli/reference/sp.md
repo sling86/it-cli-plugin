@@ -184,6 +184,13 @@ its sp files share example.sharepoint.com,1a2b,3c4d --drive b!xY7 --item 01Q3JEF
 its sp files share example.sharepoint.com,1a2b,3c4d --drive b!xY7 --item 01Q3JEFH --type view --scope anonymous --confirm
 ```
 
+### `its sp files copy <siteId>`
+Copy a file or folder, including across drives/sites. Preview without --confirm; wait for the background copy and return the new item. A timeout does not cancel the copy. Paths start with /; replace overwrites existing files (not folders).
+Flags: `--drive` Source drive ID · `--item` Source item ID · `--to-drive` Target drive ID (default source drive) · `--to-folder` Target folder ID or /path (default source parent, or root in another drive) · `--name` New name (default source name) · `--conflict <fail|replace|rename>` Name conflict behaviour · `--timeout` Maximum seconds to wait for the copy (does not cancel it) · `--confirm` Run the copy
+```bash
+its sp files copy <site> --drive <drive> --item <item> --to-drive <target-drive> --to-folder /Archive --name "Copy.docx" --confirm
+```
+
 ### `its sp files move <siteId>`
 Move or rename a file. Move an item between folders (reversible).
 Flags: `--drive` Drive ID · `--item` Item ID · `--name` New file name · `--parent` New parent folder ID

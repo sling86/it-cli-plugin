@@ -91,11 +91,20 @@ its outlook mail categorise AAMkAGI1AAAt0M0AAA= "IT,Follow up" --user jane.smith
 ```
 
 ### `its outlook mail delete [message_id]`
-Delete one or more messages (moves to Deleted Items). Pass a single id positionally, or pipe `mail list --json` to stdin with --stdin for bulk delete.
+Delete one or more messages (moves to Deleted Items) and notes which folder each came from, so `mail restore` can put it back. A message already in Deleted Items is deleted permanently and cannot be restored. Pass a single id positionally, or pipe `mail list --json` to stdin with --stdin for bulk delete.
 Flags: `--confirm` Required for every delete (single and bulk) · `--stdin` Read newline/JSON list of message ids from stdin · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
 ```bash
 its outlook mail delete <message_id> --confirm
 its outlook mail --filter "from/emailAddress/address eq 'spammer@x'" --json | its outlook mail delete --stdin --confirm
+```
+
+### `its outlook mail restore [message_id]`
+Move deleted messages back to the folder each came from. Uses the local journal `mail delete` writes (~/.its/state/outlook-deleted.jsonl, kept 30 days); for a message with no entry, --to <folder> says where it goes. Pass ids, --stdin, --last N or --since 1h. Without --confirm it only shows the plan.
+Flags: `--confirm` Required to move anything · `--stdin` Read message ids from stdin · `--last` The N most recent deletes in the journal · `--since` Deletes in the journal since a window (1h, 2d, today, a date) · `--to` Folder (id or name) for messages the journal has no entry for · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook mail restore <id_in_deleted_items> --confirm
+its outlook mail restore --since 1h --confirm
+its outlook mail restore <id> --to inbox --confirm
 ```
 
 ### `its outlook mail draft`
@@ -183,6 +192,13 @@ Flags: `--parent` Parent folder ID (omit for top-level) · `--user` Override mai
 ```bash
 its outlook folders create "IT Archive" --user jane.smith@example.com --confirm
 its outlook folders create "2026" --parent "IT Archive" --user jane.smith@example.com --confirm
+```
+
+### `its outlook folders rename <folder> <newName>`
+Rename a mail folder (by id or display name). Built-in folders (inbox, sentitems, drafts, deleteditems, junkemail, archive, outbox) are refused. Reads the folder back. Use --confirm.
+Flags: `--confirm` Required to rename · `--user` Override mailbox UPN (app-only auth). Default: OUTLOOK_DEFAULT_USER or /me.
+```bash
+its outlook folders rename "IT Archive" "IT Archive 2026" --user jane.smith@example.com --confirm
 ```
 
 ### `its outlook folders delete <folder>`

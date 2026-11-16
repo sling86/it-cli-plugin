@@ -878,9 +878,16 @@ its entra doctor --watch
 
 ### `its entra apps register <name>`
 Bootstrap a new Entra app registration end-to-end — creates the application, its service principal, and a 12-month client secret. Returns the appId, objectId, SP id, and the plaintext secret (only shown once).
-Flags: `--redirect-uri` Web redirect URI. Repeatable — pass multiple --redirect-uri flags or comma-separate. · `--audience <single|multi|consumer|personal>` Sign-in audience · `--secret-name` Display name for the client secret · `--months` Client secret lifetime in months · `--no-secret` Skip generating a client secret
+Flags: `--redirect-uri` Web redirect URI. Repeatable — pass multiple --redirect-uri flags or comma-separate. · `--audience <single|multi|consumer|personal>` Sign-in audience · `--secret-name` Display name for the client secret · `--months` Client secret lifetime in months · `--no-secret` Skip generating a client secret · `--cert` Certificate (PEM or DER) to add instead of a secret — implies --no-secret. Only the public part is sent.
 ```bash
 its entra apps register "its CLI" --redirect-uri http://localhost --months 12 --confirm
+```
+
+### `its entra apps add-cert <app>`
+Add a certificate credential to an app registration WITHOUT dropping the existing ones (Graph replaces the whole keyCredentials list, so this sends existing + new). Refuses a certificate whose thumbprint is already on the app. Reads back and prints the thumbprint and expiry.
+Flags: `--cert` Certificate file (PEM or DER). Private key, if present, is never sent. · `--name` Display name for the credential
+```bash
+its entra apps add-cert its-sp-groups-reader --cert ./its-sp.pem --name its-sp-2026 --confirm
 ```
 
 ### `its entra apps add-password <app>`
@@ -913,7 +920,7 @@ its entra apps plan --exit-code --changes-only
 
 ### `its entra apps apply`
 Execute the manifest plan against the tenant — ADDITIVE ONLY, nothing is ever removed. Per app: create app → create SP → refetch → add owners → one coalesced requiredResourceAccess PATCH → redirect/public-client PATCHes → app-role grants → delegated scope-union grants. Needs Graph permissions Application.ReadWrite.All + AppRoleAssignment.ReadWrite.All + DelegatedPermissionGrant.ReadWrite.All — easiest run as an admin via --auth az, or a delegated admin sign-in (its auth login). Use --dry-run for a write-free preview.
-Flags: `--manifest` Path to the JSONC apps manifest · `--app` Only apply one manifest entry (by name or appId) · `--confirm` Skip the interactive confirmation
+Flags: `--manifest` Path to the JSONC apps manifest · `--app` Only apply one manifest entry (by name or appId) · `--confirm` Skip the interactive confirmation · `--write-appid` After creating an app, insert its appId into the manifest entry (so a re-run cannot create a duplicate)
 ```bash
 its entra apps apply --confirm
 ```

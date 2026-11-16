@@ -2,15 +2,15 @@
 
 > Auto-generated from the live command definitions. Do not edit by hand.
 
-**24 providers** · **275 resources** · **1017 commands**. Pick a provider for its full command list.
+**24 providers** · **276 resources** · **1025 commands**. Pick a provider for its full command list.
 
 | Provider | Alias | Resources | Commands |
 |----------|-------|-----------|----------|
 | [Tactical RMM](./rmm.md) | `rmm` | 21 | 92 |
-| [Entra ID](./entra.md) | `entra` | 24 | 138 |
+| [Entra ID](./entra.md) | `entra` | 24 | 139 |
 | [Dokploy](./dokploy.md) | `dokploy` | 25 | 126 |
 | [Bitwarden](./bw.md) | `bw` | 17 | 72 |
-| [SharePoint](./sp.md) | `sp` | 12 | 58 |
+| [SharePoint](./sp.md) | `sp` | 12 | 59 |
 | [UniFi Network](./unifi.md) | `unifi` | 19 | 53 |
 | [Wrike](./wrike.md) | `wrike` | 17 | 66 |
 | [Azure CLI](./az.md) | `az` | 14 | 30 |
@@ -25,9 +25,9 @@
 | [Business Central](./bc.md) | `bc` | 9 | 31 |
 | [Docs UI](./docs.md) | `docs` | 5 | 5 |
 | [GitHub](./gh.md) | `gh` | 2 | 6 |
-| [Outlook](./outlook.md) | `outlook` | 12 | 51 |
+| [Outlook](./outlook.md) | `outlook` | 12 | 53 |
 | [Microsoft 365 Health](./m365.md) | `m365` | 2 | 3 |
-| [Teams](./teams.md) | `teams` | 6 | 20 |
+| [Teams](./teams.md) | `teams` | 7 | 24 |
 | [Yodeck](./yodeck.md) | `yodeck` | 2 | 3 |
 | [Purview](./purview.md) | `purview` | 2 | 2 |
 
