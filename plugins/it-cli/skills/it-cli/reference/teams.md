@@ -1,6 +1,6 @@
 # Teams (`teams`)
 
-Microsoft Teams (Graph) for the logged-in user — list chats, read messages (with edits and reactions), send messages (plain text, Markdown or HTML; URLs become real links; @mentions, quote-replies, files, inline images, Adaptive Cards, importance), edit and delete your own messages, react, check your presence. Delegated-only (runs as you via `its auth login`; sending needs ChatMessage.Send, editing/reacting/deleting need Chat.ReadWrite).
+Microsoft Teams (Graph) for the logged-in user — list chats, read messages (with edits and reactions), send messages (plain text, Markdown or HTML; URLs become real links; @mentions, quote-replies, files, inline images, Adaptive Cards, importance), edit and delete your own messages, react, check your presence. Channels: list a team's channels, read channel messages and thread replies, post (Markdown or HTML) or reply in a thread, edit your own message. Delegated-only (runs as you via `its auth login`; sending needs ChatMessage.Send, editing/reacting/deleting need Chat.ReadWrite; reading channel messages needs ChannelMessage.Read.All, which must be consented).
 
 > Auto-generated reference. Configure: `its teams setup`. For a command you can name, prefer live help `its teams <resource> help` (always current) — read this file to discover what exists. [Index](./index.md)
 
@@ -105,6 +105,42 @@ its teams teams delete 8d8854a9-1cc2-40d9-b895-ba082fc5ad94 --dry-run
 its teams teams delete 8d8854a9-1cc2-40d9-b895-ba082fc5ad94 --confirm
 ```
 
+## channels
+
+### `its teams channels <team>`
+Channels in a team you belong to. Pass the team's id or name.
+```bash
+its teams channels list "IT Department"
+```
+
+### `its teams channels messages <team> <channel>`
+Read the newest top-level messages in a channel (replies are separate: `channels replies`). Needs delegated ChannelMessage.Read.All, or Group.Read.All.
+Flags: `--limit` Max messages (0 for all; default 20)
+```bash
+its teams channels messages "IT Department" General --limit 10
+```
+
+### `its teams channels replies <team> <channel> <message_id>`
+Read the replies to one channel message, oldest first. Same permissions as `channels messages`.
+```bash
+its teams channels replies "IT Department" General 1616990032035
+```
+
+### `its teams channels send <team> <channel>`
+Post to a channel as you, or reply in a thread with --reply-to. Markdown or HTML. This goes to everyone in the channel: without --confirm (or with --dry-run) nothing is sent. Needs delegated ChannelMessage.Send (or Group.ReadWrite.All). Only a signed-in user can post; there is no app-only route.
+Flags: `--message` Message text · `--message-file` Read the message from a UTF-8 file (long bodies) · `--html` Treat the message as HTML, sent as-is · `--markdown` Treat the message as Markdown: # headings, **bold**, *italic*, `code`, [links](https://…), lists, > quotes, | tables | · `--subject` Subject: shown as the bold title of a new channel post · `--importance <normal|high|urgent>` Mark it important — Teams shows a banner · `--mention` @mention team members, comma-separated: email, full name or first name · `--reply-to` Reply in the thread of this top-level message id (from `channels messages`)
+```bash
+its teams channels send "Test Team" General --markdown --subject "Update" --message-file post.md --confirm
+its teams channels send "Test Team" General --reply-to 1616990032035 --message "agreed" --confirm
+```
+
+### `its teams channels edit-message <team> <channel> <message_id>`
+Edit one of YOUR channel messages or replies (Teams then shows it as edited). Shows before and after without --confirm, then reads it back to check. For a reply, pass the reply's id and the thread's message id with --reply-to. Takes the same --html / --markdown / --mention / --importance as send. Needs delegated ChannelMessage.ReadWrite (or Group.ReadWrite.All).
+Flags: `--message` New message text · `--message-file` Read the new text from a UTF-8 file · `--html` Treat the text as HTML, sent as-is · `--markdown` Treat the text as Markdown (same subset as send) · `--mention` @mention team members, comma-separated (as on send) · `--importance <normal|high|urgent>` Change importance · `--reply-to` The id is a reply: this is the top-level message it sits under · `--confirm` Apply the edit
+```bash
+its teams channels edit-message "Test Team" General 1616990032035 --message "corrected" --confirm
+```
+
 ## files
 
 ### `its teams files <chat_id> <message_id>`
@@ -119,3 +155,21 @@ Flags: `--to` Destination file path, or an existing directory · `--max-mb` Refu
 ```bash
 its teams files download <chatId> <messageId> <attachmentId> --to ./report.xlsx
 ```
+
+## policies
+
+### `its teams policies meeting`
+Teams meeting policies: AllowTranscription, AllowCloudRecording, NewMeetingRecordingExpirationDays, AutoRecording. With --user, the policy that user is on and how it was assigned (direct or by group). Needs the Teams admin certificate app. Read-only.
+Flags: `--user` User principal name: show their effective policy and assignments
+```bash
+its teams policies meeting --ai
+its teams policies meeting --user jo@example.com --ai
+```
+
+## Gotchas
+
+- **Which identity runs the call.** `its sp graph` (raw Graph) uses the default profile, which is the admin account. That account has no Teams licence, so posting to a channel through it fails with `403 Forbidden: Failed to get license information for the user`. This is not an outage. Use `its teams ...` (it runs as your own account, the `me` profile), or pass `--profile me` to a raw `its sp graph` call. `its auth status` shows which profile each provider uses.
+- **Permissions.** Reading channel messages and replies needs `ChannelMessage.Read.All`, and edit needs `ChannelMessage.ReadWrite`. On 13 Nov 2026 both were consented tenant-wide on the it-cli app registration (the `CLIENT_ID` app) with `its entra consent add-scope <app> 'ChannelMessage.Read.All ChannelMessage.ReadWrite' --auth az --confirm`. That is a dated note about one tenant, not something every tenant has. After a consent change run `its auth refresh` so the next call picks it up.
+- **Deleting.** There is no `channels delete-message`. Graph only lets a signed-in user soft-delete their own channel messages. Trying to delete someone else's reply returns `403 AclCheckFailed`, even for the team owner. A team owner can delete other people's messages only in the Teams app itself, and only when the team setting 'owners can delete messages' is on.
+- **General channel reaches everyone.** Posting to a team's General channel notifies the whole team. Always dry-run first, and read the thread back after posting.
+- **GIF or image replies look empty.** A reply that is only a GIF or image shows an empty `text`. Use `its sp graph get <reply> --profile me` to see the body HTML.

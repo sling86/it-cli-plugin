@@ -114,6 +114,22 @@ its dokploy apps set-auto-deploy storefront on --confirm
 its dokploy apps set-auto-deploy storefront off --dry-run
 ```
 
+### `its dokploy apps set-registry <app> <registryId>`
+Set or clear an application's Cluster Settings registry (registryId). With a registry set Dokploy pushes the image after pulling it; use `none` to clear. Reads the app back and fails if it did not change.
+Flags: `--dry-run` Print the planned request without sending
+```bash
+its dokploy apps set-registry storefront reg_123 --confirm
+its dokploy apps set-registry storefront none --confirm
+```
+
+### `its dokploy apps set-limits <app>`
+Set an application's resource limits and reservations. Memory takes 512m / 2g / bytes (Dokploy stores bytes); CPU takes cores like 0.5 (Dokploy stores nano-CPUs, 1 core = 1000000000). `none` clears one. Only the flags you pass change. Reads the app back and fails if a value did not stick. Redeploy for the swarm to pick them up.
+Flags: `--memory-limit` Hard memory cap, e.g. 1g (or none) · `--memory-reservation` Memory guaranteed to the app, e.g. 512m (or none) · `--cpu-limit` Hard CPU cap in cores, e.g. 1 (or none) · `--cpu-reservation` CPU guaranteed to the app in cores, e.g. 0.25 (or none) · `--dry-run` Print the planned request without sending
+```bash
+its dokploy apps set-limits storefront --memory-limit 1g --memory-reservation 512m --cpu-limit 1 --confirm
+its dokploy apps set-limits storefront --memory-limit none --confirm
+```
+
 ### `its dokploy apps set-source <app>`
 Wire an application to a source provider. --type github links a GitHub App repo; --type docker pins to a registry image.
 Flags: `--type <github|docker>` Source type · `--github-id` Dokploy GitHub provider ID (its dokploy git list) · `--owner` GitHub owner / org · `--repo` GitHub repository name · `--branch` Branch (default main) · `--build-path` Path inside the repo to use as build context (default /) · `--watch-paths` Comma-separated glob list to limit auto-deploy triggers (default ** = any change) · `--image` Docker image reference (for --type docker) · `--username` Registry username (optional, for private registries) · `--password` Registry password / token (optional) · `--registry-url` Registry URL — e.g. ghcr.io or docker.io. Leave blank for Docker Hub. · `--dry-run` Print the planned request without sending

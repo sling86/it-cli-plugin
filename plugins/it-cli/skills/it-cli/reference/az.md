@@ -243,3 +243,16 @@ Flags: `--scope` ARM scope: /subscriptions/<id>[/resourceGroups/<rg>[/providers/
 ```bash
 its az role-definitions list --name "OpenAI"
 ```
+
+## appinsights
+
+### `its az appinsights`
+List Application Insights components in the selected Azure subscription.
+Flags: `--resource-group` Resource group (required when component names clash) · `--subscription` Azure subscription name or ID (default: current subscription)
+
+### `its az appinsights query <component> <kql>`
+Run read-only KQL against an Application Insights component in the selected subscription. Table output shows PrimaryResult (or the first table); --json preserves every table and API error. Partial errors are reported on stderr and kept in --json.
+Flags: `--resource-group` Resource group (required when component names clash) · `--subscription` Azure subscription name or ID (default: current subscription) · `--since` API time window: 30m, 24h, 7d (default: 24h)
+```bash
+its az appinsights query BC_App_Insights "traces | take 5" --subscription "- Group Business Systems" --since 24h
+```

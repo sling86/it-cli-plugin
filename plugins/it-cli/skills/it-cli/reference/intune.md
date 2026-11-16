@@ -7,7 +7,7 @@ Microsoft Intune device management — managed devices, apps, platform scripts, 
 ## devices
 
 ### `its intune devices`
-List Intune-managed devices. Surfaces the most common fields; pass --json for raw shape.
+List Intune-managed devices, including Wi-Fi MAC addresses. Graph requires an individual devices get for Ethernet MAC addresses; list cannot return them even with $select. Pass --json for all returned fields.
 Flags: `--top` Maximum results (default all, paginates automatically) · `--all` Fetch all results (overrides --top)
 ```bash
 its intune devices
@@ -16,7 +16,7 @@ its intune devices --filter compliance=noncompliant
 ```
 
 ### `its intune devices get <device>`
-Get managed device details. Pass the id (or any natural identifier) as the positional arg.
+Get managed device details, including Ethernet and Wi-Fi MAC addresses where reported by Intune. Pass the id (or any natural identifier) as the positional arg.
 ```bash
 its intune devices get <serial>
 ```
@@ -140,8 +140,8 @@ List Win32 (.intunewin) apps with version and install command. For detection and
 Flags: `--top` Number of results (default 100)
 
 ### `its intune win32-apps upload <file>`
-Upload a packaged .intunewin as a new Win32 app. Detection: --detect-msi <product code> and/or --detect-file <full path> (file exists); at least one. Previews the package without --confirm (no Graph calls). Does not assign the app. If it fails part-way, the app exists with no content and the error gives its id. Reads the app back and reports verified.
-Flags: `--name` App display name · `--install-cmd` Install command line · `--uninstall-cmd` Uninstall command line · `--publisher` Publisher (default: Unknown) · `--description` Description (default: the name) · `--detect-msi` Detect by MSI product code, e.g. {GUID} · `--detect-file` Detect by file existing, full Windows path · `--arch <x64|x86|x64,x86>` Architectures (default x64) · `--min-windows` Minimum Windows release (default 1607) · `--confirm` Create the app and upload
+Upload a packaged .intunewin as a new Win32 app. Detection: --detect-msi <product code>, --detect-file <full path> (file exists) and/or --detect-registry <hive\key|value|operator|comparison>; at least one. --install-as user|system sets who runs the installer (default system); restart is suppressed. Previews the package without --confirm (no Graph calls). Does not assign the app. If it fails part-way, the app exists with no content and the error gives its id. Reads the app back and reports verified.
+Flags: `--name` App display name · `--install-cmd` Install command line · `--uninstall-cmd` Uninstall command line · `--publisher` Publisher (default: Unknown) · `--description` Description (default: the name) · `--detect-msi` Detect by MSI product code, e.g. {GUID} · `--detect-file` Detect by file existing, full Windows path · `--detect-registry` Detect by registry value: '<HKCU|HKLM>\<key>|<value>|<operator>|<comparison>' (operator: equal, notEqual, greaterThan, ...); '<hive>\<key>|<value>' alone tests it exists · `--install-as <user|system>` Run the installer as (default system; per-user HKCU packs need user) · `--arch <x64|x86|x64,x86>` Architectures (default x64) · `--min-windows` Minimum Windows release (default 1607) · `--confirm` Create the app and upload
 ```bash
 its intune win32-apps upload ./7zip.intunewin --name "7-Zip" --install-cmd "msiexec /i 7z.msi /qn" --uninstall-cmd "msiexec /x {23170F69-40C1-2702-2501-000001000000} /qn" --detect-msi "{23170F69-40C1-2702-2501-000001000000}" --dry-run
 its intune win32-apps upload ./app.intunewin --name "App" --install-cmd "setup.exe /s" --uninstall-cmd "uninstall.exe /s" --detect-file "C:\Program Files\App\app.exe" --confirm

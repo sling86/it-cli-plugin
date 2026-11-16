@@ -2,18 +2,18 @@
 
 > Auto-generated from the live command definitions. Do not edit by hand.
 
-**23 providers** · **263 resources** · **984 commands**. Pick a provider for its full command list.
+**24 providers** · **269 resources** · **999 commands**. Pick a provider for its full command list.
 
 | Provider | Alias | Resources | Commands |
 |----------|-------|-----------|----------|
-| [Tactical RMM](./rmm.md) | `rmm` | 21 | 88 |
-| [Entra ID](./entra.md) | `entra` | 24 | 134 |
-| [Dokploy](./dokploy.md) | `dokploy` | 25 | 123 |
+| [Tactical RMM](./rmm.md) | `rmm` | 21 | 89 |
+| [Entra ID](./entra.md) | `entra` | 24 | 135 |
+| [Dokploy](./dokploy.md) | `dokploy` | 25 | 125 |
 | [Bitwarden](./bw.md) | `bw` | 17 | 72 |
 | [SharePoint](./sp.md) | `sp` | 12 | 58 |
-| [UniFi Network](./unifi.md) | `unifi` | 17 | 51 |
+| [UniFi Network](./unifi.md) | `unifi` | 18 | 52 |
 | [Wrike](./wrike.md) | `wrike` | 17 | 66 |
-| [Azure CLI](./az.md) | `az` | 13 | 28 |
+| [Azure CLI](./az.md) | `az` | 14 | 30 |
 | [Exchange Online](./exo.md) | `exo` | 18 | 86 |
 | [Intune](./intune.md) | `intune` | 23 | 68 |
 | [UniFi Protect](./protect.md) | `protect` | 6 | 12 |
@@ -27,7 +27,8 @@
 | [GitHub](./gh.md) | `gh` | 2 | 6 |
 | [Outlook](./outlook.md) | `outlook` | 12 | 51 |
 | [Microsoft 365 Health](./m365.md) | `m365` | 2 | 3 |
-| [Teams](./teams.md) | `teams` | 4 | 14 |
+| [Teams](./teams.md) | `teams` | 6 | 20 |
 | [Yodeck](./yodeck.md) | `yodeck` | 2 | 3 |
+| [Purview](./purview.md) | `purview` | 2 | 2 |
 
 Plus **[24 global commands](./global.md)** that take no provider — `its status`, `its find`, `its user`, `its setup` and the rest.

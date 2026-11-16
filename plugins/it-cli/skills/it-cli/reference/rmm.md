@@ -34,7 +34,7 @@ its rmm agents search "jane.smith"
 ```
 
 ### `its rmm agents get <agent>`
-Full agent detail — hardware, OS, last-seen, public IP, disks, version, maintenance state. Accepts hostname, username, or agent UUID.
+Full agent detail — hardware, serial, user, MAC addresses from Windows network inventory (including virtual adapters), OS, last-seen, public IP, disks, version, maintenance state. MACs require detail; the list endpoint does not include network inventory. Accepts hostname, username, or agent UUID.
 ```bash
 its rmm agents get OFFICE-PC-01
 its rmm agents get jane.smith
@@ -55,6 +55,14 @@ Flags: `--confirm` Confirm the reboot
 its rmm agents reboot WKS-9 --confirm
 its rmm agents reboot OFFICE-PC-01 --confirm
 its rmm agents reboot c3e5f1a7-... --confirm
+```
+
+### `its rmm agents update <agent>`
+Update the Tactical RMM agent software itself (not Windows updates — that is `rmm updates`) on one or more agents. Takes hostnames, usernames or agent IDs. Without --confirm it only previews. The server decides the target version and skips agents already on it; the update runs in the background, so check `agents get` for the new version after a few minutes.
+Flags: `--confirm` Queue the update (without it, preview only)
+```bash
+its rmm agents update WKS-9 WKS-10
+its rmm agents update WKS-9 WKS-10 --confirm
 ```
 
 ### `its rmm agents remove <agent>`

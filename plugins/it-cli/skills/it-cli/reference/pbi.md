@@ -130,7 +130,7 @@ its pbi scan run --workspace <id> --detail schema,expressions --out ./data/scann
 ## api
 
 ### `its pbi api get <path>`
-Raw read-only GET against the Power BI REST API (api.powerbi.com): pass a /v1.0/myorg/... or /v2.0/myorg/... path. Uses the CLI's own admin token; GET only. --to-file saves the JSON (mode 0600) and prints only a count.
+Raw read-only GET against the Power BI REST API (api.powerbi.com): pass a /v1.0/myorg/... or /v2.0/myorg/... path. Query values (including spaces and quotes) are encoded for you. Uses the CLI's own admin token; GET only. --to-file saves the JSON (mode 0600) and prints only a count.
 Flags: `--to-file` Write the JSON here (mode 0600) instead of printing it
 ```bash
 its pbi api get /v1.0/myorg/admin/widelySharedArtifacts/publishedToWeb

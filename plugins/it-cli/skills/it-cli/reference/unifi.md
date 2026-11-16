@@ -48,7 +48,7 @@ its unifi devices get <mac>
 ```
 
 ### `its unifi devices ports <device>`
-Per-port link view of a switch: speed, duplex, PoE, STP state, error/drop counters and which online clients sit on each port. Flags copper ports up below 1000 Mbit or at half duplex.
+Per-port view of a switch: speed, duplex, PoE, STP state, port profile, native VLAN and tagged VLANs (all | none | list), error/drop counters and which online clients sit on each port. Flags copper ports up below 1000 Mbit or at half duplex.
 Flags: `--site` Site name override · `--degraded` Only ports below gigabit, at half duplex, with errors, or silent (up but nothing received)
 ```bash
 its unifi devices ports "Office Switch" --site hq
@@ -441,6 +441,15 @@ Flags: `--site` Site name override
 ```bash
 its unifi dashboard
 its unifi dashboard --watch
+```
+
+## port-profiles
+
+### `its unifi port-profiles`
+List switch port profiles with what they forward, their native network and tagged VLANs (all | none | list).
+Flags: `--site` Site name override · `--all-sites` List across every site
+```bash
+its unifi port-profiles list --site hq
 ```
 
 ## audit

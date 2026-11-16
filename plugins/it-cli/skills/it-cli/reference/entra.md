@@ -915,6 +915,13 @@ Flags: `--god-threshold` App-role grant count above which an app is critical · 
 its entra apps audit --severity high
 ```
 
+### `its entra apps usage`
+Per-app usage report for one enterprise app (name or appId): who is assigned (users, groups, disabled users; flags assignment not enforced) and sign-ins over --since, split interactive vs non-interactive, with distinct users, active days, per-resource split and weekly counts. The window is cut into 5-day slices fetched in parallel (a single long query times out); a slice that fails is named in the output and the totals are marked INCOMPLETE. TRAPS: (1) BC MCP users sign in through the shared 'Claude AI MCP Client' app, so read the resource split, not the app total. (2) Non-interactive counts are mostly token refreshes: distinct active days is the honest measure of use, not the sign-in count. Needs AuditLog.Read.All and Directory.Read.All.
+Flags: `--since` Look-back window (e.g. 7d, 30d)
+```bash
+its entra apps usage 'Claude AI MCP Client' --since 30d
+```
+
 ## admin-bootstrap
 
 ### `its entra admin-bootstrap run <user_id>`

@@ -68,8 +68,8 @@ its bc extensions get platformSync --env Production
 ## query
 
 ### `its bc query get <entity>`
-Query any BC entity — OData passthrough with filter/top/select.
-Flags: `--company` Company name/id (default: first company) · `--filter` OData $filter expression · `--top` Max records (default 50) · `--select` $select fields (comma-separated) · `--orderby` $orderby expression · `--all` Fetch all pages (up to 10000 records; overrides --top) · `--env` BC environment name (default: BC_ENVIRONMENT) · `--api` Custom API route <publisher>/<group>/<version> (default: standard v2.0 API)
+Query a BC API entity, or a published web service with --odata-v4 --company <exact name>. Supports filter/top/select and follows pages (up to 20 pages).
+Flags: `--odata-v4` Read a published ODataV4 web service; requires --company <exact case-sensitive name>, cannot use --api · `--company` Company name/id (default: first company); exact name required with --odata-v4 · `--filter` OData $filter expression · `--top` Max records (default 50) · `--select` $select fields (comma-separated) · `--orderby` $orderby expression · `--all` Fetch all pages (up to 10000 records; overrides --top) · `--env` BC environment name (default: BC_ENVIRONMENT) · `--api` Custom API route <publisher>/<group>/<version> (default: standard v2.0 API)
 ```bash
 its bc query get items --company <company-id>
 ```
